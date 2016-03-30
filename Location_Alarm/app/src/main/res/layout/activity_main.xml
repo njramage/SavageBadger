@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/location_layout"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,48 +8,61 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.nathan_pc.location_alarm.MainActivity">
+    tools:context="com.blank_canvas.nathan_pc.location_alarm.MainActivity">
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
 
-        <TableRow>
-
-            <TextView
-                android:id="@+id/location_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Current Suburb:" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
 
             <TextView
-                android:id="@+id/location_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/location_label"
-                android:paddingLeft="@dimen/place_autocomplete_prediction_horizontal_margin"
-                android:text="Hello World!" />
+                android:textSize="32dp"
+                android:text="@string/title"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/start_location_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_suburb"
+                android:textSize="20dp"
+                android:gravity="center"/>
+
+            <EditText
+                android:id="@+id/suburb_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_suburb"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="@string/button_submit"
+                android:onClick="beginJourney"/>
         </TableRow>
 
         <TableRow>
 
-            <TextView
-                android:id="@+id/post_code_lablel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/location_label"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:text="Post Code:" />
-
-            <TextView
-                android:id="@+id/post_code_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/location_label"
-                android:layout_toRightOf="@id/post_code_lablel"
-                android:paddingLeft="@dimen/place_autocomplete_prediction_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:text="Post Code:" />
         </TableRow>
+
     </TableLayout>
 </RelativeLayout>

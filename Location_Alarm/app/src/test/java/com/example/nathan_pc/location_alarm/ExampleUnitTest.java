@@ -1,4 +1,4 @@
-package com.example.nathan_pc.location_alarm;
+package com.blank_canvas.nathan_pc.location_alarm;
 
 import org.junit.Test;
 
