@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Location_Alarm</string>
     <string name="suburb">Enter a Suburb</string>
+    <string name="app_name">Location Alarm</string>
 </resources>
