@@ -10,7 +10,18 @@
     tools:context="com.blank_canvas.location_alarm.MainActivity">
 
     <TextView
+        android:id="@+id/suburb_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="@string/suburb"
+        android:textSize="20dp"/>
+
+    <EditText
+        android:id="@+id/suburb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:hint="@string/suburb"
+        android:layout_toRightOf="@id/suburb_label"/>
+
 </RelativeLayout>
