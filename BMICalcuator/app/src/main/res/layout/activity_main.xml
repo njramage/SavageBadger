@@ -21,6 +21,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerInParent="true">
 
         <TextView
@@ -53,9 +54,10 @@
         <EditText
             android:id="@+id/height_textfield"
             android:layout_width="80sp"
-            android:layout_height="wrap_content"
+            android:layout_height="40sp"
             android:layout_below="@id/radio_female"
-            android:layout_toRightOf="@id/height_label"/>
+            android:layout_toRightOf="@id/height_label"
+            android:layout_alignBaseline="@id/height_label"/>
         <TextView
             android:id="@+id/weight_label"
             android:layout_width="wrap_content"
@@ -66,9 +68,11 @@
         <EditText
             android:id="@+id/weight_textfield"
             android:layout_width="80sp"
-            android:layout_height="wrap_content"
+            android:layout_height="40sp"
             android:layout_below="@id/height_label"
-            android:layout_toRightOf="@id/weight_label"/>
+            android:layout_toRightOf="@id/weight_label"
+            android:layout_alignBaseline="@id/weight_label"
+            />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
