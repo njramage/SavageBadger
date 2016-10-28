@@ -10,14 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.blank_canvas.bmicalcuator.MainActivity">
 
-    <!-- new Relative layout centered
-
-        TextView, Male and Female Radio Butons
-
-        Height and Width, TextView and EditText
-
-        Button-->
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,7 +71,7 @@
             android:layout_below="@id/weight_label"
             android:layout_alignRight="@id/radio_female"
             android:text="CAlculate"
-            android:onClick="CalculateBMI"/>
+            android:onClick="submit"/>
 
     </RelativeLayout>
 </RelativeLayout>
