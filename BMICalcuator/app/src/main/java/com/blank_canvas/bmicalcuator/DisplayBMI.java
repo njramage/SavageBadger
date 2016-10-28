@@ -14,3 +14,4 @@ public class DisplayBMI extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 }
+ 

@@ -16,12 +16,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void submit(View view) {
-        double bmi = calculateBMI(0,0,"Male");
+        double bmi = calculateBMI(0,0);
         Intent intent = new Intent(this, DisplayBMI.class);
 
     }
 
-    private double calculateBMI(int height, int weight, String gender) {
-        return 0;
+    private double calculateBMI(double height, double weight) {
+        double bmi = weight/(height*height);
+        return bmi;
     }
 }
