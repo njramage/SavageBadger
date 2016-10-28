@@ -14,14 +14,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/suburb"
-        android:textSize="20dp"/>
+        android:textSize="20dp"
+        android:layout_alignBaseline="@+id/suburb"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/suburb"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:hint="@string/suburb"
-        android:layout_toRightOf="@id/suburb_label"/>
+        android:layout_toRightOf="@id/suburb_label"
+        android:layout_marginLeft="10dp"
+        android:textAlignment="center"/>
+    <Button
+        android:id="@+id/suburb_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/suburb_button"
+        android:layout_below="@id/suburb"
+        android:layout_alignEnd="@id/suburb"
+        android:onClick="searchForLocation"/>
 
 </RelativeLayout>
