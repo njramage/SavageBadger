@@ -66,13 +66,13 @@ class Database:
 
 def init():
     db = Database(filename = 'Badger.db')
-    db.RunSQL('create table IF NOT EXISTS people (ID INTEGER PRIMARY KEY NOT NULL, First_Name text, Last_Name text, DOB text, Gender text, Country ENUM, Suburb text, Job_title text, Interests text)')
-    db.RunSQL('create table IF NOT EXISTS questions (ID INTEGER PRIMARY KEY NOT NULL,  Survey INTEGER, Question text, Answer_type text, Answer_text text)')
+    db.RunSQL('create table IF NOT EXISTS people (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, First_Name text, Last_Name text, DOB text, Gender text, Country ENUM, Suburb text, Job_title text, Interests text)')
+    db.RunSQL('create table IF NOT EXISTS questions (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL,  Survey INTEGER, Question text, Answer_type text, Answer_text text)')
     db.RunSQL('create table IF NOT EXISTS subquestions (ID INTEGER PRIMARY KEY NOT NULL, Parent_ID INTEGER, Required_Answer text )')
-    db.RunSQL('create table IF NOT EXISTS compnay (ID INTEGER PRIMARY KEY NOT NULL, Name text, Industries text, Num_surveys INTEGER)')
-    db.RunSQL('create table IF NOT EXISTS surveyTransaction (ID INTEGER PRIMARY KEY NOT NULL, CompanyName text, Survey INTEGER, Cost INTEGER)')
-    db.RunSQL('create table IF NOT EXISTS survey (ID INTEGER PRIMARY KEY NOT NULL, Name text, Topic text, Company INTEGER, Industry text)')
-    db.RunSQL('create table IF NOT EXISTS answers (ID INTEGER PRIMARY KEY NOT NULL, Question INTEGER, Person INTEGER, Result text, Times_Selected INTEGER)')
+    db.RunSQL('create table IF NOT EXISTS compnay (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, Name text, Industries text, Num_surveys INTEGER)')
+    db.RunSQL('create table IF NOT EXISTS surveyTransaction (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, CompanyName text, Survey INTEGER, Cost INTEGER)')
+    db.RunSQL('create table IF NOT EXISTS survey (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, Name text, Topic text, Company INTEGER, Industry text)')
+    db.RunSQL('create table IF NOT EXISTS answers (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, Question INTEGER, Person INTEGER, Result text, Times_Selected INTEGER)')
     db.close()
 
 if __name__ == "__main__":
