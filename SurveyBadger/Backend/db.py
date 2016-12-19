@@ -23,14 +23,10 @@ class Database:
 
     def retrieve(self, table, key, val):
         cursor = self._db.execute('select * from {} where {} = ?'.format(table, key), (val,))
-        #Could be cleaner
-        if len(cursor) > 1:
-            return [dict(row) for row in cursor]
-        elif len(cursor) == 1:
-            return cursor.fetchone()
-        else:
-            return None
-
+        
+        rows = [dict(row) for row in cursor.fetchall()]
+        return rows
+                
     def update(self, table, row, ID):
         #Create set method
         setStr = ""
@@ -74,6 +70,7 @@ def init():
     db.RunSQL('create table IF NOT EXISTS survey (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, Name text, Topic text, Company INTEGER, Industry text)')
     db.RunSQL('create table IF NOT EXISTS answers (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, Question INTEGER, Person INTEGER, Result text)')
     db.close()
+
 
 if __name__ == "__main__":
     print("Initializing Database")

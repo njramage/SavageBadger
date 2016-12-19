@@ -3,17 +3,20 @@ from flask_httpauth import HTTPBasicAuth
 
 import handler as hl
 
+#declare app
+app = Flask(__name__)
+
 #===========Main Client=======================
 #get a survey
 @app.route('/getsurvey/<id>', methods=["GET"])
 def getSurvey(id):
-    return jsonify({"questions" : hl.getQuestions(id))
+    return jsonify({"questions" : hl.getQuestions(id)})
 
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
 def submitSurvey():
     answers = requests.values['Answers']
-    return jsonify({"result" : hl.submit(answer)})
+    return jsonify({"result" : hl.submit(answers)})
 
 if __name__ == "__main__":
     #FAKE KEY
