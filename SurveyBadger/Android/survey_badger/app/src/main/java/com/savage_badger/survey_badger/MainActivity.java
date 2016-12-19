@@ -1,5 +1,6 @@
 package com.savage_badger.survey_badger;
 
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+
+import HTTPCom.httpCom;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -290,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject q = questions.getJSONObject(i);
 
                 JSONObject answersJSON = q.getJSONObject("answers");
-                try{
+                try {
                     JSONArray answers = answersJSON.getJSONArray("answers");
 
                     List<String> possibleAnswers = new List<String>() {
@@ -416,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
                     };
 
                     // fill answers list
-                    for (int j = 0; j < answers.length(); j++){
+                    for (int j = 0; j < answers.length(); j++) {
                         String possibleAnswer = answers.getString(j);
                         possibleAnswers.add(possibleAnswer);
                     }
@@ -425,16 +428,32 @@ public class MainActivity extends AppCompatActivity {
 
                     questionsList.add(question);
 
-                }
-                catch (JSONException e)
-                {
+                } catch (JSONException e) {
                     //TODO: Exception message
                 }
-        }
-        }
-        catch (JSONException e)
-        {
+            }
+        } catch (JSONException e) {
             //TODO: Exception message
         }
     }
+
+    //Server connection tasks
+    private class fetchTask extends AsyncTask<Integer, JSONObject, JSONObject> {
+
+        @Override
+        protected void onPreExecute() {
+            //Update GUI before execute
+        }
+
+        @Override
+        protected JSONObject doInBackground(Integer... params) {
+            JSONObject res = null;
+            res = httpCom.getSurvey(params[0]);
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject s) { createQuestions(s); }
+    }
+
 }
