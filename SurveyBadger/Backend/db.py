@@ -16,9 +16,9 @@ class Database:
 
     def insert(self, table, row):
         keys = sorted(row.keys())
-        values = [row(k) for k in keys]
-        q = 'INSERT INTO {} ({}) VALUES ({})'.format(table,", ".join(keys),", ".join('?' for i in len(values)))
-        self._db.execute(q)
+        values = [row[k] for k in keys]
+        q = 'INSERT INTO {} ({}) VALUES ({})'.format(table,", ".join(keys),", ".join('?' for i in range(len(values))))
+        self._db.execute(q,values)
         self._db.commit()
 
     def retrieve(self, table, key, val):
@@ -27,18 +27,25 @@ class Database:
         rows = [dict(row) for row in cursor.fetchall()]
         return rows
                 
+    def retrieveAll(self, table):
+        cursor = self._db.execute('select * from {}'.format(table))
+        
+        rows = [dict(row) for row in cursor.fetchall()]
+        return rows
+
+    
     def update(self, table, row, ID):
         #Create set method
         setStr = ""
         for k in row:
             if k != 'ID':
-                setStr += "{} = {},".format(k, row[k])
+                setStr += "{} = {}, ".format(k, row[k])
 
-        #Remove trailing comma
-        setStr = setStr[:(len(setStr-1))]
-        
+        #Remove trailing comma and space
+        setStr = setStr[:(len(setStr)-2)]
+        print(setStr) 
         #execute
-        self._db.execute('update {} set {}  where ID = ?'.format(table,setStr,ID))
+        self._db.execute('update {} set {}  where ID = ?'.format(table,setStr),(ID,))
         self._db.commit()
 
     def delete(self, table, key, val):

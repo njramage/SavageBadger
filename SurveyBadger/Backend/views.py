@@ -15,7 +15,7 @@ def getSurvey(id):
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
 def submitSurvey():
-    answers = requests.values['Answers']
+    answers = request.get_json()
     return jsonify({"result" : hl.submit(answers)})
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 from db import Database
 
 #Database file
-filen = ""
+filen = "Badger.db"
 
 
 def getQuestions(surveyID):
@@ -26,8 +26,9 @@ def submit(answers):
     #Add answers to database
     try:
         for ans in answers:
-            db.insert("answers",{"Question" : ans['QuestionID'], "Person" : ans['PersonID'], "Result" : ans['result']})
-    except:
+            db.insert("answers",{"Question" : int(ans['QuestionID']), "Person" : int(ans['PersonID']), "Result" : str(ans['result'])})
+    except Exception as e:
+        raise
         #close db and return failure
         db.close()
         return False
