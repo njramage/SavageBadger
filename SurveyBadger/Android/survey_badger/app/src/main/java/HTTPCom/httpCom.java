@@ -21,7 +21,7 @@ import java.net.URL;
 
 public class httpCom {
 	//Connection BASEURL
-	final static String BASEURL = "http://54.206.53.90";
+	final static String BASEURL = "http://54.206.53.90/";
 
     final static String USERNAME = "SBSADM";
     final static String PASS = "W0htInTh3WuRld";
@@ -127,7 +127,8 @@ public class httpCom {
         StringBuilder loginBuilder = new StringBuilder().append("Basic ").append(Base64.encodeToString(loginBytes, Base64.DEFAULT));
 
         try {
-            URL url = new URL(BASEURL + "/getsurvey/" + id);
+            URL url = new URL(BASEURL + "getsurvey/" + id);
+            Log.i("URL",url.toString());
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
