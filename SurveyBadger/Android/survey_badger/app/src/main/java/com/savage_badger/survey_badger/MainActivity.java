@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         currentQuestion = 1;// Start at first question
+
+        fetchTask getQuestions = new fetchTask();
+        getQuestions.execute("Transpotation_Survey");
     }
 
     // gets survey questions as a JSON object
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Creates a list of question objects
     public void createQuestions(JSONObject jsonObject) {
+        Log.i("Questions",jsonObject.toString());
 
         try {
             // turns Question JSON object into a JSON array for easy manipulation
@@ -98,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Server connection tasks
-    private class fetchTask extends AsyncTask<Integer, JSONObject, JSONObject> {
+    private class fetchTask extends AsyncTask<String, JSONObject, JSONObject> {
 
         @Override
         protected void onPreExecute() {
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected JSONObject doInBackground(Integer... params) {
+        protected JSONObject doInBackground(String... params) {
             JSONObject res = null;
             res = httpCom.getSurvey(params[0]);
             return res;

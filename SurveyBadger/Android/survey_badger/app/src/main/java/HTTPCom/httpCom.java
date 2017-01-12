@@ -21,7 +21,10 @@ import java.net.URL;
 
 public class httpCom {
 	//Connection BASEURL
-	final static String BASEURL = "";
+	final static String BASEURL = "http://54.206.53.90";
+
+    final static String USERNAME = "SBSADM";
+    final static String PASS = "W0htInTh3WuRld";
 
     final static int CONNECTTIMEOUT = 8000;
     final static int SOCKETTIMEOUT = 7000;
@@ -30,6 +33,10 @@ public class httpCom {
 
         BufferedReader reader = null;
         HttpURLConnection con = null;
+
+        //for login
+        byte[] loginBytes = (USERNAME + ":" + PASS).getBytes();
+        StringBuilder loginBuilder = new StringBuilder().append("Basic ").append(Base64.encodeToString(loginBytes, Base64.DEFAULT));
 
         JSONArray postData = data;
 
@@ -45,6 +52,10 @@ public class httpCom {
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Content-Type",
                     "application/json");
+
+            //for login
+            con.addRequestProperty("Authorization", loginBuilder.toString());
+
             //httpURLConnection.setRequestProperty("charset", "utf-8");
             //httpURLConnection.setRequestProperty("Content-Length",
             //       Integer.toString(postDataLength));
@@ -106,19 +117,26 @@ public class httpCom {
         }
     }
 
-    public static JSONObject getSurvey(int id) {
+    public static JSONObject getSurvey(String id) {
 
         BufferedReader reader = null;
         HttpURLConnection con = null;
 
+        //for login
+        byte[] loginBytes = (USERNAME + ":" + PASS).getBytes();
+        StringBuilder loginBuilder = new StringBuilder().append("Basic ").append(Base64.encodeToString(loginBytes, Base64.DEFAULT));
+
         try {
-            URL url = new URL(BASEURL + "/getsurvey/" + String.valueOf(id));
+            URL url = new URL(BASEURL + "/getsurvey/" + id);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
             //Set timeout
             con.setConnectTimeout(CONNECTTIMEOUT);
             con.setReadTimeout(SOCKETTIMEOUT);
+
+            //for login
+            con.addRequestProperty("Authorization", loginBuilder.toString());
 
             StringBuilder sb = new StringBuilder();
             reader = new BufferedReader((new InputStreamReader(con.getInputStream())));
