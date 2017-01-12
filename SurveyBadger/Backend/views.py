@@ -1,7 +1,7 @@
 from flask import Flask, request, url_for, session, jsonify
 from flask_httpauth import HTTPBasicAuth
 
-import handler as hl
+import Survey.handler as hl
 
 #declare app
 app = Flask(__name__)

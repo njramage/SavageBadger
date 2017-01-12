@@ -1,8 +1,11 @@
 #Imports
-from db import Database
+from Survey. db import Database
 
 #Database file
-filen = "Badger.db"
+filen = "/var/www/Survey/Survey/Badger.db"
+
+def checkLogin(user,passwd):
+    return True if user == "SBSADM" and passwd == "W0htInTh3WuRld" else False
 
 
 def getQuestions(surveyID):
