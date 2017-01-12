@@ -17,6 +17,12 @@ public class Answer {
         result = "No result";
     }
 
+    public Answer(int questionID, int personID, String result) {
+        this.questionID = questionID;
+        this.personID = personID;
+        this.result = result;
+    }
+
     /* Getters and Setters */
 
     public void setQuestionID(int id) {

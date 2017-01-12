@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title_number_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Savage Badger"
+        android:textSize="40sp"
+        android:layout_centerHorizontal="true"/>
+
+    <NumberPicker
+        android:id="@+id/number_pick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/title"></NumberPicker>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:textSize="20sp"
+        android:onClick="pickNumber"/>
+
+</RelativeLayout>

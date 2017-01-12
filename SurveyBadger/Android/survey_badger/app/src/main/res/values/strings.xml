@@ -1,12 +1,8 @@
 <resources>
     <string name="app_name">survey_badger</string>
-    <string-array name="tempvalues">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
+    <string name="question_selection">Selection</string>
+    <string name="question_number">Number</string>
+    <string name="question_time_duration">Time_duration</string>
+    <string name="question_set_time">Set_time</string>
+    <string name="question_money">Dollar_value</string>
 </resources>

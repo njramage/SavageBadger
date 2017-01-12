@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Question> questionsList;
     private List<Answer> answersList;
     private int currentQuestion;
+    private boolean optionPicked;
+    private int person_id = 1;// defualt player id for testing
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,4 +126,67 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(JSONObject s) { createQuestions(s); }
     }
 
+    // display questions
+    public void displayQuestions(ArrayList<Question> questions) {
+        int i = 0;// the current question index
+
+        // find the type of question
+        while (i < questions.size()) {
+            optionPicked = false;
+            // if the question is a selection question
+            if (questions.get(i).getType() == getResources().getString(R.string.question_selection)) {
+                selectionQuestion(questions.get(i));
+            }
+            // if the question is a number question
+            else if (questions.get(i).getType() == getResources().getString(R.string.question_number)) {
+                numberQuestion(questions.get(i));
+            }
+            // if the question is a money question
+            else if (questions.get(i).getType() == getResources().getString(R.string.question_money)) {
+                //TODO: question_money display, OJ
+            }
+            // if the question is a set time question
+            else if (questions.get(i).getType() == getResources().getString(R.string.question_set_time)) {
+                //TODO: question_set_time display Nathan
+            }
+            // if the question is a time duration question
+            else if (questions.get(i).getType() == getResources().getString(R.string.question_time_duration)) {
+                numberQuestion(questions.get(i));
+            }
+        }
+    }
+
+    public void selectionQuestion(Question question) {
+        setContentView(R.layout.selection_question);
+        //TODO: OJ to finish
+    }
+
+    // display for number question
+    public void numberQuestion(Question question){
+        setContentView(R.layout.number_question);
+
+        // display the question
+        TextView question_text = (TextView) findViewById(R.id.title_number_question);
+        question_text.setText(question.getQuestion());
+
+        NumberPicker selectedNumber = (NumberPicker) findViewById(R.id.number_pick);
+
+        selectedNumber.setMinValue(1);
+        selectedNumber.setMaxValue(Integer.parseInt(question.getAnswers().get(0)));// get max value from the question object
+
+        while (!optionPicked) {}; // pause while the user hasn't picked an option
+
+        saveAnswer(question.getId(), person_id, Integer.toString(selectedNumber.getValue()));
+    }
+
+    // onClick method for a number question
+    public void pickNumber(View view) {
+        optionPicked = true;
+    }
+
+    // create a new answer and add it to the end of the answers list
+    public void saveAnswer(int question, int person, String result){
+        Answer answer = new Answer(question, person, result);
+        answersList.add(answer);
+    }
 }
