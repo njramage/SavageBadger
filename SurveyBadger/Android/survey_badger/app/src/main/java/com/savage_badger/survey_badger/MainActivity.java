@@ -83,6 +83,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // create jsonArray to send answer back
+    public JSONArray sendAnswers(ArrayList<Answer> answersList) {
+        return new JSONArray(answersList);
+    }
+
     //Server connection tasks
     private class fetchTask extends AsyncTask<Integer, JSONObject, JSONObject> {
 
