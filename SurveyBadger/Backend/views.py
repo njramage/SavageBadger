@@ -6,14 +6,29 @@ import Survey.handler as hl
 #declare app
 app = Flask(__name__)
 
+
+#Security
+auth = HTTPBasicAuth()
+
+#Decorators for API
+@auth.verify_password
+def verify_password(username, password):
+    if hl.checkLogin(username, password):
+        return True
+    #logging.info(str(username),str(password))
+    return False
+
+
 #===========Main Client=======================
 #get a survey
 @app.route('/getsurvey/<id>', methods=["GET"])
+@auth.login_required
 def getSurvey(id):
     return jsonify({"questions" : hl.getQuestions(id)})
 
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
+@auth.login_required
 def submitSurvey():
     answers = request.get_json()
     return jsonify({"result" : hl.submit(answers)})
