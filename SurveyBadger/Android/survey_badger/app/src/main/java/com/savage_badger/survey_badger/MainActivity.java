@@ -55,27 +55,36 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject q = questions.getJSONObject(i);
 
                 // turns Answers JSON object into a JSON array for easy manipulation
-                JSONObject answersJSON = q.getJSONObject("answers");
-                try {
-                    // get all possible answers
-                    JSONArray answers = answersJSON.getJSONArray("answers");
+                JSONArray answersJSON = q.getJSONArray("answers");
 
-                    // store them in an array for easy use
-                    ArrayList<String> possibleAnswers = new ArrayList<String>();
+                if (answersJSON.length() > 1){
+                    try {
+                        // get all possible answers
+                        //JSONArray answers = answersJSON.getJSONArray("answers");
 
-                    // fill possible answers list
-                    for (int j = 0; j < answers.length(); j++) {
-                        String possibleAnswer = answers.getString(j);
-                        possibleAnswers.add(possibleAnswer);
+                        // store them in an array for easy use
+                        ArrayList<String> possibleAnswers = new ArrayList<String>();
+
+                        // fill possible answers list
+                        for (int j = 0; j < answersJSON.length(); j++) {
+                            String possibleAnswer = answersJSON.getString(j);
+                            possibleAnswers.add(possibleAnswer);
+                        }
+
+                        // create an answers object
+                        Question question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
+
+                        questionsList.add(question);// add it to the list
+
+                    } catch (JSONException e) {
+                        //TODO: Exception message
                     }
-
-                    // create an answers object
+                }
+                else {
+                    ArrayList<String> possibleAnswers = new ArrayList<String>();
+                    possibleAnswers.add(answersJSON.getString(0));
                     Question question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
-
-                    questionsList.add(question);// add it to the list
-
-                } catch (JSONException e) {
-                    //TODO: Exception message
+                    questionsList.add(question);
                 }
             }
         } catch (JSONException e) {
