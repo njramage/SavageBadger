@@ -1,11 +1,27 @@
 #Imports
-from Survey. db import Database
+from Survey.db import Database
+from passlib.hash import sha256_crypt
+
+
 
 #Database file
 filen = "/var/www/Survey/Survey/Badger.db"
 
+
+
 def checkLogin(user,passwd):
-    return True if user == "SBSADM" and passwd == "W0htInTh3WuRld" else False
+    #Connect to databse
+    db = Database(filename = filen)
+    actual = data.retrieve('users','User',user)
+    data.close()
+    if actual != [] and username == actual['User'] and sha256_crypt.verify(password, actual['Pass']):
+        return True
+    else:
+        return False
+
+
+
+def 
 
 
 def getQuestions(surveyID):

@@ -33,3 +33,8 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+#database security
+*/sec.py
+#Virtual environments
+~/venv
