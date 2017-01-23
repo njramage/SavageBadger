@@ -35,6 +35,10 @@ Temporary Items
 .apdisk
 
 #database security
-*/SurveyBadger/Backend/sec.py
+SurveyBadger/Backend/sec.py
+
 #Virtual environments
 **/venv/
+
+#Ignore pycache
+**/__pycache__/
