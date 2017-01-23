@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -159,6 +160,23 @@ public class MainActivity extends AppCompatActivity {
     public void selectionQuestion(Question question) {
         setContentView(R.layout.selection_question);
         //TODO: OJ to finish
+        TextView question_text = (TextView) findViewById(R.id.title_selection_question);
+        question_text.setText(question.getQuestion());
+
+        Button selectedQuestion = (Button) findViewById(R.id.Option1);
+        final Button button = (Button) findViewById(R.id.Option2);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Use onClick to save answer and move onto the next question
+                
+                //https://developer.android.com/reference/android/widget/Button.html
+                //https://developer.android.com/training/basics/firstapp/starting-activity.html
+                //http://stackoverflow.com/questions/20156733/how-to-add-button-click-event-in-android-studio
+                //http://stackoverflow.com/questions/32469674/how-to-create-two-android-button-using-android-studio
+            }
+        });
+
+
     }
 
     // display for number question

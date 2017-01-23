@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/title_selection_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Savage Badger"
@@ -14,6 +14,43 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title"></RelativeLayout>
+        android:layout_below="@id/title_selection_question"
+        android:id="@+id/relativeLayout"></RelativeLayout>
+
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relativeLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="56dp"
+        android:id="@+id/Option1" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Option1"
+        android:layout_alignEnd="@+id/Option1"
+        android:layout_marginTop="30dp"
+        android:id="@+id/Option2" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Option2"
+        android:layout_alignStart="@+id/Option2"
+        android:layout_marginTop="32dp"
+        android:id="@+id/Option3" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Option3"
+        android:layout_alignStart="@+id/Option3"
+        android:layout_marginTop="36dp"
+        android:id="@+id/Option4" />
 
 </RelativeLayout>
