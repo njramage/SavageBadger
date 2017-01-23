@@ -35,6 +35,6 @@ Temporary Items
 .apdisk
 
 #database security
-*/sec.py
+*/SurveyBadger/Backend/sec.py
 #Virtual environments
-~/venv
+**/venv/
