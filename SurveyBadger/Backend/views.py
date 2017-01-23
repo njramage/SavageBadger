@@ -22,11 +22,11 @@ def verify_token(token):
     try:
         data = s.loads(token)
     except SignatureExpired:
-        return None # valid token, but expired
+        return False # valid token, but expired
     except BadSignature:
-        return None # invalid token
+        return False # invalid token
     
-    user = User.query.get(data['id'])                                  return user
+    return True
 
 
 #Decorators for API
@@ -50,7 +50,7 @@ def getSurvey(id):
 def submitSurvey():
     if hl.checkUser(auth.username(), "SEND"):
         content = request.get_json()
-        if verify_token(content['token']) != None:
+        if verify_token(content['token']):
             answers = content['answers']
             return jsonify({"result" : hl.submit(answers)})
     
