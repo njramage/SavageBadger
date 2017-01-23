@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -164,6 +165,9 @@ public class MainActivity extends AppCompatActivity {
         question_text.setText(question.getQuestion());
 
         Button selectedQuestion = (Button) findViewById(R.id.Option1);
+        /*RelativeLayout.LayoutParams btnParams = (RelativeLayout.LayoutParams) selectedQuestion.getLayoutParams();
+        btnParams.addRule((RelativeLayout.ALIGN_START));
+        selectedQuestion.setLayoutParams(btnParams);*/
         final Button button = (Button) findViewById(R.id.Option2);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
