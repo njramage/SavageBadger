@@ -42,7 +42,7 @@ def verify_password(username, password):
 @app.route('/getsurvey/<id>', methods=["GET"])
 @auth.login_required
 def getSurvey(id):
-    return jsonify({"questions" : hl.getQuestions(id), "token" : generate_token(id) })
+    return jsonify({"questions" : hl.getQuestions(id), "token" : generate_token(id).decode('utf-8') })
 
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])

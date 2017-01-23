@@ -14,7 +14,7 @@ def checkLogin(user,passwd):
     data = Database(filename = filen)
     actual = data.retrieve('users','User',user)
     data.close()
-    if actual != [] and username == actual['User'] and sha256_crypt.verify(password, actual['Pass']):
+    if actual != [] and user == actual['User'] and sha256_crypt.verify(passwd, actual['Pass']):
         return True
     else:
         return False
