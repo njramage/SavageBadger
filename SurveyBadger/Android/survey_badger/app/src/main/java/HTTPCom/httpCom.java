@@ -23,13 +23,16 @@ public class httpCom {
 	//Connection BASEURL
 	final static String BASEURL = "http://54.206.53.90/";
 
-    final static String USERNAME = "SBSADM";
-    final static String PASS = "W0htInTh3WuRld";
+    //final static String USERNAME = "SBSADM";
+    //final static String PASS = "W0htInTh3WuRld";
 
     final static int CONNECTTIMEOUT = 8000;
     final static int SOCKETTIMEOUT = 7000;
 
     public static JSONObject sendAnswers(JSONObject data) {
+
+        String USERNAME = "SBSENT";
+        String PASS = "@N9sn3n9#NFN#";
 
         BufferedReader reader = null;
         HttpURLConnection con = null;
@@ -118,6 +121,9 @@ public class httpCom {
     }
 
     public static JSONObject getSurvey(String id) {
+
+        String USERNAME = "SBSADM";
+        String PASS = "n@Twsb3qw9sdNSbnwo21rd";
 
         BufferedReader reader = null;
         HttpURLConnection con = null;

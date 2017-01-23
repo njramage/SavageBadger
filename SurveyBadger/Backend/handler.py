@@ -21,7 +21,8 @@ def checkLogin(user,passwd):
 
 
 
-def 
+def checkUser(user, func):
+    return True if func == "SEND" and user == "SBSENT" else False
 
 
 def getQuestions(surveyID):

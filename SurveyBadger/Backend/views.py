@@ -37,7 +37,6 @@ def verify_password(username, password):
     #logging.info(str(username),str(password))
     return False
 
-
 #===========Main Client=======================
 #get a survey
 @app.route('/getsurvey/<id>', methods=["GET"])
@@ -49,12 +48,13 @@ def getSurvey(id):
 @app.route('/submitsurvey/', methods=["POST"])
 @auth.login_required
 def submitSurvey():
-    content = request.get_json()
-    if verify_token(content['token']) != None:
-        answers = content['answers']
-        return jsonify({"result" : hl.submit(answers)})
-    else:
-        return jsonify({"result" : "Failed"})
+    if hl.checkUser(auth.username(), "SEND"):
+        content = request.get_json()
+        if verify_token(content['token']) != None:
+            answers = content['answers']
+            return jsonify({"result" : hl.submit(answers)})
+    
+    return jsonify({"result" : "Failed"})
 
 
 if __name__ == "__main__":
