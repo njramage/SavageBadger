@@ -11,7 +11,7 @@ filen = "/var/www/Survey/Survey/Badger.db"
 
 def checkLogin(user,passwd):
     #Connect to databse
-    db = Database(filename = filen)
+    data = Database(filename = filen)
     actual = data.retrieve('users','User',user)
     data.close()
     if actual != [] and username == actual['User'] and sha256_crypt.verify(password, actual['Pass']):
