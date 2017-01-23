@@ -1,5 +1,7 @@
 from flask import Flask, request, url_for, session, jsonify
 from flask_httpauth import HTTPBasicAuth
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                                  as Serializer, BadSignature, SignatureExpired)
 
 import Survey.handler as hl
 
@@ -9,6 +11,23 @@ app = Flask(__name__)
 
 #Security
 auth = HTTPBasicAuth()
+
+def gen_token(user, expiration = 72000):
+    s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+    return s.dumps({ 'user': user })
+
+@staticmethod
+def verify_token(token):
+    s = Serializer(app.config['SECRET_KEY'])
+    try:
+        data = s.loads(token)
+    except SignatureExpired:
+        return None # valid token, but expired
+    except BadSignature:
+        return None # invalid token
+    
+    user = User.query.get(data['id'])                                  return user
+
 
 #Decorators for API
 @auth.verify_password
@@ -24,14 +43,19 @@ def verify_password(username, password):
 @app.route('/getsurvey/<id>', methods=["GET"])
 @auth.login_required
 def getSurvey(id):
-    return jsonify({"questions" : hl.getQuestions(id)})
+    return jsonify({"questions" : hl.getQuestions(id), "token" : generate_token(id) })
 
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
 @auth.login_required
 def submitSurvey():
-    answers = request.get_json()
-    return jsonify({"result" : hl.submit(answers)})
+    content = request.get_json()
+    if verify_token(content['token']) != None:
+        answers = content['answers']
+        return jsonify({"result" : hl.submit(answers)})
+    else:
+        return jsonify({"result" : "Failed"})
+
 
 if __name__ == "__main__":
     #FAKE KEY

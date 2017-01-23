@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentQuestion;
     private boolean optionPicked;
     private int person_id = 1;// defualt player id for testing
+    private String token = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +45,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // gets survey questions as a JSON object
-    public void getSurvey() {
+    public void getSurvey(JSONObject s) {
         // reset questions and answers
         questionsList = new ArrayList<Question>();
 
         answersList = new ArrayList<Answer>();
 
-        jsonObject = null;
-        createQuestions(jsonObject);/// convert JSON object into a list of question objects
+        createQuestions(s);/// convert JSON object into a list of question objects
     }
 
     // Creates a list of question objects
@@ -107,25 +107,6 @@ public class MainActivity extends AppCompatActivity {
     // create jsonArray to send answer back
     public JSONArray sendAnswers(ArrayList<Answer> answersList) {
         return new JSONArray(answersList);
-    }
-
-    //Server connection tasks
-    private class fetchTask extends AsyncTask<String, JSONObject, JSONObject> {
-
-        @Override
-        protected void onPreExecute() {
-            //Update GUI before execute
-        }
-
-        @Override
-        protected JSONObject doInBackground(String... params) {
-            JSONObject res = null;
-            res = httpCom.getSurvey(params[0]);
-            return res;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject s) { createQuestions(s); }
     }
 
     // display questions
@@ -210,5 +191,24 @@ public class MainActivity extends AppCompatActivity {
     public void saveAnswer(int question, int person, String result){
         Answer answer = new Answer(question, person, result);
         answersList.add(answer);
+    }
+
+    //Server connection tasks
+    private class fetchTask extends AsyncTask<String, JSONObject, JSONObject> {
+
+        @Override
+        protected void onPreExecute() {
+            //Update GUI before execute
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            JSONObject res = null;
+            res = httpCom.getSurvey(params[0]);
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject s) { getSurvey(s); }
     }
 }
