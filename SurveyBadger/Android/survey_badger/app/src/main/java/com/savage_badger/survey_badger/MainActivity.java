@@ -51,7 +51,13 @@ public class MainActivity extends AppCompatActivity {
 
         answersList = new ArrayList<Answer>();
 
-        createQuestions(s);/// convert JSON object into a list of question objects
+        try {
+            this.token = s.getString("token");
+            createQuestions(s);/// convert JSON object into a list of question objects
+        } catch (JSONException e) {
+            e.printStackTrace();
+            //TODO Notify user of connection failure
+        }
     }
 
     // Creates a list of question objects
@@ -105,8 +111,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // create jsonArray to send answer back
-    public JSONArray sendAnswers(ArrayList<Answer> answersList) {
-        return new JSONArray(answersList);
+    public void sendAnswers(ArrayList<Answer> answersList) {
+        JSONObject data = new JSONObject();
+        try {
+            data.put("token",this.token);
+            data.put("answers", new JSONArray(answersList));
+
+            SendTask sendAnswers = new SendTask();
+            sendAnswers.execute(data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     // display questions
@@ -205,6 +220,25 @@ public class MainActivity extends AppCompatActivity {
         protected JSONObject doInBackground(String... params) {
             JSONObject res = null;
             res = httpCom.getSurvey(params[0]);
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject s) { getSurvey(s); }
+    }
+
+    //Server connection tasks
+    private class SendTask extends AsyncTask<JSONObject, JSONObject, JSONObject> {
+
+        @Override
+        protected void onPreExecute() {
+            //Update GUI before execute
+        }
+
+        @Override
+        protected JSONObject doInBackground(JSONObject... params) {
+            JSONObject res = null;
+            res = httpCom.sendAnswers(params[0]);
             return res;
         }
 

@@ -29,7 +29,7 @@ public class httpCom {
     final static int CONNECTTIMEOUT = 8000;
     final static int SOCKETTIMEOUT = 7000;
 
-    public static JSONObject sendAnswers(JSONArray data) {
+    public static JSONObject sendAnswers(JSONObject data) {
 
         BufferedReader reader = null;
         HttpURLConnection con = null;
@@ -38,7 +38,7 @@ public class httpCom {
         byte[] loginBytes = (USERNAME + ":" + PASS).getBytes();
         StringBuilder loginBuilder = new StringBuilder().append("Basic ").append(Base64.encodeToString(loginBytes, Base64.DEFAULT));
 
-        JSONArray postData = data;
+        JSONObject postData = data;
 
         Log.i("JSON", postData.toString());
         //int postDataLength = postData.length;
