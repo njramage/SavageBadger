@@ -14,6 +14,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private int person_id = 1;// defualt player id for testing
     private String token = null;
     private View main_Activity_View, number_Question_View, selection_Question_View;
+    private TextView Question_Title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
         fetchTask getQuestions = new fetchTask();
         getQuestions.execute("Transpotation_Survey");
+
+
 
     }
 
@@ -133,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // display questions
-    public void displayQuestions(ArrayList<Question> questions) {
+    public void displayQuestions(final ArrayList<Question> questions) {
         int i = 0;// the current question index
         Log.i ("in displayQuestions", "test");
 
@@ -165,13 +169,12 @@ public class MainActivity extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
                         setContentView(number_Question_View);
-                        // Perform action on click
+                        Question_Title =(TextView)findViewById(R.id.title_number_question);
+                        Question_Title.setText(questions.get(0).getQuestion());
+                        //don't know how to have it be questions.get(i)
+                        
                     }
                 });
-
-
-
-
                 numberQuestion(questions.get(i));
                 Log.i ("in else if", "after Time duration test");
 
@@ -208,10 +211,12 @@ public class MainActivity extends AppCompatActivity {
     // display for number question
     public void numberQuestion(Question question){
 
-
+        Log.i ("gets into numberQ", question.getQuestion());
         // display the question
-      //  TextView question_text = (TextView) findViewById(R.id.title_number_question);
-       // question_text.setText(question.getQuestion());
+
+        //TextView question_text = (TextView) findViewById(R.id.title_number_question);
+      //  question_text.setText(question.getQuestion());
+
 
 
         NumberPicker selectedNumber = (NumberPicker) findViewById(R.id.number_pick);
@@ -219,9 +224,9 @@ public class MainActivity extends AppCompatActivity {
        // selectedNumber.setMinValue(1);
        // selectedNumber.setMaxValue(Integer.parseInt(question.getAnswers().get(0)));// get max value from the question object
 
-       // while (!optionPicked) {}; // pause while the user hasn't picked an option
+        //while (!optionPicked) {}; // pause while the user hasn't picked an option
 
-     //   saveAnswer(question.getId(), person_id, Integer.toString(selectedNumber.getValue()));
+       // saveAnswer(question.getId(), person_id, Integer.toString(selectedNumber.getValue()));
     }
 
     // onClick method for a number question
