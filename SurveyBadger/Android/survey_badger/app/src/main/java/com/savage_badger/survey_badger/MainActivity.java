@@ -26,22 +26,28 @@ import HTTPCom.httpCom;
 public class MainActivity extends AppCompatActivity {
 
     private JSONObject jsonObject;
-    private List<Question> questionsList;
-    private List<Answer> answersList;
+    private ArrayList<Question> questionsList;
+    private ArrayList<Answer> answersList;
     private int currentQuestion;
     private boolean optionPicked;
     private int person_id = 1;// defualt player id for testing
     private String token = null;
+    private View main_Activity_View, number_Question_View, selection_Question_View;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        main_Activity_View = getLayoutInflater().inflate(R.layout.activity_main, null);
+        number_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
+        selection_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
+
+        setContentView(main_Activity_View);
 
         currentQuestion = 1;// Start at first question
 
         fetchTask getQuestions = new fetchTask();
         getQuestions.execute("Transpotation_Survey");
+
     }
 
     // gets survey questions as a JSON object
@@ -54,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             this.token = s.getString("token");
             createQuestions(s);/// convert JSON object into a list of question objects
+            displayQuestions(questionsList);
+
         } catch (JSONException e) {
             e.printStackTrace();
             //TODO Notify user of connection failure
@@ -127,9 +135,11 @@ public class MainActivity extends AppCompatActivity {
     // display questions
     public void displayQuestions(ArrayList<Question> questions) {
         int i = 0;// the current question index
+        Log.i ("in displayQuestions", "test");
 
         // find the type of question
         while (i < questions.size()) {
+            Log.i ("in while loop", "display questions test");
             optionPicked = false;
             // if the question is a selection question
             if (questions.get(i).getType() == getResources().getString(R.string.question_selection)) {
@@ -148,9 +158,25 @@ public class MainActivity extends AppCompatActivity {
                 //TODO: question_set_time display Nathan
             }
             // if the question is a time duration question
-            else if (questions.get(i).getType() == getResources().getString(R.string.question_time_duration)) {
+            else if (questions.get(i).getType().equals("Time_duration")) {
+                Log.i ("in else if", "Time duration test");
+
+                final Button button = (Button) findViewById(R.id.give_Question);
+                button.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        setContentView(number_Question_View);
+                        // Perform action on click
+                    }
+                });
+
+
+
+
                 numberQuestion(questions.get(i));
-            }
+                Log.i ("in else if", "after Time duration test");
+
+        }
+            i++;
         }
     }
 
@@ -181,20 +207,21 @@ public class MainActivity extends AppCompatActivity {
 
     // display for number question
     public void numberQuestion(Question question){
-        setContentView(R.layout.number_question);
+
 
         // display the question
-        TextView question_text = (TextView) findViewById(R.id.title_number_question);
-        question_text.setText(question.getQuestion());
+      //  TextView question_text = (TextView) findViewById(R.id.title_number_question);
+       // question_text.setText(question.getQuestion());
+
 
         NumberPicker selectedNumber = (NumberPicker) findViewById(R.id.number_pick);
 
-        selectedNumber.setMinValue(1);
-        selectedNumber.setMaxValue(Integer.parseInt(question.getAnswers().get(0)));// get max value from the question object
+       // selectedNumber.setMinValue(1);
+       // selectedNumber.setMaxValue(Integer.parseInt(question.getAnswers().get(0)));// get max value from the question object
 
-        while (!optionPicked) {}; // pause while the user hasn't picked an option
+       // while (!optionPicked) {}; // pause while the user hasn't picked an option
 
-        saveAnswer(question.getId(), person_id, Integer.toString(selectedNumber.getValue()));
+     //   saveAnswer(question.getId(), person_id, Integer.toString(selectedNumber.getValue()));
     }
 
     // onClick method for a number question

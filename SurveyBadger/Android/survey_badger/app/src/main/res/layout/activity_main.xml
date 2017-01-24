@@ -14,5 +14,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="40sp"
-        android:text="MAIN ACTIVITY"/>
+        android:text="MAIN ACTIVITY"
+        android:id="@+id/textView" />
+
+    <Button
+        android:text="Give me a question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="105dp"
+        android:id="@+id/give_Question" />
 </RelativeLayout>
