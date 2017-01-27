@@ -1,5 +1,8 @@
 package com.savage_badger.survey_badger;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by nathan on 14/12/16.
  */
@@ -47,5 +50,19 @@ public class Answer {
 
     public String getResult() {
         return result;
+    }
+
+    //Returns a JSONObject used for sending to the server
+    public JSONObject toJson() {
+        JSONObject answerJSON = new JSONObject();
+        try {
+            answerJSON.put("QuestionID", questionID);
+            answerJSON.put("PersonID", personID);
+            answerJSON.put("Result", result);
+            return answerJSON;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

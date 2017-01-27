@@ -26,8 +26,8 @@ import HTTPCom.httpCom;
 public class MainActivity extends AppCompatActivity {
 
     private JSONObject jsonObject;
-    private List<Question> questionsList;
-    private List<Answer> answersList;
+    private ArrayList<Question> questionsList;
+    private ArrayList<Answer> answersList;
     private int currentQuestion;
     private boolean optionPicked;
     private int person_id = 1;// defualt player id for testing
@@ -115,7 +115,13 @@ public class MainActivity extends AppCompatActivity {
         JSONObject data = new JSONObject();
         try {
             data.put("token",this.token);
-            data.put("answers", new JSONArray(answersList));
+
+            //Put all answers into a JSONArray to send to server
+            JSONArray answers = new JSONArray();
+            for (Answer ans:answersList) {
+                answers.put(ans.toJson());
+            }
+            data.put("answers", answers);
 
             SendTask sendAnswers = new SendTask();
             sendAnswers.execute(data);
@@ -243,6 +249,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(JSONObject s) { getSurvey(s); }
+        protected void onPostExecute(JSONObject s) {
+            try {
+                if (s.getBoolean("result") == true) {
+                    Log.i("Survey Badger","Successfully Submitted Answers");
+                } else {
+                    Log.i("Survey Badger","Answers not submitted");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e("Survey Badger","Error retrieving JSON result");
+            }
+
+
+
+        }
     }
 }

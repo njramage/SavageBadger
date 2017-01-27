@@ -48,12 +48,17 @@ public class httpCom {
         try {
             URL url = new URL(BASEURL + "submitsurvey/");
             Log.i("httpCOM", "Connecting to: " + url);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setInstanceFollowRedirects(false);
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setRequestProperty("Content-Type",
+            con = (HttpURLConnection) url.openConnection();
+
+            //Set timeout
+            con.setConnectTimeout(CONNECTTIMEOUT);
+            con.setReadTimeout(SOCKETTIMEOUT);
+
+            con.setDoOutput(true);
+            con.setDoInput(true);
+            con.setInstanceFollowRedirects(false);
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type",
                     "application/json");
 
             //for login
@@ -62,17 +67,17 @@ public class httpCom {
             //httpURLConnection.setRequestProperty("charset", "utf-8");
             //httpURLConnection.setRequestProperty("Content-Length",
             //       Integer.toString(postDataLength));
-            httpURLConnection.setConnectTimeout(10000);
+            con.setConnectTimeout(10000);
             DataOutputStream dataOutputStream = new DataOutputStream(
-                    httpURLConnection.getOutputStream());
+                    con.getOutputStream());
             dataOutputStream.write(postData.toString().getBytes("UTF-8"));
             dataOutputStream.flush();
             dataOutputStream.close();
-            int status = httpURLConnection.getResponseCode();
+            int status = con.getResponseCode();
             Log.i("HTTP", "Response " + String.valueOf(status));
             if (status == HttpURLConnection.HTTP_OK) {
                 InputStream responseStream = new BufferedInputStream(
-                        httpURLConnection.getInputStream());
+                        con.getInputStream());
                 BufferedReader responseStreamReader = new BufferedReader(
                         new InputStreamReader(responseStream));
                 StringBuilder sb = new StringBuilder();
@@ -93,7 +98,7 @@ public class httpCom {
                     return res;
                 }
             }
-            Log.e("httpCOM", "Response: " + String.valueOf(httpURLConnection.getResponseCode()));
+            Log.e("httpCOM", "Response: " + String.valueOf(con.getResponseCode()));
             JSONObject res = new JSONObject();
             res.put("result", false);
             return res;

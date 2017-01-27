@@ -46,7 +46,7 @@ def submit(answers):
     #Add answers to database
     try:
         for ans in answers:
-            db.insert("answers",{"Question" : int(ans['QuestionID']), "Person" : int(ans['PersonID']), "Result" : str(ans['result'])})
+            db.insert("answers",{"Question" : int(ans['QuestionID']), "Person" : int(ans['PersonID']), "Result" : str(ans['Result'])})
     except Exception as e:
         raise
         #close db and return failure

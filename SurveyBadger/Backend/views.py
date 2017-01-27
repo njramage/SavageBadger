@@ -16,7 +16,6 @@ def gen_token(user, expiration = 72000):
     s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
     return s.dumps({ 'user': user })
 
-@staticmethod
 def verify_token(token):
     s = Serializer(app.config['SECRET_KEY'])
     try:
