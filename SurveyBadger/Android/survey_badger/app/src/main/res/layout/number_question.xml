@@ -22,6 +22,8 @@
         android:layout_height="wrap_content"
         android:text="Submit"
         android:textSize="20sp"
-        android:onClick="pickNumber"/>
+        android:onClick="pickNumber"
+        android:layout_below="@+id/number_pick"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

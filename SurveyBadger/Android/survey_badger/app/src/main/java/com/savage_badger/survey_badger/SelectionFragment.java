@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,11 +65,14 @@ public class SelectionFragment extends Fragment {
         TextView questionTV = (TextView) view.findViewById(R.id.title_selection_question);
         questionTV.setText(questionText);
 
+
         RelativeLayout mRelativeLayout = (RelativeLayout) view.findViewById(R.id.button_container);
 
-        /*for (int i = 0; i < answers.length; i++) {
+       for (int i = 0; i < answers.length; i++) {
             Context mContext = getContext();
             Button btn = new Button(mContext);
+
+
 
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.ALIGN_TOP);
@@ -76,7 +80,10 @@ public class SelectionFragment extends Fragment {
             btn.setLayoutParams(layoutParams);
 
             mRelativeLayout.addView(btn);
-        }*/
+            btn.setText(answers.toString());
+
+        }
+
 
         return view;
     }

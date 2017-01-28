@@ -1,5 +1,6 @@
 package com.savage_badger.survey_badger;
 
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -43,13 +44,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE); SOMETHING WRONG WITH THIS BREAKS CODE.
         main_Activity_View = getLayoutInflater().inflate(R.layout.activity_main, null);
         number_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
         selection_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
 
         setContentView(main_Activity_View);
 
-        currentQuestion = 1;// Start at first question
+        currentQuestion = 0;// Start at first question
 
         fetchTask getQuestions = new fetchTask();
         getQuestions.execute("Transpotation_Survey");
@@ -152,9 +154,22 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = fm.beginTransaction();// begin a fragment transcation
 
         // if the question is a selection question
-        if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_selection)) {
+        if (questions.get(currentQuestion).getType().equals(getString(R.string.question_selection))) {
+            Log.i ("getting into Select", "testing");
+            SelectionFragment selectionFragment = SelectionFragment.newInstance(questions.get(currentQuestion));
             selectionQuestion(questions.get(currentQuestion));
+            if (fragment != null)
+            {
+                ft.replace(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
+                ft.commit();
+            }
+            else
+            {
+             ft.add(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
+                ft.commit();
+            }
         }
+
         // if the question is a number question
         else if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_number)) {
             //numberQuestion(questions.get(currentQuestion));
@@ -166,9 +181,10 @@ public class MainActivity extends AppCompatActivity {
         // if the question is a set time question
         else if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_set_time)) {
             //TODO: question_set_time display Nathan
+            Log.i("test", "test");
         }
         // if the question is a time duration question
-        else if (questions.get(currentQuestion).getType().equals("Time_duration")) {
+        else if (questions.get(currentQuestion).getType().equals(getString(R.string.question_time_duration))) {
             // create a new instance of a Number Fragment
             NumberFragment numberFragment = NumberFragment.newInstance(questions.get(currentQuestion));
 
@@ -186,6 +202,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void selectionQuestion(Question question) {
 
+        Log.i ("getting selectQuestion", "Test");
+       // final Button button = (Button) findViewById(R.id.number_pick);
+       // button.setText(question.getAnswers().get(1));
+      //  button.setText("hi");
+
+
+
+
+
+
     }
 
     // onClick method for a number question
@@ -202,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
         displayQuestions(questionsList);// display the next question
         Log.d("Main Activity", "Moved to next question");
+        Log.i ("test", "1");
 
     }
 
