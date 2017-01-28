@@ -1,7 +1,5 @@
 package com.savage_badger.survey_badger;
 
-import android.app.PendingIntent;
-
 import java.util.List;
 
 /**

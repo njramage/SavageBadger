@@ -7,15 +7,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Savage Badger"
-        android:textSize="40sp"
-        android:layout_centerHorizontal="true"/>
-
-    <NumberPicker
-        android:id="@+id/number_pick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:textSize="30dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/title_number_question"></NumberPicker>
+        android:textAlignment="center"/>
+
+    <RelativeLayout
+        android:id="@+id/number_pick_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_number_question">
+
+        <NumberPicker
+            android:id="@+id/number_pick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"></NumberPicker>
+        <TextView
+            android:id="@+id/number_type_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Times"
+            android:textSize="20dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="250dp"
+            android:layout_alignParentStart="true"/>
+
+    </RelativeLayout>
 
     <Button
         android:layout_width="wrap_content"
@@ -23,7 +41,7 @@
         android:text="Submit"
         android:textSize="20sp"
         android:onClick="pickNumber"
-        android:layout_below="@+id/number_pick"
+        android:layout_below="@id/number_pick_container"
         android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

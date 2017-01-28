@@ -1,7 +1,6 @@
 package com.savage_badger.survey_badger;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +17,11 @@ public class NumberFragment extends Fragment {
     // Tags to help find the arguements the fragment was initialised with
     public static final String MAX_VALUE = "MAX_VALUE";
     public static final String QUESTION_TEXT = "QUESTION_TEXT";
+    public static final String QUESTION_TYPE = "QUESTION_TYPE";
 
     private String questionText;
     private int maxValue;// max value fot the numberpicker
+    private String questionType;
 
     public NumberFragment() {
 
@@ -32,6 +33,7 @@ public class NumberFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString(QUESTION_TEXT, question.getQuestion());
         args.putInt(MAX_VALUE, Integer.parseInt(question.getAnswers().get(0)));
+        args.putString(QUESTION_TYPE, question.getType());
 
         // create a fragment and set arguements to it
         NumberFragment fragment = new NumberFragment();
@@ -47,6 +49,7 @@ public class NumberFragment extends Fragment {
         if (getArguments() != null) {
             questionText = getArguments().getString(QUESTION_TEXT);
             maxValue = getArguments().getInt(MAX_VALUE);
+            questionType = getArguments().getString(QUESTION_TYPE);
         }
     }
 
@@ -64,6 +67,21 @@ public class NumberFragment extends Fragment {
         NumberPicker numberPicker = (NumberPicker) view.findViewById(R.id.number_pick);
         numberPicker.setMinValue(0);
         numberPicker.setMaxValue(maxValue);
+
+        TextView questionTypeTV = (TextView) view.findViewById(R.id.number_type_text);
+
+        if (questionType.equals(getString(R.string.question_money))) {
+            int paddingLeftPixels = 130;
+            float density = getContext().getResources().getDisplayMetrics().density;
+            int paddingLeftDp = (int) (paddingLeftPixels * density);
+            questionTypeTV.setPadding(paddingLeftDp, 0, 0, 0);
+            questionTypeTV.setText("$");
+        } else {
+            if (questionType.equals(getString(R.string.question_time_duration)))
+            {
+                questionTypeTV.setText("Hours");
+            }
+        }
 
         return view;
     }

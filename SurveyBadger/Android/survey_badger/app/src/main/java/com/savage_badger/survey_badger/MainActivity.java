@@ -1,30 +1,23 @@
 package com.savage_badger.survey_badger;
 
-import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 import HTTPCom.httpCom;
 
@@ -153,11 +146,12 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = fm.findFragmentByTag(QUESTION_FRAGMENT);// find any active fragments with the QUESTION_FRAGMENT tag
         FragmentTransaction ft = fm.beginTransaction();// begin a fragment transcation
 
-        // if the question is a selection question
-        if (questions.get(currentQuestion).getType().equals(getString(R.string.question_selection))) {
-            Log.i ("getting into Select", "testing");
+        if (currentQuestion < questionsList.size())
+        {
+            // if the question is a selection question
+            if (questions.get(currentQuestion).getType().equals(getString(R.string.question_selection))) {
+            /*Log.i ("getting into Select", "testing");
             SelectionFragment selectionFragment = SelectionFragment.newInstance(questions.get(currentQuestion));
-            selectionQuestion(questions.get(currentQuestion));
             if (fragment != null)
             {
                 ft.replace(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
@@ -167,51 +161,78 @@ public class MainActivity extends AppCompatActivity {
             {
              ft.add(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
                 ft.commit();
+            }*/
+            }
+
+            // if the question is a number question
+            else if (questions.get(currentQuestion).getType().equals(getString(R.string.question_number))) {
+                // create a new instance of a Number Fragment
+                NumberFragment numberFragment = NumberFragment.newInstance(questions.get(currentQuestion));
+
+                // if there are is an active fragment, replace the old fragment with the new one and commit
+                if (fragment != null) {
+                    ft.replace(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
+                else {// add the new framgent and commit
+                    ft.add(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
+            }
+            // if the question is a money question
+            else if (questions.get(currentQuestion).getType().equals(getString(R.string.question_money))) {
+                // create a new instance of a Number Fragment
+                NumberFragment numberFragment = NumberFragment.newInstance(questions.get(currentQuestion));
+
+                // if there are is an active fragment, replace the old fragment with the new one and commit
+                if (fragment != null) {
+                    ft.replace(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
+                else {// add the new framgent and commit
+                    ft.add(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
+            }
+            // if the question is a set time question
+            else if (questions.get(currentQuestion).getType().equals(getString(R.string.question_set_time))) {
+                // create a new instance of a Number Fragment
+                TimeFragment timeFragment = TimeFragment.newInstance(questions.get(currentQuestion));
+
+                // if there are is an active fragment, replace the old fragment with the new one and commit
+                if (fragment != null) {
+                    ft.replace(R.id.fragment_container, timeFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
+                else {// add the new framgent and commit
+                    ft.add(R.id.fragment_container, timeFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
+            }
+            // if the question is a time duration question
+            else if (questions.get(currentQuestion).getType().equals(getString(R.string.question_time_duration))) {
+                // create a new instance of a Number Fragment
+                NumberFragment numberFragment = NumberFragment.newInstance(questions.get(currentQuestion));
+
+                // if there are is an active fragment, replace the old fragment with the new one and commit
+                if (fragment != null) {
+                    ft.replace(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
+                else {// add the new framgent and commit
+                    ft.add(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
             }
         }
-
-        // if the question is a number question
-        else if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_number)) {
-            //numberQuestion(questions.get(currentQuestion));
-        }
-        // if the question is a money question
-        else if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_money)) {
-            //TODO: question_money display, OJ
-        }
-        // if the question is a set time question
-        else if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_set_time)) {
-            //TODO: question_set_time display Nathan
-            Log.i("test", "test");
-        }
-        // if the question is a time duration question
-        else if (questions.get(currentQuestion).getType().equals(getString(R.string.question_time_duration))) {
-            // create a new instance of a Number Fragment
-            NumberFragment numberFragment = NumberFragment.newInstance(questions.get(currentQuestion));
-
-            // if there are is an active fragment, replace the old fragment with the new one and commit
+        else { /// end of survey show confirmation screen
+            Log.d("Main Activity", "Finished Survey");
             if (fragment != null) {
-                ft.replace(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
-                ft.commit();
-            }
-            else {// add the new framgent and commit
-                ft.add(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
+                FinishedSurveyFragment finisedFragment = new FinishedSurveyFragment();
+                ft.replace(R.id.fragment_container, finisedFragment, QUESTION_FRAGMENT);
                 ft.commit();
             }
         }
-    }
-
-    public void selectionQuestion(Question question) {
-
-        Log.i ("getting selectQuestion", "Test");
-       // final Button button = (Button) findViewById(R.id.number_pick);
-       // button.setText(question.getAnswers().get(1));
-      //  button.setText("hi");
-
-
-
-
-
-
     }
 
     // onClick method for a number question
@@ -228,8 +249,30 @@ public class MainActivity extends AppCompatActivity {
 
         displayQuestions(questionsList);// display the next question
         Log.d("Main Activity", "Moved to next question");
-        Log.i ("test", "1");
 
+    }
+
+    // onClick method for a set time question
+    public void pickTime(View view) {
+        TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
+        if (Build.VERSION.SDK_INT >= 23)
+        {
+            saveAnswer(questionsList.get(currentQuestion).getId(), person_id, Integer.toString(timePicker.getHour()) + ":" + Integer.toString(timePicker.getMinute()));
+        }
+        else {
+            saveAnswer(questionsList.get(currentQuestion).getId(), person_id, Integer.toString(timePicker.getCurrentHour()) + ":" + Integer.toString(timePicker.getCurrentMinute()));
+        }
+
+        currentQuestion++;// increment question number reference
+        displayQuestions(questionsList);// display the next question
+    }
+
+    // onClick method for a survey completion screen
+    public void getAnotherSurvey(View view) {
+        currentQuestion = 0;// Start at first question
+
+        fetchTask getQuestions = new fetchTask();
+        getQuestions.execute("Transpotation_Survey");
     }
 
     // create a new answer and add it to the end of the answers list
