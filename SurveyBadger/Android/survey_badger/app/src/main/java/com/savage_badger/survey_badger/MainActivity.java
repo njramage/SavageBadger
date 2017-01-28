@@ -2,6 +2,9 @@ package com.savage_badger.survey_badger;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,11 +29,12 @@ import HTTPCom.httpCom;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String QUESTION_FRAGMENT = "QUESTION_FRAGMENT";
+
     private JSONObject jsonObject;
     private ArrayList<Question> questionsList;
     private ArrayList<Answer> answersList;
     private int currentQuestion;
-    private boolean optionPicked;
     private int person_id = 1;// defualt player id for testing
     private String token = null;
     private View main_Activity_View, number_Question_View, selection_Question_View;
@@ -49,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
         fetchTask getQuestions = new fetchTask();
         getQuestions.execute("Transpotation_Survey");
-
-
-
     }
 
     // gets survey questions as a JSON object
@@ -144,100 +145,64 @@ public class MainActivity extends AppCompatActivity {
 
     // display questions
     public void displayQuestions(final ArrayList<Question> questions) {
-        int i = 0;// the current question index
         Log.i ("in displayQuestions", "test");
 
-        // find the type of question
-        while (i < questions.size()) {
-            Log.i ("in while loop", "display questions test");
-            optionPicked = false;
-            // if the question is a selection question
-            if (questions.get(i).getType() == getResources().getString(R.string.question_selection)) {
-                selectionQuestion(questions.get(i));
-            }
-            // if the question is a number question
-            else if (questions.get(i).getType() == getResources().getString(R.string.question_number)) {
-                numberQuestion(questions.get(i));
-            }
-            // if the question is a money question
-            else if (questions.get(i).getType() == getResources().getString(R.string.question_money)) {
-                //TODO: question_money display, OJ
-            }
-            // if the question is a set time question
-            else if (questions.get(i).getType() == getResources().getString(R.string.question_set_time)) {
-                //TODO: question_set_time display Nathan
-            }
-            // if the question is a time duration question
-            else if (questions.get(i).getType().equals("Time_duration")) {
-                Log.i ("in else if", "Time duration test");
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentByTag(QUESTION_FRAGMENT);// find any active fragments with the QUESTION_FRAGMENT tag
+        FragmentTransaction ft = fm.beginTransaction();// begin a fragment transcation
 
-                final Button button = (Button) findViewById(R.id.give_Question);
-                button.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View view) {
-                        setContentView(number_Question_View);
-                        Question_Title =(TextView)findViewById(R.id.title_number_question);
-                        Question_Title.setText(questions.get(0).getQuestion());
-                        //don't know how to have it be questions.get(i)
-                        
-                    }
-                });
-                numberQuestion(questions.get(i));
-                Log.i ("in else if", "after Time duration test");
-
+        // if the question is a selection question
+        if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_selection)) {
+            selectionQuestion(questions.get(currentQuestion));
         }
-            i++;
+        // if the question is a number question
+        else if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_number)) {
+            //numberQuestion(questions.get(currentQuestion));
+        }
+        // if the question is a money question
+        else if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_money)) {
+            //TODO: question_money display, OJ
+        }
+        // if the question is a set time question
+        else if (questions.get(currentQuestion).getType() == getResources().getString(R.string.question_set_time)) {
+            //TODO: question_set_time display Nathan
+        }
+        // if the question is a time duration question
+        else if (questions.get(currentQuestion).getType().equals("Time_duration")) {
+            // create a new instance of a Number Fragment
+            NumberFragment numberFragment = NumberFragment.newInstance(questions.get(currentQuestion));
+
+            // if there are is an active fragment, replace the old fragment with the new one and commit
+            if (fragment != null) {
+                ft.replace(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
+                ft.commit();
+            }
+            else {// add the new framgent and commit
+                ft.add(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
+                ft.commit();
+            }
         }
     }
 
     public void selectionQuestion(Question question) {
-        setContentView(R.layout.selection_question);
-        //TODO: OJ to finish
-        TextView question_text = (TextView) findViewById(R.id.title_selection_question);
-        question_text.setText(question.getQuestion());
 
-        Button selectedQuestion = (Button) findViewById(R.id.Option1);
-        /*RelativeLayout.LayoutParams btnParams = (RelativeLayout.LayoutParams) selectedQuestion.getLayoutParams();
-        btnParams.addRule((RelativeLayout.ALIGN_START));
-        selectedQuestion.setLayoutParams(btnParams);*/
-        final Button button = (Button) findViewById(R.id.Option2);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Use onClick to save answer and move onto the next question
-                
-                //https://developer.android.com/reference/android/widget/Button.html
-                //https://developer.android.com/training/basics/firstapp/starting-activity.html
-                //http://stackoverflow.com/questions/20156733/how-to-add-button-click-event-in-android-studio
-                //http://stackoverflow.com/questions/32469674/how-to-create-two-android-button-using-android-studio
-            }
-        });
-
-
-    }
-
-    // display for number question
-    public void numberQuestion(Question question){
-
-        Log.i ("gets into numberQ", question.getQuestion());
-        // display the question
-
-        //TextView question_text = (TextView) findViewById(R.id.title_number_question);
-      //  question_text.setText(question.getQuestion());
-
-
-
-        NumberPicker selectedNumber = (NumberPicker) findViewById(R.id.number_pick);
-
-       // selectedNumber.setMinValue(1);
-       // selectedNumber.setMaxValue(Integer.parseInt(question.getAnswers().get(0)));// get max value from the question object
-
-        //while (!optionPicked) {}; // pause while the user hasn't picked an option
-
-       // saveAnswer(question.getId(), person_id, Integer.toString(selectedNumber.getValue()));
     }
 
     // onClick method for a number question
     public void pickNumber(View view) {
-        optionPicked = true;
+        // find number picker
+        NumberPicker numberPicker = (NumberPicker) findViewById(R.id.number_pick);
+
+        // save the chosen answer
+        saveAnswer(questionsList.get(currentQuestion).getId(), person_id, Integer.toString(numberPicker.getValue()));
+        Log.d("Main Activity", "Saved answer");
+
+        currentQuestion++;// increment question number reference
+        Log.d("Main Activity", "Incremented currentQuestion");
+
+        displayQuestions(questionsList);// display the next question
+        Log.d("Main Activity", "Moved to next question");
+
     }
 
     // create a new answer and add it to the end of the answers list

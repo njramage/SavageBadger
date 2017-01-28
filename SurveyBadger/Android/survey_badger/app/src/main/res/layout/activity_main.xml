@@ -4,26 +4,10 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.savage_badger.survey_badger.MainActivity">
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="40sp"
-        android:text="MAIN ACTIVITY"
-        android:id="@+id/textView" />
-
-    <Button
-        android:text="Give me a question"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="105dp"
-        android:layout_marginTop="105dp"
-        android:id="@+id/give_Question" />
+        android:layout_height="match_parent"></FrameLayout>
 </RelativeLayout>
