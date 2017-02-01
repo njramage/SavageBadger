@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -150,18 +151,18 @@ public class MainActivity extends AppCompatActivity {
         {
             // if the question is a selection question
             if (questions.get(currentQuestion).getType().equals(getString(R.string.question_selection))) {
-            /*Log.i ("getting into Select", "testing");
-            SelectionFragment selectionFragment = SelectionFragment.newInstance(questions.get(currentQuestion));
-            if (fragment != null)
-            {
-                ft.replace(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
-                ft.commit();
-            }
-            else
-            {
-             ft.add(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
-                ft.commit();
-            }*/
+                Log.i ("getting into Select", "testing");
+                SelectionFragment selectionFragment = SelectionFragment.newInstance(questions.get(currentQuestion));
+                if (fragment != null)
+                {
+                    ft.replace(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
+                else
+                {
+                 ft.add(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
+                    ft.commit();
+                }
             }
 
             // if the question is a number question
@@ -249,6 +250,15 @@ public class MainActivity extends AppCompatActivity {
 
         displayQuestions(questionsList);// display the next question
         Log.d("Main Activity", "Moved to next question");
+
+    }
+    public void selectionQuestion (View view)
+    {
+      //  saveAnswer(questionsList.get(currentQuestion).getId(), person_id, Integer.toString());
+        currentQuestion++;
+        displayQuestions(questionsList);
+        //saveAnswer(questionsList.get(currentQuestion).getId(), person_id, );
+
 
     }
 
