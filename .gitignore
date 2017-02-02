@@ -45,3 +45,6 @@ SurveyBadger/Backend/sec.py
 
 #Swap files
 **/*.py.swp
+
+#ignore .idea folder
+**/.idea/

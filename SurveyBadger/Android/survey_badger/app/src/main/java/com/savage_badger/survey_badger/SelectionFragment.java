@@ -25,9 +25,11 @@ public class SelectionFragment extends Fragment {
     // Tags to help find the arguements the fragment was initialised with
     private static final String QUESTION_TEXT = "QUESTION_TEXT";
     private static final String QUESTION_ANSWERS = "QUESTION_ANSWERS";
+    private static final String QUESTION_ID = "QUESTION_ID";
 
     private String[] answers;
     private String questionText;
+    private int qID;
 
     private int test = 1;
     private int person_id = 1;// defualt player id for testing
@@ -45,6 +47,7 @@ public class SelectionFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString(QUESTION_TEXT, question.getQuestion());
         args.putStringArray(QUESTION_ANSWERS, answersToArray);
+        args.putInt(QUESTION_ID, question.getId());
 
         // create a fragment and set arguements to it
         SelectionFragment fragment = new SelectionFragment();
@@ -61,8 +64,10 @@ public class SelectionFragment extends Fragment {
 
         // if fragment was created with arguements, assignment to respective variables
         if (getArguments() != null) {
+            qID = getArguments().getInt(QUESTION_ID);
             questionText = getArguments().getString(QUESTION_TEXT);
             answers = getArguments().getStringArray(QUESTION_ANSWERS);
+            Log.i("Question ID",String.valueOf(qID));
         }
     }
 
@@ -82,7 +87,8 @@ public class SelectionFragment extends Fragment {
             numRows++;
         }
         RelativeLayout mRelativeLayout = (RelativeLayout) view.findViewById(R.id.button_container);
-        for (int i = 0; i < answers.length; i++) ///  THE ISSUE IS THAT ITS CREATING THE BUTTON ONCE AND JUST OVER LAPING IT
+        test = 0;
+        for (String answer: answers) ///  THE ISSUE IS THAT ITS CREATING THE BUTTON ONCE AND JUST OVER LAPING IT
         {
 
 
@@ -156,11 +162,11 @@ public class SelectionFragment extends Fragment {
                 layoutParams.setMargins(layoutMarginLeft, layoutMarginTop, layoutMaringRight, layoutMaringBottom);
 
                   btn.setLayoutParams(layoutParams);
-                Log.i("test",  answers.clone().toString());
+                Log.i("test",  answers.toString());
                // Log.i ("testing", questionText.toString());
                 mRelativeLayout.addView(btn);
                // btn.setText(  answers.toString());
-                btn.setText("test");
+                btn.setText(answer);
                 //answers.toString().indexOf(1);
 
 
@@ -174,7 +180,8 @@ public class SelectionFragment extends Fragment {
                 public void onClick(View view) {
                     // Perform action on click
                     Log.i ("testing", "will this work");
-                    //((MainActivity)getActivity()).saveAnswer(questionTV, person_id, answers.toString());
+                    Button b = (Button) view;
+                    ((MainActivity)getActivity()).saveAnswer(qID, person_id, b.getText().toString());
                     ((MainActivity)getActivity()).selectionQuestion(view)  ;
                 }
             });

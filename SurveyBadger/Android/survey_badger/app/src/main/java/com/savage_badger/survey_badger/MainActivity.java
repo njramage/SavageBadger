@@ -289,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
     public void saveAnswer(int question, int person, String result){
         Answer answer = new Answer(question, person, result);
         answersList.add(answer);
+        Log.i("Answer",String.valueOf(question)+":"+String.valueOf(person)+":"+result);
     }
 
     //Server connection tasks
