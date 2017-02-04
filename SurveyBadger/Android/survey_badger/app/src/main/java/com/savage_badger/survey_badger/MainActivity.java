@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE); SOMETHING WRONG WITH THIS BREAKS CODE.
         main_Activity_View = getLayoutInflater().inflate(R.layout.activity_main, null);
         number_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
         selection_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
@@ -229,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
         else { /// end of survey show confirmation screen
             Log.d("Main Activity", "Finished Survey");
             if (fragment != null) {
+                sendAnswers(answersList);
                 FinishedSurveyFragment finisedFragment = new FinishedSurveyFragment();
                 ft.replace(R.id.fragment_container, finisedFragment, QUESTION_FRAGMENT);
                 ft.commit();

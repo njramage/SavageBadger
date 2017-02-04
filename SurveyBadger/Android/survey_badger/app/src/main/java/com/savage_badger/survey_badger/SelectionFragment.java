@@ -30,8 +30,6 @@ public class SelectionFragment extends Fragment {
     private String[] answers;
     private String questionText;
     private int qID;
-
-    private int test = 1;
     private int person_id = 1;// defualt player id for testing
     public SelectionFragment () {
 
@@ -81,131 +79,65 @@ public class SelectionFragment extends Fragment {
 
 
 
-       int numRows = (int) answers.length;
+        int numRows = (int) answers.length / 3;// number of rows needed
+        int numCols = answers.length / 3;// used to track number of 3 button rows
         if (answers.length % 3 != 0)
         {
             numRows++;
         }
+        int current_answer = 0;// current index for the possible answers
         RelativeLayout mRelativeLayout = (RelativeLayout) view.findViewById(R.id.button_container);
-        test = 0;
-        for (String answer: answers) ///  THE ISSUE IS THAT ITS CREATING THE BUTTON ONCE AND JUST OVER LAPING IT
+        for (int i = 0; i < numRows; i++)
         {
-
-
-          //  for (int j = 0; j<answers.length;j++)
-            //{
-                int layoutMarginLeft = 180;
-                int layoutMarginTop = 180;
-                int layoutMaringRight = 180;
+            int numBtns;
+            if (numCols > 0)// the row needs 3 buttons
+            {
+                numBtns = 3;
+            }
+            else// calcualte how many buttons the row should have
+            {
+                numBtns = numRows % 3;
+            }
+            for (int j = 0; j < numBtns; j++) {
+                int layoutMarginLeft = 30 + (100 * (j));
+                int layoutMarginTop = 30 + (80 * (i));
+                int layoutMaringRight = 0;
                 int layoutMaringBottom = 0;
-                if (test == 2)
-                {
-
-
-                    layoutMarginLeft = 580;
-
-                }
-                else if (test == 3)
-                {
-                    layoutMarginLeft = 980;
-                    //ayoutMaringRight = 580;
-
-                }
-                else if (test == 4)
-                {
-                    layoutMarginTop = 380;
-
-                }
-                else if (test == 5)
-                {
-                    layoutMarginTop = 380;
-                    layoutMarginLeft = 580;
-                }
-                else if (test == 6)
-                {
-                    layoutMarginTop = 380;
-                    layoutMarginLeft = 980;
-                }
-                else if (test == 7)
-                {
-                    layoutMarginTop = 580;
-                }
-
 
 
                 Context mContext = getContext();
-             //   Button button = new Button(mContext);
-               // Button btn = new Button(mContext);
-               // Button btn = new Button (mContext);
-                int paddingTopPixels = 90;
-                int paddingLeftPixels = 60;
 
                 float density = getContext().getResources().getDisplayMetrics().density;
-                int paddingTopDp=(int) (paddingTopPixels * density);
-                int paddingLeftDp =(int) (paddingLeftPixels * density);
-
-               // button.setPadding(paddingLeftDp, 0, paddingLeftDp, 0);//LEFT, TOP, RIGHT, BOTTOM
-               // btn.setPaddingRelative(0, paddingLeftDp, 0, paddingTopDp);
-               // btn.setLayoutParams();
-              //  mRelativeLayout.addView(button);
-                //mRelativeLayout.addView(btn);
-              //  button.setText("hi");
-               // btn.setText("bye");
-
-                //SET DIFFERENT VARRIABLES, WHEN IT INCREMENTS THROUGH THE FOR LOOP CHANGE THE VARIABLES.
+                layoutMarginLeft = (int) (layoutMarginLeft * density);
+                layoutMarginTop = (int) (layoutMarginTop * density);
 
 
                 Button btn = new Button(mContext);
 
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 layoutParams.setMargins(layoutMarginLeft, layoutMarginTop, layoutMaringRight, layoutMaringBottom);
 
-                  btn.setLayoutParams(layoutParams);
-                Log.i("test",  answers.toString());
-               // Log.i ("testing", questionText.toString());
+                btn.setLayoutParams(layoutParams);
+                Log.i("test", answers.toString());
                 mRelativeLayout.addView(btn);
-               // btn.setText(  answers.toString());
-                btn.setText(answer);
-                //answers.toString().indexOf(1);
+                btn.setText(answers[current_answer]);
 
+                btn.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        // Perform action on click
+                        Log.i("testing", "will this work");
+                        Button b = (Button) view;
+                        ((MainActivity) getActivity()).saveAnswer(qID, person_id, b.getText().toString());
+                        ((MainActivity) getActivity()).selectionQuestion(view);
+                    }
+                });
 
-                test++;
-               // String hello = toString().test;
-               // Log.i ("test", test );
-            //((MainActivity)getActivity()).pickNumber(view);
-
-
-            btn.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    // Perform action on click
-                    Log.i ("testing", "will this work");
-                    Button b = (Button) view;
-                    ((MainActivity)getActivity()).saveAnswer(qID, person_id, b.getText().toString());
-                    ((MainActivity)getActivity()).selectionQuestion(view)  ;
-                }
-            });
-
-
-           // }
+                current_answer++;
+            }
+            numCols--;
         }
-      /*  RelativeLayout mRelativeLayout = (RelativeLayout) view.findViewById(R.id.button_container);
-
-       for (int i = 0; i < answers.length; i++) {
-            Context mContext = getContext();
-            Button btn = new Button(mContext);
-
-
-
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.addRule(RelativeLayout.ALIGN_TOP);
-
-            btn.setLayoutParams(layoutParams);
-
-            mRelativeLayout.addView(btn);
-            btn.setText(answers.toString());
-
-        }*/
 
         return view;
     }
