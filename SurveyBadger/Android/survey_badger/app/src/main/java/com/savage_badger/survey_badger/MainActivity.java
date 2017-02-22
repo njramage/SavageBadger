@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
         fetchTask getQuestions = new fetchTask();
 
-       this.survey = "Transpotation_Survey";
-        //this.survey = "I_Like_Food";
+       //this.survey = "Transpotation_Survey";
+        this.survey = "I_Like_Food";
         getQuestions.execute(this.survey);
     }
 

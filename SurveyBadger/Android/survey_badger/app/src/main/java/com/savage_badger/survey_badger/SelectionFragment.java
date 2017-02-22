@@ -128,23 +128,23 @@ public class SelectionFragment extends Fragment {
                 Log.i("test", answers.toString());
                 mRelativeLayout.addView(btn);
              //   Log.i("testing answers",answers[current_answer] );
-              //  btn.setText(answers[current_answer]);
+                btn.setText(answers[current_answer]);
                 //btn.setText("hi"); //THIS WORKS !!???
                 button_number++;
                 test_number = current_answer;
                 Log.i ("testNumber", Integer.toString(test_number));
                 Log.i("BUTTON NUMBER", Integer.toString(button_number));
-                if (button_number == test_number)
-                {
+               // if (button_number == test_number)
+              //  {
 
 
-                        btn.setText("Hi");
+                //       btn.setText("Hi");
 
-                }
-                else
-                {
-                    btn.setText(answers[current_answer]);
-                }
+               // }
+               // else
+              // {
+                  //  btn.setText(answers[current_answer]);
+               // }
 
 
 
