@@ -13,10 +13,6 @@ import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Answer> answersList;
     private int currentQuestion;
     private int person_id = 1;// defualt player id for testing
-    private String survey; 
     private String token = null;
     private View main_Activity_View, number_Question_View, selection_Question_View;
     private TextView Question_Title;
@@ -52,10 +47,14 @@ public class MainActivity extends AppCompatActivity {
         currentQuestion = 0;// Start at first question
 
         fetchTask getQuestions = new fetchTask();
+<<<<<<< HEAD
 
        //this.survey = "Transpotation_Survey";
         this.survey = "I_Like_Food";
         getQuestions.execute(this.survey);
+=======
+        getQuestions.execute("Transpotation_Survey");
+>>>>>>> parent of b17ac6e... Network Handling
     }
 
     // gets survey questions as a JSON object
@@ -289,14 +288,8 @@ public class MainActivity extends AppCompatActivity {
     public void getAnotherSurvey(View view) {
         currentQuestion = 0;// Start at first question
 
-        if (this.survey.equals("Transpotation_Survey")) {
-            this.survey = "I_Like_Food";
-        } else {
-            this.survey = "Transpotation_Survey";
-        }
-
         fetchTask getQuestions = new fetchTask();
-        getQuestions.execute(this.survey);
+        getQuestions.execute("Transpotation_Survey");
     }
 
     // create a new answer and add it to the end of the answers list
@@ -322,48 +315,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(JSONObject s) { 
-            try {
-                if (s.has("questions")) {
-                    getSurvey(s); 
-                } else {
-                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); 
-                    alertDialog.setTitle("Fetch Failed");
-                    alertDialog.setMessage("Failed to retrieve the survey from the server. Please try again later");
-                    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int which) {
-                            finish();
-                        }
-                    });
-                    alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            MainActivity.this.finish();
-                        }
-                    }); 
-                    alertDialog.show();
-               }   
-        
-            } catch (Exception e) {
-                Log.e("Polavo","Error server connection failed");
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); 
-                alertDialog.setTitle("Connection Failed");
-                alertDialog.setMessage("Unable to reach the server. Check your internet connection and try again later");
-                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        finish();
-                    }
-                });
-                alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        MainActivity.this.finish();
-                    }
-                });
-                alertDialog.show();
-            }
-        } 
+        protected void onPostExecute(JSONObject s) { getSurvey(s); }
     }
+
     //Server connection tasks
     private class SendTask extends AsyncTask<JSONObject, JSONObject, JSONObject> {
 
