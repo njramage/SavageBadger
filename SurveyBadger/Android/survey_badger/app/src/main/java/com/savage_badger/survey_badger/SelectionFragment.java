@@ -76,11 +76,15 @@ public class SelectionFragment extends Fragment {
 
         final TextView questionTV = (TextView) view.findViewById(R.id.title_selection_question);
         questionTV.setText(questionText);
+        int button_number= -1;
+        int test_number = 0;
 
 
 
         int numRows = (int) answers.length / 3;// number of rows needed
         int numCols = answers.length / 3;// used to track number of 3 button rows
+        Log.i ("answer Length", Integer.toString(answers.length));
+        Log.i ("answer Length", Integer.toString(answers.length / 3));
         if (answers.length % 3 != 0)
         {
             numRows++;
@@ -97,6 +101,7 @@ public class SelectionFragment extends Fragment {
             else// calcualte how many buttons the row should have
             {
                 numBtns = numRows % 3;
+              //  ((MainActivity) getActivity()).getSurvey() .selectionQuestion(view);
             }
             for (int j = 0; j < numBtns; j++) {
                 int layoutMarginLeft = 30 + (100 * (j));
@@ -122,7 +127,31 @@ public class SelectionFragment extends Fragment {
                 btn.setLayoutParams(layoutParams);
                 Log.i("test", answers.toString());
                 mRelativeLayout.addView(btn);
-                btn.setText(answers[current_answer]);
+             //   Log.i("testing answers",answers[current_answer] );
+              //  btn.setText(answers[current_answer]);
+                //btn.setText("hi"); //THIS WORKS !!???
+                button_number++;
+                test_number = current_answer;
+                Log.i ("testNumber", Integer.toString(test_number));
+                Log.i("BUTTON NUMBER", Integer.toString(button_number));
+                if (button_number == test_number)
+                {
+
+
+                        btn.setText("Hi");
+
+                }
+                else
+                {
+                    btn.setText(answers[current_answer]);
+                }
+
+
+
+
+                //Log.i ("CURRENT ANSWER", Integer.toString(current_answer));
+                ///CURRENT ANSWER MIGHT BE OVER THE SET NUMBER OF CURRENT ANSWERS
+                //ERROR IT THROWS   java.lang.ArrayIndexOutOfBoundsException: length=4; index=4
 
                 btn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
@@ -136,8 +165,11 @@ public class SelectionFragment extends Fragment {
 
                 current_answer++;
             }
+            Log.i ("testing rows", Integer.toString(numRows));
+            Log.i ("testing Cols", Integer.toString(numCols));
             numCols--;
         }
+        button_number = 0;
 
         return view;
     }

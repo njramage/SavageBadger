@@ -82,4 +82,5 @@ def init():
 if __name__ == "__main__":
     print("Initializing Database")
     init()
+
     print("Done")
