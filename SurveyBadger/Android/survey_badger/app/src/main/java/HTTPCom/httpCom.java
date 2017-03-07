@@ -21,7 +21,7 @@ import java.net.URL;
 
 public class httpCom {
 	//Connection BASEURL
-	final static String BASEURL = "http://54.206.56.101/";
+	final static String BASEURL = "http://45.32.191.96/";
 
     //final static String USERNAME = "SBSADM";
     //final static String PASS = "W0htInTh3WuRld";
