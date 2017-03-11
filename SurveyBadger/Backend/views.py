@@ -1,9 +1,9 @@
-from flask import Flask, request, url_for, session, jsonify
+from flask import Flask, request, url_for, session, jsonify, render_template
 from flask_httpauth import HTTPBasicAuth
 from itsdangerous import (TimedJSONWebSignatureSerializer
                                   as Serializer, BadSignature, SignatureExpired)
 
-import Survey.handler as hl
+import handler as hl
 
 #declare app
 app = Flask(__name__)
@@ -37,22 +37,32 @@ def verify_password(username, password):
     return False
 
 #===========Main Client=======================
+#Web client
+@app.route('/', methods=["GET"])
+def webClient():
+    return render_template("index.html")
+
 #get a survey
 @app.route('/getsurvey/<id>', methods=["GET"])
-@auth.login_required
+#@auth.login_required
 def getSurvey(id):
-    return jsonify({"questions" : hl.getQuestions(id), "token" : generate_token(id).decode('utf-8') })
+    return jsonify({"questions" : hl.getQuestions(id), "token" : gen_token(id).decode('utf-8') })
 
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
-@auth.login_required
+#@auth.login_required
 def submitSurvey():
-    if hl.checkUser(auth.username(), "SEND"):
-        content = request.get_json()
-        if verify_token(content['token']):
-            answers = content['answers']
-            return jsonify({"result" : hl.submit(answers)})
+    #if hl.checkUser(auth.username(), "SEND"):
+    content = request.get_json()
+    #Web client support
+    if content == None:
+        content = {'token' : request.values['token'], 'answers' : request.values['answers']}
+    if verify_token(content['token']):
+        print("Auth succesful")
+        answers = content['answers']
+        return jsonify({"result" : hl.submit(answers)})
     
+    print("Token auth failed")
     return jsonify({"result" : "Failed"})
 
 

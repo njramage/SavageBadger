@@ -1,11 +1,12 @@
 #Imports
-from Survey.db import Database
+from db import Database
 from passlib.hash import sha256_crypt
 
 
 
 #Database file
-filen = "/var/www/Survey/Survey/Badger.db"
+#filen = "/var/www/Survey/Survey/Badger.db"
+filen = "Badger.db"
 
 
 
@@ -48,7 +49,7 @@ def submit(answers):
         for ans in answers:
             db.insert("answers",{"Question" : int(ans['QuestionID']), "Person" : int(ans['PersonID']), "Result" : str(ans['Result'])})
     except Exception as e:
-        raise
+        print(e)
         #close db and return failure
         db.close()
         return False
