@@ -1,7 +1,8 @@
-from flask import Flask, request, url_for, session, jsonify, render_template
+from flask import Flask, request, url_for, session, jsonify, render_template, Response
 from flask_httpauth import HTTPBasicAuth
 from itsdangerous import (TimedJSONWebSignatureSerializer
                                   as Serializer, BadSignature, SignatureExpired)
+from functools import wraps
 
 import handler as hl
 
@@ -12,7 +13,7 @@ app = Flask(__name__)
 #Security
 auth = HTTPBasicAuth()
 
-def gen_token(user, expiration = 72000):
+def gen_token(user, expiration = 600):
     s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
     return s.dumps({ 'user': user })
 
@@ -27,7 +28,6 @@ def verify_token(token):
     
     return True
 
-
 #Decorators for API
 @auth.verify_password
 def verify_password(username, password):
@@ -35,6 +35,23 @@ def verify_password(username, password):
         return True
     #logging.info(str(username),str(password))
     return False
+
+def tokenAuth(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        auth = request.authorization
+        if hl.checkUser(auth.username, "SEND"):
+            if verify_token(auth.password):
+                return f(*args, **kwargs)
+        return authenticate()
+    return wrapper
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
 #===========Main Client=======================
 #Web client
@@ -44,26 +61,29 @@ def webClient():
 
 #get a survey
 @app.route('/getsurvey/<id>', methods=["GET"])
-#@auth.login_required
+@auth.login_required
 def getSurvey(id):
     return jsonify({"questions" : hl.getQuestions(id), "token" : gen_token(id).decode('utf-8') })
 
+@app.route('/getsurveycode/', methods=["GET"])
+def getFromCode():
+    auth = request.authorization
+    questions = hl.getQuestions(auth.password,auth.username)
+    if questions == []:
+        return jsonify({"status" : "Failed"})
+    return jsonify({"questions" : questions, "token" : gen_token(auth.username).decode('utf-8'), "status" : "Success" })
+
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
-#@auth.login_required
+@tokenAuth
 def submitSurvey():
-    #if hl.checkUser(auth.username(), "SEND"):
     content = request.get_json()
     #Web client support
     if content == None:
-        content = {'token' : request.values['token'], 'answers' : request.values['answers']}
-    if verify_token(content['token']):
-        print("Auth succesful")
-        answers = content['answers']
-        return jsonify({"result" : hl.submit(answers)})
-    
-    print("Token auth failed")
-    return jsonify({"result" : "Failed"})
+        #content = {'token' : request.values['token'], 'answers' : request.values['answers']}
+        content = {'answers' : request.values['answers']}
+    answers = content['answers']
+    return jsonify({"result" : hl.submit(answers)})
 
 
 if __name__ == "__main__":
