@@ -41,8 +41,9 @@ def tokenAuth(f):
     def wrapper(*args, **kwargs):
         auth = request.authorization
         if hl.checkUser(auth.username, "SEND"):
-            if verify_token(auth.password):
+            if verify_token(auth.password) or verify_token(request.get_json()['token']) :
                 return f(*args, **kwargs)
+
         return authenticate()
     return wrapper
 
