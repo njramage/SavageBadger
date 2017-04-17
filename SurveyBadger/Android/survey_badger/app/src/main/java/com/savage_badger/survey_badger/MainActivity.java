@@ -47,14 +47,10 @@ public class MainActivity extends AppCompatActivity {
         currentQuestion = 0;// Start at first question
 
         fetchTask getQuestions = new fetchTask();
-<<<<<<< HEAD
 
        //this.survey = "Transpotation_Survey";
         this.survey = "I_Like_Food";
         getQuestions.execute(this.survey);
-=======
-        getQuestions.execute("Transpotation_Survey");
->>>>>>> parent of b17ac6e... Network Handling
     }
 
     // gets survey questions as a JSON object

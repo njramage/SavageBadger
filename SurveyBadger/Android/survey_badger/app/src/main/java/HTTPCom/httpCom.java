@@ -21,7 +21,7 @@ import java.net.URL;
 
 public class httpCom {
 	//Connection BASEURL
-	final static String BASEURL = "http://54.206.56.101/";
+	final static String BASEURL = "http://www.polavo.net/";
 
     //final static String USERNAME = "SBSADM";
     //final static String PASS = "W0htInTh3WuRld";
@@ -31,15 +31,15 @@ public class httpCom {
 
     public static JSONObject sendAnswers(JSONObject data) {
 
-        String USERNAME = "SBSENT";
-        String PASS = "@N9sn3n9#NFN#";
+        //String USERNAME = "SBSENT";
+        //String PASS = "@N9sn3n9#NFN#";
 
         BufferedReader reader = null;
         HttpURLConnection con = null;
 
         //for login
-        byte[] loginBytes = (USERNAME + ":" + PASS).getBytes();
-        StringBuilder loginBuilder = new StringBuilder().append("Basic ").append(Base64.encodeToString(loginBytes, Base64.DEFAULT));
+        //byte[] loginBytes = (USERNAME + ":" + PASS).getBytes();
+        //StringBuilder loginBuilder = new StringBuilder().append("Basic ").append(Base64.encodeToString(loginBytes, Base64.DEFAULT));
 
         JSONObject postData = data;
 
@@ -62,7 +62,7 @@ public class httpCom {
                     "application/json");
 
             //for login
-            con.addRequestProperty("Authorization", loginBuilder.toString());
+            //con.addRequestProperty("Authorization", loginBuilder.toString());
 
             //httpURLConnection.setRequestProperty("charset", "utf-8");
             //httpURLConnection.setRequestProperty("Content-Length",

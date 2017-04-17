@@ -1,9 +1,9 @@
-from flask import Flask, request, url_for, session, jsonify
+from flask import Flask, request, url_for, session, jsonify, render_template
 from flask_httpauth import HTTPBasicAuth
 from itsdangerous import (TimedJSONWebSignatureSerializer
                                   as Serializer, BadSignature, SignatureExpired)
 
-import Survey.handler as hl
+import handler as hl
 
 #declare app
 app = Flask(__name__)
@@ -12,7 +12,7 @@ app = Flask(__name__)
 #Security
 auth = HTTPBasicAuth()
 
-def gen_token(user, expiration = 72000):
+def gen_token(user, expiration = 600):
     s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
     return s.dumps({ 'user': user })
 
@@ -37,21 +37,33 @@ def verify_password(username, password):
     return False
 
 #===========Main Client=======================
+#Web client
+@app.route('/', methods=["GET"])
+def index():
+    return render_template("index.html") 
+
+
 #get a survey
 @app.route('/getsurvey/<id>', methods=["GET"])
 @auth.login_required
 def getSurvey(id):
-    return jsonify({"questions" : hl.getQuestions(id), "token" : generate_token(id).decode('utf-8') })
+    return jsonify({"questions" : hl.getQuestions(id), "token" : gen_token(id).decode('utf-8') })
+
+#get survey from a code
+@app.route('/getsurveycode/<id>', methods=["GET"])
+@auth.login_required
+def getFromCode(id):
+    return jsonify({"questions" : hl.getQuestions(id, True), "token" : gen_token(id).decode('utf-8') })
 
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
-@auth.login_required
+#@auth.login_required
 def submitSurvey():
-    if hl.checkUser(auth.username(), "SEND"):
-        content = request.get_json()
-        if verify_token(content['token']):
-            answers = content['answers']
-            return jsonify({"result" : hl.submit(answers)})
+    #if hl.checkUser(auth.username(), "SEND"):
+    content = request.get_json()
+    if verify_token(content['token']):
+        answers = content['answers']
+        return jsonify({"result" : hl.submit(answers)})
     
     return jsonify({"result" : "Failed"})
 

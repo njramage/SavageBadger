@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+	<script src="../../static/js/jquery-3.1.0.js"></script>
+</head>
+
+
+<body style="padding-top: 0px;width:90%;padding-left:5%">
+    <header>
+        <div class="container nav-top" style="marign-top:0;" >
+            <h2 class="text-center">Polavo</h2>
+        </div>
+    </header>
+  {% block body %}{% endblock %}
+</body>
+</html>

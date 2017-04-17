@@ -1,37 +1,42 @@
 #Imports
-from Survey.db import Database
+from db import Database
 from passlib.hash import sha256_crypt
 
 
 
 #Database file
-filen = "/var/www/Survey/Survey/Badger.db"
-
-
+#filen = "/var/www/Survey/Survey/Badger.db"
+filen = "Badger.db"
 
 def checkLogin(user,passwd):
     #Connect to databse
     data = Database(filename = filen)
-    actual = data.retrieve('users','User',user)
+    actual = data.retrieve('users','User',user)[0]
     data.close()
     if actual != [] and user == actual['User'] and sha256_crypt.verify(passwd, actual['Pass']):
         return True
     else:
         return False
 
-
-
 def checkUser(user, func):
     return True if func == "SEND" and user == "SBSENT" else False
 
-
-def getQuestions(surveyID):
+def getQuestions(surveyID,code = False):
     #Connect to databse
     db = Database(filename = filen)
     questions = []
     
+    if code:
+        if surveyID == "translink":
+            cursor = db.retrieve("questions","Survey","Transpotation_Survey")
+        else:
+            cursor = db.retrieve("questions","Survey",surveyID)
+            
+    else:
+        cursor = db.retrieve("questions","Survey",surveyID)
+
     #grab questions for survey
-    for q in db.retrieve("questions","Survey",surveyID):
+    for q in cursor:
         question = {"id" :q['ID'] , "question" : q['Question'] , "type" : q['Answer_type'] , "answers" : q['Answer_text'].split(",")}
         questions.append(question)
 
