@@ -13,6 +13,11 @@ import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentQuestion;
     private int person_id = 1;// defualt player id for testing
     private String token = null;
+    private String survey;
     private View main_Activity_View, number_Question_View, selection_Question_View;
     private TextView Question_Title;
 
@@ -48,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         fetchTask getQuestions = new fetchTask();
 
-       //this.survey = "Transpotation_Survey";
-        this.survey = "I_Like_Food";
+        this.survey = "Transpotation_Survey";
         getQuestions.execute(this.survey);
     }
 
@@ -311,7 +316,47 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(JSONObject s) { getSurvey(s); }
+        protected void onPostExecute(JSONObject s) { 
+            try {
+                if (s.has("questions")) {
+                    getSurvey(s); 
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); 
+                    alertDialog.setTitle("Fetch Failed");
+                    alertDialog.setMessage("Failed to retrieve the survey from the server. Please try again later");
+                    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,int which) {
+                            finish();
+                        }
+                    });
+                    alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            MainActivity.this.finish();
+                        }
+                    }); 
+                    alertDialog.show();
+               }   
+        
+            } catch (Exception e) {
+                Log.e("Polavo","Error server connection failed");
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); 
+                alertDialog.setTitle("Connection Failed");
+                alertDialog.setMessage("Unable to reach the server. Check your internet connection and try again later");
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        finish();
+                    }
+                });
+                alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        MainActivity.this.finish();
+                    }
+                });
+                alertDialog.show();
+            } 
+        }
     }
 
     //Server connection tasks

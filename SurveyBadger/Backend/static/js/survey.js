@@ -1,269 +1,298 @@
-var token;
+//Globals
 var survey;
-var index;
 var answers;
-var qID;
-
-var IN = 700;
-var OUT = 500;
-
-var authUser = <USER>;
-var authPass = <PASS>;
-
+var token;
+var questionIndex;
 
 $(document).ready(function(){
-    displayLogin();
+    startPage();
 });
 
-function displayLogin() {
-    //new div
-    var div = $('<div>');
-
-    //Introduction
-    var greating = $('<h1 class="text-center">').text("Welcome to Polavo!");
-    var subtext = $('<p class="text-center" style="padding-top:50px">').text("Please enter your survey code below to begin!");
-
-    div.append(greating);
-    div.append(subtext);
-
-    //new form
-    var form = $('<form action="" class="form-group" method="" style="width:300px">')
- 
-    //Access Code
-    var surveyDiv = $('<div class="form-group" style="margin-bottom: 2px">');
-    var survey = $('<input type="password" class="form-control" placeholder = "" name="survey" id="code" style="height: 44px;width: 300px">');
-    surveyDiv.append(survey);
-    surveyDiv.append($('<br>'));
-
-    //Submit button
-    var btn = $('<button type="button" class="btn btn-success btn-lg btn-block" onclick="getSurvey()">Start</button>');
-
-	//Add to form
-    form.append(surveyDiv);
-    form.append(btn);
-
-    div.append(form);
-    
-    $('#content').fadeOut(OUT, function() {
-        $('#content').html(div.html());
-        $('#content').fadeIn(IN);   
-    });
-};
-
-function updateSlider() {
-    //get slider value
-    var value = $('#answer').val();
-    
-    //create display text
-    var text;
-
-    if (survey[index]['type'] == "Time_duration") {
-        if (value == 0) {
-            text = "Less than 1 Hour";
-        } else if (value == 1) {
-            text = "1 Hour";
-        } else {
-            text = value + " Hours";
-        }
-    } else if (survey[index]['type'] == "Dollar_value") {
-        text = "$"+value;
-        if (value == survey[index]['answers']) {
-            text += "+";
-        } 
-    } else {
-        text = value;
-        if (value == survey[index]['answers']) {
-            text += "+";
-        } 
-    }
-
-    //Update value
-    $('#display').text(text);
-
-}
-
-function checkSelection() {
-    if ($('input:radio:checked').length > 0) {
-        $('#submit').prop('disabled', false); 
-    } else {
-        $('#submit').prop('disabled', true); 
-    }
-
-}
-
-
 function getSurvey() {
-    //get survey code
-    var surveyCode = $('#code').val();
-    
-    //get survey
-    $.ajax
-    ({
-        type: "GET",
-        url: "/getsurveycode/"+surveyCode,
-        dataType: 'json',
-        async: true,
-        headers: {
-            "Authorization": "Basic " + btoa(authUser + ":" + authPass)
-        },
-        success: function (data){
-            console.log(data);
-            //set token and survey
-            token = data.token;
-            survey = data.questions;
-            
-            //reset index and answers, display survey
-            index = 0;
-            answers = [];
-            displaySurvey();
-        } 
+    var code = $('#code').val();
+    //$('#question').html('<h2>Please wait</h2>'); 
+    $('#wait').toggle();
+    $('#code').val("");
+    //get data
+    $.ajax({
+            type: 'GET',
+            url: '/getsurveycode/',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader ("Authorization", "Basic " + btoa('WEBCODE' + ":" + code));
+            },
+            success: function(data) {
+                console.log(data);
+                if (data.status == "Failed") {
+                    alert("An error occured geting the survey. Please ensure the code you entered is correct");
+                    $('#wait').toggle();
+                    $('#code').val(code);
+                } else {
+                    survey = data.questions;
+                    token = data.token;
+                    console.log(survey);
+                    //reset question index and answers
+                    questionIndex = 0;
+                    answers = [];
+                    displayQuestion();
+                }
+            },
+            contentType: "application/json",
+            dataType: 'json'            
     });
 };
 
-function displaySurvey() {
-    //get question from survey list
-    var question = survey[index];
-    qID = question['id'];
+function submitSurvey() {
+    //Notify user that survey is being submitted
+    $('#question').html('<h2>Please wait</h2>');
 
-    //create div
-    var div = $('<div>');
+    //var submitData = {'token' : token, 'answers' : answers};
+    var submitData = {'answers' : answers};
+    console.log(submitData);
+    $.ajax({
+            type: 'POST',
+            url: '/submitsurvey/',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader ("Authorization", "Basic " + btoa('SBSENT' + ":" + token));
+            },
+            data: JSON.stringify(submitData), 
+            success: function(data) { 
+                console.log(data);
+                var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
+                var header = $('<h1>').html("Survey Submitted!");
+                var logo = $('<img alt="Polavo Logo" src="../../static/images/badger.png">');
+                var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
+                var next = $('<a href="/">').html("Click here to fill out another survey");
 
-    //Add question text
-    var questionText = $('<h2>').html(question['question']);
+                div.append(div);
+                div.append(header);
+                div.append(logo);
+                div.append(thank);
+                div.append(next);
+                
+                $('#question').fadeOut('slow', function() {
+                    $('#question').html(div.html());
+                    $('#question').fadeIn('slow');
+                });
+            },
+            statusCode: {
+                401: function() {
+                    alert("Failed to submit survey results. Please try again later");
+                    startPage();
+                },
+            },
+            contentType: "application/json",
+            dataType: 'json'
+    });
+}
 
-    div.append(questionText);
-    div.append('<br>');
+function updateSliderValue() {
+    //Get current and max values
+    var val = parseInt($('#slide').val());
+    var max = survey[questionIndex]['answers'][0];
+    //Check if equal to max
+    var text = '';
+    if (val == max) {
+        text += 'Over ';
+    }
+    
+    if (val >= 60) {
+        var hrs = Math.floor(val / 60);
+        var mins = val % 60;
+        text += hrs.toString()+" hour";
+        if (mins != 0) {
+            text += " "+mins.toString()+" minutes";
+        } 
+    } else {
+        text += val.toString()+" minutes";
+    }
+    $('#sliderText').html(text); 
+}
 
-    //Check question type 
-    switch(question['type']) {
-        case "Time_duration":
-            display = $('<p id="display" style="font-size: 24px">').text("Less than 1 Hour");
-            inpt = $('<input type="range" min="0" max="'+question['answers']+'" value="0" id="answer" step="1" onchange="updateSlider()">');
-            
-            div.append(display);
-            div.append($('<br>'));
-            div.append(inpt);
+/*
+ * Check if there is atleast one checkbox selected to reanable the submit button
+ *
+*/
+function checkSelectionSubmit() {
+    for (var opt in survey[questionIndex]['answers']) {
+        if($("#Select"+opt).is(':checked')) {
+            $('#submit').attr('disabled',false);
+            return;
+        }
+    } 
+    $('#submit').attr('disabled',true);
+}
+
+
+function applyEvents(type) {
+    switch(survey[questionIndex]['type']) {
+        case 'Time_duration':
+            //Add live update for slider if any
+            $('#slide').mousemove(function() {
+                updateSliderValue();
+            }); 
             break;
-        case "Set_time":
-            inpt = $('<input type="time" id="answer">');
-            div.append(inpt);
-            div.append($('<br>'));
+        case 'Selection':
+            for (var opt in survey[questionIndex]['answers']) {
+                $('#Select'+opt).click(function() {
+                    checkSelectionSubmit();
+                });
+            }
+            break; 
+        default:
+    }
+}
+
+function displayQuestion() {
+    console.log(survey[questionIndex]['type'])
+    //New div and question header
+    var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
+    var ques = $('<h1>').html(survey[questionIndex]['question']);
+    div.append(ques);
+    //Submit button
+    var next = $('<button class="btn" id="submit" onclick="getAnswer()" style="margin-top:20px"  >').html("Submit");
+    //Determine type of question
+    switch(survey[questionIndex]['type']) {
+        case 'Time_duration':
+            //Create slider
+            var max = survey[questionIndex]['answers'][0].toString();
+            var slider = $('<input id="slide" type="range" min="0" max="'+max+'" step="1" value="0">');
+            var amt = $('<h2 id="sliderText">').html("0 minutes");
+            div.append(amt);
+            div.append(slider);
             break;
-        case "Selection":
-            div.append(createSelection(question['answers']));
-            div.append($('<br>'));
+        case 'Set_time':
+            var container = $('<div class="container-fluid" style="padding:0;margin:0;">'); 
+            container.attr('horizontal', '');
+            container.attr('layout', '');
+            var hrs = $('<input type="number" id="hrs" min="1" max="12" value="9" >');
+            var mins = $('<input type="number" id="minutes" min="00" max="60" value="00">');
+            var apm = $('<select id="apm">');
+            apm.append($('<option value="am">').html('AM'));
+            apm.append($('<option value="pm">').html('PM'));
+            container.append(hrs);
+            container.append(mins);
+            container.append(apm);
+            div.append(container);
             break;
-        case "Dollar_value":
-            display = $('<p id="display" style="font-size: 24px">').text("$0");
-            inpt = $('<input type="range" min="0" max="'+question['answers']+'" value="0" id="answer" step="1" onchange="updateSlider()">');
-            
-            div.append(display);
-            div.append($('<br>'));
-            div.append(inpt);
+        case 'Selection':
+            var container = $('<div class="container-fluid" style="padding-left:0;margin:0;">'); 
+            //container.attr('horizontal', '');
+            //container.attr('layout', '');
+            for (var opt in survey[questionIndex]['answers']) {
+                var id = 'Select'+opt;
+                var val = survey[questionIndex]['answers'][opt]
+                var checkopt = $('<label>').html(" "+val).prepend($('<input type="checkbox" id="'+id+'" value="'+val+'">'));
+                container.append(checkopt);
+                container.append($('<br/>'));
+            }
+            next.attr('disabled',true);
+            div.append(container);
+            div.append($('<br/>'));
             break;
-        case "Number":
-            display = $('<p id="display" style="font-size: 24px">').text("0");
-            inpt = $('<input type="range" min="0" max="'+question['answers']+'" value="0" id="answer" step="1" onchange="updateSlider()">');
-            
-            div.append(display);
-            div.append($('<br>'));
-            div.append(inpt);
+        case 'Dollar_value':
+            var entry = $('<label>').html("$").append($('<input type="number" id="entry" value="0.0">'));
+            div.append(entry);
+            div.append($('<br/>'));
+        default:
+    }
+    //add Submit button
+    div.append(next);
+
+    //Display question
+    $('#question').fadeOut('slow', function() {
+        $('#question').html(div.html());
+        $('#question').fadeIn('slow');
+        //Apply any events to elements
+        applyEvents(survey[questionIndex]['type']);
+    });
+
+}
+
+function getAnswer() {
+    //Create answer object
+    var ans = {QuestionID : questionIndex, PersonID : 1, Result : ''};
+
+    //Get Result based on question type 
+    switch(survey[questionIndex]['type']) {
+        case 'Time_duration':
+            ans.Result = $('#slide').val();
+            break;
+        case 'Set_time':
+            var hr = parseInt($('#hrs').val());
+            var min = parseInt($('#minutes').val());
+            //Error check
+            if (isNaN(hr) || isNaN(min)) {
+                return;
+            }
+            //check if AM or PM and convert to 24hour time
+            if ($('#apm').val() == "pm") {
+                hr += 12;
+            }
+            console.log(hr);
+            //Add leading zeros and create answer string
+            var ansStr = '';
+            if (hr < 10) {
+                ansStr += '0'+hr.toString();
+            } else {
+                ansStr += hr.toString();
+            }
+
+            if (min < 10) {
+                ansStr += "0"+min.toString();
+            } else {
+                ansStr += min.toString();
+            }
+            ans.Result = ansStr;
+            break;
+        case 'Selection':
+            selected = [];
+            for (var opt in survey[questionIndex]['answers']) {
+                if($("#Select"+opt).is(':checked')) {
+                    selected.push($("#Select"+opt).val());
+                }
+            } 
+            ans.Result = selected;
+            break;
+        case 'Dollar_value':
+            ans.Result = "$"+$('#entry').val();
             break;
         default:
-            break;
-    }
- 
-    //Submit button
-    var btn = $('<button type="button" id="submit" class="btn btn-lg" style="width:220px" onclick="submitAnswer()">Submit</button>');
-    
-    //disable button if type is selection
-    if (question['type'] == "Selection") {
-        btn.prop('disabled', true);
     }
     
+    //Add answer to the answers list
+    answers.push(ans);
+    console.log(ans);
+    //Update question index
+    questionIndex++;
     
-    div.append($('<br>'));
-    div.append(btn);
-    //Change html
-    $('#content').fadeOut(OUT, function() {
-        $('#content').html(div.html());
-        $('#content').fadeIn(IN);   
-    });
-
-};
-
-function createSelection(values) {
-    //create form
-    var form = $('<form action="" onchange="checkSelection()" id="answer" >');
-    
-    //add values to the form
-    for (var option in values) {
-        var opt = $('<input type="radio" name="answer" value="'+values[option]+'">')
-        var text = "   "+values[option];  
-        var lbl = $('<label>').text(text);
-
-        form.append(opt);
-        form.append(lbl);
-        form.append($('<br>'));
+    //Check if the survey is complete, else display next question
+    if (questionIndex == survey.length) {
+        submitSurvey();
+    } else {
+        displayQuestion();
     }
-
-    return form;
 }
 
-function submitAnswer() {
-    //get answer
-    var answer
-    if (survey[index]['type'] == "Selection") {
-        answer = $('input:radio:checked').val();
-    } else {
-        answer = $('#answer').val();
-    }
 
-    answers.push({'QuestionID' : qID, 'PersonID' : 2, 'Result' : answer});
-    console.log(answers[index]);
-    index += 1;
+function startPage() {
+    var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
+    
+    var heading = $('<h1>').html("Welcome to Povalo!");
+    var instruction = $('<p>').html("Please enter the code for the survey you wish to complete");
+    var wait = $('<p id="wait" hidden>').html("Please Wait");
+    var codeEntry = $('<input type="text" id="code" size="20" style="font-size:28px;">');
+    var button = $('<button class="btn" onclick="getSurvey()">').html("Enter");
 
-    //Check if end of survey
-    if (index == survey.length) {
-        endSurvey();
-    } else {
-        displaySurvey();
-    }
+    div.append(heading);
+    div.append($('<br/>'));
+    div.append(instruction);
+    //div.append($('<br/>'));
+    div.append(wait);
+    div.append(codeEntry);
+    div.append($('<br/>'));
+    div.append($('<br/>'));
+    div.append(button);
 
-
-};
-
-function endSurvey() {
-    //send res
-    $.ajax({
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        url: "/submitsurvey/",
-        data: JSON.stringify({ token : token, answers : answers }),
-
-        success: function (data) {              
-            //create div
-            var div = $('<div>');
-            
-            //Completion message
-            var greating = $('<h1 class="text-center">').text("You done!");
-            var subtext = $('<p class="text-center" style="padding-top:50px">').text("Thank you for completing our survey!");
-
-            div.append(greating);
-            div.append(subtext);
-            
-            //Submit button
-            var btn = $('<button type="button" class="btn btn-lg" style="width:220px" onclick="displayLogin()">Submit another survey</button>');
-             
-            div.append($('<br>'));
-            div.append(btn);
-            //Change html
-            $('#content').fadeOut(OUT, function() {
-                $('#content').html(div.html());
-                $('#content').fadeIn(IN);   
-            });
-        },
-        dataType: "json" 
-    });
-
+    $('#question').html(div); 
 }
+

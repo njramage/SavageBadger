@@ -1,10 +1,11 @@
 {% extends "header.html" %}
 
 {% block body %}
-<head>
-	<script type= "text/javascript" src="{{ url_for('static', filename='js/survey.js') }}"></script>
-</head>
-<div class="container-fluid" align="center" style="margin-top: 30px" id="content">
-    <h3 class="text-center">Please wait<h3>
+
+<div class="container-fluid" align="center" style="margin-top: 10px">
+    <div class="container-fluid" id="question" style="padding:0;margin:0;">
+        <h2>Please wait</h2>
+    </div>
 </div>
+
 {% endblock %}

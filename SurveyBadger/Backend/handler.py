@@ -2,8 +2,6 @@
 from db import Database
 from passlib.hash import sha256_crypt
 
-
-
 #Database file
 #filen = "/var/www/Survey/Survey/Badger.db"
 filen = "Badger.db"
@@ -13,7 +11,7 @@ def checkLogin(user,passwd):
     data = Database(filename = filen)
     actual = data.retrieve('users','User',user)[0]
     data.close()
-    if actual != [] and user == actual['User'] and sha256_crypt.verify(passwd, actual['Pass']):
+    if actual != [] and user == actual[0]['User'] and sha256_crypt.verify(passwd, actual[0]['Pass']):
         return True
     else:
         return False
@@ -21,19 +19,17 @@ def checkLogin(user,passwd):
 def checkUser(user, func):
     return True if func == "SEND" and user == "SBSENT" else False
 
-def getQuestions(surveyID,code = False):
+def getQuestions(surveyID, user = None):
     #Connect to databse
     db = Database(filename = filen)
     questions = []
-    
-    if code:
-        if surveyID == "translink":
-            cursor = db.retrieve("questions","Survey","Transpotation_Survey")
+
+    #If the user is set, then retrieving survey by code
+    if user != None:
+        if user == "WEBCODE" and surveyID == "translink":
+            surveyID = "Transpotation_Survey"
         else:
-            cursor = db.retrieve("questions","Survey",surveyID)
-            
-    else:
-        cursor = db.retrieve("questions","Survey",surveyID)
+            return questions
 
     #grab questions for survey
     for q in cursor:
@@ -53,7 +49,7 @@ def submit(answers):
         for ans in answers:
             db.insert("answers",{"Question" : int(ans['QuestionID']), "Person" : int(ans['PersonID']), "Result" : str(ans['Result'])})
     except Exception as e:
-        raise
+        print(e)
         #close db and return failure
         db.close()
         return False
