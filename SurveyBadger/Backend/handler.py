@@ -3,7 +3,7 @@ from db import Database
 from passlib.hash import sha256_crypt
 
 #Database file
-#filen = "/var/www/Survey/Survey/Badger.db"
+#filen = "/var/www/polavo/polavo/Badger.db"
 filen = "Badger.db"
 
 def checkLogin(user,passwd):
@@ -11,7 +11,7 @@ def checkLogin(user,passwd):
     data = Database(filename = filen)
     actual = data.retrieve('users','User',user)[0]
     data.close()
-    if actual != [] and user == actual[0]['User'] and sha256_crypt.verify(passwd, actual[0]['Pass']):
+    if actual != [] and user == actual['User'] and sha256_crypt.verify(passwd, actual['Pass']):
         return True
     else:
         return False

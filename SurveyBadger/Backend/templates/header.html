@@ -9,38 +9,15 @@
 	<script type= "text/javascript" src="{{ url_for('static', filename='js/survey.js') }}"></script>
 </head>
 
-<header>
-<nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container-fluid">
-        <!--Logo
-        <div class="navbar-header" style="margin-bottom:7px">
-            <img alt="Bobby" src="{{ url_for('static', filename='images/bobbyLogo.png') }}">
-        </div>
-        -->
-        <!-- Title -->
-		<h2 style='text-align:center;'>Polavo</h2>
-        <!--
-		<div class="navbar-header" style="margin: 0 auto;width:100%;padding-top:13px">  margin-left:24.5%
-		    <h2 class="text-center" style="font-size:20px">Polavo</h2>
-        </div> -->
-		<!-- System
-		<div class="btn-group navbar-right" style="margin-top:7px; margin-right:2px">
-          <a href="/logout/" type="button" class="btn btn-danger" href="/logout/">Logout</a>
-          <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a href="/logout/">Logout</a></li>
-            <li><a href="/console/tasks/">Task Manager</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="/stop/">Stop Server</a></li>
-        </div> -->
-    </div>
-</nav>
-</header>
+
+
 
 <body style="padding-top: 70px;width:90%;padding-left:5%">
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#" style="position: absolute; left: 50%;margin-left: -50px;display: block;">WebSiteName</a>
+    </div>
+</nav>
     {% block body %}{% endblock %}
 </body>
 </html>

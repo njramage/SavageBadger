@@ -90,6 +90,11 @@ function updateSliderValue() {
     var val = parseInt($('#slide').val());
     var max = survey[questionIndex]['answers'][0];
     //Check if equal to max
+    var text = calTimeText(val,max);
+    $('#sliderText').html(text); 
+}
+
+function calTimeText(val,max) {
     var text = '';
     if (val == max) {
         text += 'Over ';
@@ -105,8 +110,10 @@ function updateSliderValue() {
     } else {
         text += val.toString()+" minutes";
     }
-    $('#sliderText').html(text); 
+
+    return text;
 }
+
 
 /*
  * Check if there is atleast one checkbox selected to reanable the submit button
@@ -155,10 +162,15 @@ function displayQuestion() {
         case 'Time_duration':
             //Create slider
             var max = survey[questionIndex]['answers'][0].toString();
-            var slider = $('<input id="slide" type="range" min="0" max="'+max+'" step="1" value="0">');
+            var slideMin = $('<span class="pull-left">').html(calTimeText(0,max));
+            var slideMax = $('<span class="pull-right">').html(calTimeText(max,max)); 
+            var slider = $('<input id="slide" type="range" min="0" max="'+max+'" step="1" value="0" style="width:100%">');
             var amt = $('<h2 id="sliderText">').html("0 minutes");
             div.append(amt);
             div.append(slider);
+            div.append(slideMin);
+            div.append(slideMax);
+            div.append($('<br>'));
             break;
         case 'Set_time':
             var container = $('<div class="container-fluid" style="padding:0;margin:0;">'); 
@@ -277,7 +289,7 @@ function getAnswer() {
 function startPage() {
     var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
     
-    var heading = $('<h1>').html("Welcome to Povalo!");
+    var heading = $('<h1>').html("Welcome to Polavo!");
     var instruction = $('<p>').html("Please enter the code for the survey you wish to complete");
     var wait = $('<p id="wait" hidden>').html("Please Wait");
     var codeEntry = $('<input type="text" id="code" size="20" style="font-size:28px;">');
