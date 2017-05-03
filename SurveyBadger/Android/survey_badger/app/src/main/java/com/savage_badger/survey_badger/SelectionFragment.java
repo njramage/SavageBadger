@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -115,7 +116,8 @@ public class SelectionFragment extends Fragment {
                 layoutMarginTop = (int) (layoutMarginTop * density);
 
 
-                Button btn = new Button(mContext);
+              //  Button btn = new Button(mContext);
+                ImageButton btn = new ImageButton(mContext);
 
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -126,7 +128,71 @@ public class SelectionFragment extends Fragment {
                 Log.i("test", answers.toString());
                 mRelativeLayout.addView(btn);
 
-                btn.setText(answers[current_answer]);
+               // btn.setText(answers[current_answer]);
+
+                ///ISSUES LEFT
+                ///HAVING IT DYNAMICALLY SET BUTTON IMAGES
+                ///IMAGE PLACING ON SCREENS.
+
+
+                final String btnAnswer = answers[current_answer];
+                Log.i ("testing string output", btnAnswer);
+                Log.i ("testing string output", "Bus");
+
+                int buttonImage = 0; // R.drawable.bus;
+              //  Log.i("what is the int", Integer.toString(H));
+              //   H = R.drawable.car;
+
+              //  Log.i("what is the int", Integer.toString(H));
+             //   int J =  2130837587;
+
+               // btn.setImageResource(H);
+
+
+                if (answers[current_answer].equals("Bus"))
+                {
+                    buttonImage = R.drawable.bus;
+                    btn.setImageResource(buttonImage);
+                }
+                else if (answers[current_answer].equals("Car"))
+                {
+                    buttonImage = R.drawable.car;
+                    btn.setImageResource(buttonImage);
+                }
+                else if(answers[current_answer].equals("Ferry"))
+                {
+                    buttonImage = R.drawable.ferry;
+                    btn.setImageResource(buttonImage);
+                }
+                else if (answers[current_answer].equals("Train"))
+                {
+                    buttonImage = R.drawable.train;
+                    btn.setImageResource(buttonImage);
+                }
+                else if (answers[current_answer].equals("Tram"))
+                {
+                    buttonImage = R.drawable.tram;
+                    btn.setImageResource(buttonImage);
+                }
+
+
+
+
+
+
+              /*  if (answers[current_answer].equals("Bus") )
+                {
+                    Log.i ("does it get in", "yes");
+                    btn.setImageResource(R.drawable.images1);
+                }
+                else
+                {
+                    btn.setImageResource(R.drawable.download);
+                }*/
+                //having buttons as they own unquie image
+                // having the pressed button be saved and sent back.
+
+
 
 
 
@@ -135,9 +201,11 @@ public class SelectionFragment extends Fragment {
                     public void onClick(View view) {
                         // Perform action on click
                         Log.i("testing", "will this work");
-                        Button b = (Button) view;
-                        ((MainActivity) getActivity()).saveAnswer(qID, person_id, b.getText().toString());
+                       // Button b = (Button) view;
+                       // ((MainActivity) getActivity()).saveAnswer(qID, person_id, b.getText().toString());
+                        ((MainActivity) getActivity()).saveAnswer(qID, person_id, btnAnswer);
                         ((MainActivity) getActivity()).selectionQuestion(view);
+                        Log.i ("did they get the answer", btnAnswer);
                     }
                 });
 
@@ -150,3 +218,61 @@ public class SelectionFragment extends Fragment {
         return view;
     }
 }
+/*
+    ImageButton btn = new ImageButton(mContext);
+    Button btnTest = new Button (mContext);
+
+    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        layoutParams.setMargins(layoutMarginLeft, layoutMarginTop, layoutMaringRight, layoutMaringBottom);
+
+        btn.setLayoutParams(layoutParams);
+        Log.i("test", answers.toString());
+        mRelativeLayout.addView(btn);
+        // Drawable myDrawable = getResources().getDrawable(R.drawable.download);
+
+        // Drawable myDrawable = getResources().getDrawable(<insert your id here>);e =
+        // btn.setImageDrawable(@drawable/download.png);
+        //   btn.setImageDrawable(android.graphics.drawable.Drawable.createFromPath("@drawablhjkhkjhkhhkjhkhje/download"));
+        btnTest.setText(answers[current_answer]);
+        String testString = answers[current_answer];
+        Log.i ("testing string output", testString);
+        Log.i ("testing string output", "Bus");
+
+        if (answers[current_answer].equals("Bus") )
+        {
+        Log.i ("does it get in", "yes");
+        btn.setImageResource(R.drawable.apple);
+        }
+        //having buttons as they own unquie image
+        // having the pressed button be saved and sent back.
+
+
+
+                */
+/*else if (testString == "Bus" || testString == "Car"|| testString == "Tram")
+                {
+                    btn.setImageResource(R.drawable.apple);
+                }*//*
+
+
+
+        // btn.setImageResource(R.drawable.download);
+        Log.i ("set the image", "yes");
+
+        // btn.setText(answers[current_answer]);
+
+
+
+
+        btn.setOnClickListener(new View.OnClickListener() {
+public void onClick(View view) {
+        // Perform action on click
+        Log.i("testing", "will this work");
+        //  ImageButton b = (ImageButton) view;
+        // ((MainActivity) getActivity()).saveAnswer(qID, person_id, b.getText().toString());
+        ((MainActivity) getActivity()).selectionQuestion(view);
+        }
+        });
+*/
