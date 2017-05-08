@@ -185,6 +185,38 @@ public class httpCom {
             }
         }
     }
+    
+    public static JSONObject getImage(String path) {
+        BufferedReader reader = null;
+        HttpURLConnection con = null;
+        
+        try {
+            URL url = new URL(BASEURL + "surveyimages/" + path);
+            Log.i("URL",url.toString());
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            //Set timeout
+            con.setConnectTimeout(CONNECTTIMEOUT);
+            con.setReadTimeout(SOCKETTIMEOUT);
+
+            InputStream in = con.getInputStream();
+            Bitmap bitmap = BitmapFactory.decodeStream(in);
+
+            in.close();
+            return bitmap;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                int status = con.getResponseCode();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        
+    }
 
 }
 

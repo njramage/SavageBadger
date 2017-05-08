@@ -1,14 +1,14 @@
-from flask import Flask, request, url_for, session, jsonify, render_template, Response
+from flask import Flask, request, url_for, session, jsonify, render_template, Response, send_from_directory
 from flask_httpauth import HTTPBasicAuth
 from itsdangerous import (TimedJSONWebSignatureSerializer
                                   as Serializer, BadSignature, SignatureExpired)
 from functools import wraps
+import os
 
 import handler as hl
 
 #declare app
 app = Flask(__name__)
-
 
 #Security
 auth = HTTPBasicAuth()
@@ -74,6 +74,11 @@ def getFromCode():
         return jsonify({"status" : "Failed"})
     return jsonify({"questions" : questions, "token" : gen_token(auth.username).decode('utf-8'), "status" : "Success" })
 
+#serve images
+@app.route('/surveyimages/<path:filename>', methods=["GET"])
+def getImage(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],'car.png')
+
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
 @tokenAuth
@@ -90,4 +95,5 @@ if __name__ == "__main__":
     #FAKE KEY
     #USE FOR TESTING ONLY
     app.secret_key = 'nwb1g382gb197qweh1o02yhhe324n2hoih41928h31824hron123h84ro1u4r'
-    app.run()
+    app.config['UPLOAD_FOLDER'] = os.path.dirname(os.getcwd()+"/static/images/") 
+    app.run(debug=True)
