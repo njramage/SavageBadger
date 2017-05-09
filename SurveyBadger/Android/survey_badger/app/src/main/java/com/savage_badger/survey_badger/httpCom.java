@@ -1,5 +1,9 @@
-package HTTPCom;
+package com.savage_badger.survey_badger;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 
@@ -18,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class httpCom {
 	//Connection BASEURL
@@ -125,13 +130,15 @@ public class httpCom {
         }
     }
 
-    public static JSONObject getSurvey(String id) {
+    public static ArrayList<Question> getSurvey(String id) {
 
         String USERNAME = "SBSADM";
         String PASS = "n@Twsb3qw9sdNSbnwo21rd";
 
         BufferedReader reader = null;
         HttpURLConnection con = null;
+
+        QuestionList questionList = new QuestionList();
 
         //for login
         byte[] loginBytes = (USERNAME + ":" + PASS).getBytes();
@@ -160,11 +167,14 @@ public class httpCom {
             JSONObject obj = new JSONObject(sb.toString());
 
             if (obj.has("questions")) {
-                return obj;
+                Log.e("httpCon", "Retrieving Questions success");
+                questionList.createQuestions(obj);
+                Log.d("httpCon", "first question: " + questionList.getQustionList().get(0));
+                return questionList.getQustionList();
             } else {
                 Log.e("httpCon", "Retrieving Questions failed");
-                JSONObject handle = new JSONObject().put("result", false);
-                return handle;
+                //JSONObject handle = new JSONObject().put("result", false);
+                return questionList.getQustionList();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,38 +194,6 @@ public class httpCom {
                 }
             }
         }
-    }
-    
-    public static JSONObject getImage(String path) {
-        BufferedReader reader = null;
-        HttpURLConnection con = null;
-        
-        try {
-            URL url = new URL(BASEURL + "surveyimages/" + path);
-            Log.i("URL",url.toString());
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-
-            //Set timeout
-            con.setConnectTimeout(CONNECTTIMEOUT);
-            con.setReadTimeout(SOCKETTIMEOUT);
-
-            InputStream in = con.getInputStream();
-            Bitmap bitmap = BitmapFactory.decodeStream(in);
-
-            in.close();
-            return bitmap;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                int status = con.getResponseCode();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            return null;
-        }
-        
     }
 
 }

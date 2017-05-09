@@ -1,10 +1,10 @@
 package com.savage_badger.survey_badger;
 
+import android.icu.text.LocaleDisplayNames;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -14,18 +14,15 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-
-import HTTPCom.httpCom;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(main_Activity_View);
 
+        answersList = new ArrayList<Answer>();
+
         currentQuestion = 0;// Start at first question
 
         fetchTask getQuestions = new fetchTask();
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         getQuestions.execute(this.survey);
     }
 
-    // gets survey questions as a JSON object
+/*    // gets survey questions as a JSON object
     public void getSurvey(JSONObject s) {
         // reset questions and answers
         questionsList = new ArrayList<Question>();
@@ -124,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             //TODO: Exception message
         }
-    }
+    }*/
 
     // create jsonArray to send answer back
     public void sendAnswers(ArrayList<Answer> answersList) {
@@ -272,6 +271,8 @@ public class MainActivity extends AppCompatActivity {
 
     // onClick method for a set time question
     public void pickTime(View view) {
+        Log.d("Main Activity", "currentQuestion: " + currentQuestion);
+        Log.d("Main Activity", "question id: " + questionsList.get(currentQuestion).getId());
         TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
         if (Build.VERSION.SDK_INT >= 23)
         {
@@ -295,13 +296,15 @@ public class MainActivity extends AppCompatActivity {
 
     // create a new answer and add it to the end of the answers list
     public void saveAnswer(int question, int person, String result){
+        Log.i("Main Activity", "question " + question);
+        Log.i("Main Activity", "result " + result);
         Answer answer = new Answer(question, person, result);
         answersList.add(answer);
         Log.i("Answer",String.valueOf(question)+":"+String.valueOf(person)+":"+result);
     }
 
     //Server connection tasks
-    private class fetchTask extends AsyncTask<String, JSONObject, JSONObject> {
+    private class fetchTask extends AsyncTask<String, ArrayList<Question>, ArrayList<Question>> {
 
         @Override
         protected void onPreExecute() {
@@ -309,17 +312,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected JSONObject doInBackground(String... params) {
-            JSONObject res = null;
-            res = httpCom.getSurvey(params[0]);
-            return res;
+        protected ArrayList<Question> doInBackground(String... params) {
+            questionsList = new ArrayList<Question>();
+            questionsList = httpCom.getSurvey(params[0]);
+            Log.d("Main Activity", "quetsion id" + questionsList.get(0).getId());
+            return questionsList;
         }
 
         @Override
-        protected void onPostExecute(JSONObject s) { 
-            try {
+        protected void onPostExecute(ArrayList<Question> questions) {
+            displayQuestions(questions);
+            /*try {
                 if (s.has("questions")) {
-                    getSurvey(s); 
+                    //getSurvey(s);
                 } else {
                     AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); 
                     alertDialog.setTitle("Fetch Failed");
@@ -355,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 alertDialog.show();
-            } 
+            } */
         }
     }
 
