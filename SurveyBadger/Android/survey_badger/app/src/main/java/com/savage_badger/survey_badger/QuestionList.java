@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 /**
  * Created by nrama on 9/05/2017.
@@ -38,6 +40,9 @@ public class QuestionList {
 
             // fill questions list
             for (int i = 0; i < questions.length(); i++) { // iterate theough all the questions
+                //initialize question object
+                Question question;
+                
                 JSONObject q = questions.getJSONObject(i);
 
                 // turns Answers JSON object into a JSON array for easy manipulation
@@ -58,9 +63,7 @@ public class QuestionList {
                         }
 
                         // create an answers object
-                        Question question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
-
-                        questionList.add(question);// add it to the list
+                        question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
 
                     } catch (JSONException e) {
                         //TODO: Exception message
@@ -69,12 +72,38 @@ public class QuestionList {
                 else {
                     ArrayList<String> possibleAnswers = new ArrayList<String>();
                     possibleAnswers.add(answersJSON.getString(0));
-                    Question question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
-                    questionList.add(question);
+                    question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
                 }
+
+                //Get images from server or local sources
+                question.setImages(getQuestionImages(q.getJSONArray("images")));
+                questionList.add(question);// add it to the list 
             }
         } catch (JSONException e) {
             //TODO: Exception message
         }
+    }
+
+    //gets all the images required for an image
+    private List<Bitmap> getQuestionImages(List<Strings> links) {
+        List<Bitmap> images = new ArrayList<Bitmap>();
+        
+        for (String link: links) {
+            Bitmap bitmap;
+            //If the reference is to a local resource, grab from drawable folder
+            if (link.contains("@drawable/")) {
+                //TODO: Handle local resources (Issues with application context)
+                //Get resource ID
+                //int imageResource = getResources().getIdentifier(link, null, getPackageName());
+                //bitmap = BitmapFactory.decodeResource(context.getResources(),getResources().getDrawable(imageResource));
+                bitmap = null;
+            } else {
+                bitmap = httpCom.getImage(link);
+            }
+
+            images.append(bitmap);
+        }
+
+        return images;
     }
 }

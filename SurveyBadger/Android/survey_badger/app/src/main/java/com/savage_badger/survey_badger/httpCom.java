@@ -191,37 +191,40 @@ public class httpCom {
             }
         }
     }
-
-    public static Bitmap getImage(String path) {
+    
+    public static bitmap getImage(String link) {
         BufferedReader reader = null;
         HttpURLConnection con = null;
+       
+        Bitmap bitmap;
+        
+        //Grab image from server
+        try {    
+            URL url = new URL(BASEURL + "surveyimages/" + link);
+            Log.i("URL",url.toString());
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
 
-        try {
-        URL url = new URL(BASEURL + "surveyimages/" + path);
-        Log.i("URL",url.toString());
-        con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-        
-        //Set timeout
-        con.setConnectTimeout(CONNECTTIMEOUT);
-        con.setReadTimeout(SOCKETTIMEOUT);
-        
-        InputStream in = con.getInputStream();
-        Bitmap bitmap = BitmapFactory.decodeStream(in);
-        
-        in.close();
-        return bitmap;
+            //Set timeout
+            con.setConnectTimeout(CONNECTTIMEOUT);
+            con.setReadTimeout(SOCKETTIMEOUT);
 
-        } catch (Exception e) {
+            InputStream in = con.getInputStream();
+            bitmap = BitmapFactory.decodeStream(in);
+            in.close();
+        }
+        catch (Exception e) {
             e.printStackTrace();
             try {
                 int status = con.getResponseCode();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                return null;
-             } 
+                Log.e("Retieve Images","Unable to get image: "+String.valueOf(status));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            bitmap = null;
         }
+        return bitmap;
+    }
 }
 
 
