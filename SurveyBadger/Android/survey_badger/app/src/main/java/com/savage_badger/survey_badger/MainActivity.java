@@ -153,7 +153,8 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = fm.findFragmentByTag(QUESTION_FRAGMENT);// find any active fragments with the QUESTION_FRAGMENT tag
         FragmentTransaction ft = fm.beginTransaction();// begin a fragment transcation
 
-        if (currentQuestion < questionsList.size())
+
+        if (currentQuestion < questions.size())
         {
             // if the question is a selection question
             if (questions.get(currentQuestion).getType().equals(getString(R.string.question_selection))) {
@@ -242,6 +243,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    
+    //sets the token after server connection
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     // onClick method for a number question
     public void pickNumber(View view) {
@@ -313,15 +319,32 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<Question> doInBackground(String... params) {
-            questionsList = new ArrayList<Question>();
-            questionsList = httpCom.getSurvey(params[0]);
-            Log.d("Main Activity", "quetsion id" + questionsList.get(0).getId());
-            return questionsList;
+            QuestionList questionListCreator = new QuestionList();
+            JSONObject s = httpCom.getSurvey(params[0]);
+            
+            try {
+                if (s.has("questions") && s.has("token")) {
+                    //Set the token for survey submission
+                    setToken(s.getString("token"));
+
+                    //Create question list
+                    questionListCreator.createQuestions(s);
+                    Log.d("Polavo", "first question: " + questionListCreator.getQustionList().get(0));
+                } else {
+                    Log.e("Polavo","Error occured getting the survey from the server");
+                }
+            } catch (Exception e) {
+                Log.e("Polavo","Error occured getting the survey from the server");
+            }
+        
+            return questionListCreator.getQustionList(); 
         }
 
         @Override
         protected void onPostExecute(ArrayList<Question> questions) {
-            displayQuestions(questions);
+            questionsList = questions;
+            displayQuestions(questionsList);
+            
             /*try {
                 if (s.has("questions")) {
                     //getSurvey(s);
