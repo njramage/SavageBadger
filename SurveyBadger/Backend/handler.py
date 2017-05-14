@@ -1,6 +1,9 @@
 #Imports
-from db import Database
 from passlib.hash import sha256_crypt
+try:
+    from db import Database
+except:
+    from polavo.db import Database
 
 #Database file
 #filen = "/var/www/polavo/polavo/Badger.db"
