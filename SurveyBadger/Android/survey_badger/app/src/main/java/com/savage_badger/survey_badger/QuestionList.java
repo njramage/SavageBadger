@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -47,36 +48,49 @@ public class QuestionList {
 
                 // turns Answers JSON object into a JSON array for easy manipulation
                 JSONArray answersJSON = q.getJSONArray("answers");
+                // store them in an array for easy use
+                ArrayList<String> possibleAnswers = new ArrayList<String>();
 
                 if (answersJSON.length() > 1){
                     try {
-                        // get all possible answers
-                        //JSONArray answers = answersJSON.getJSONArray("answers");
-
-                        // store them in an array for easy use
-                        ArrayList<String> possibleAnswers = new ArrayList<String>();
-
                         // fill possible answers list
                         for (int j = 0; j < answersJSON.length(); j++) {
                             String possibleAnswer = answersJSON.getString(j);
                             possibleAnswers.add(possibleAnswer);
                         }
 
-                        // create an answers object
-                        question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
 
                     } catch (JSONException e) {
                         //TODO: Exception message
                     }
                 }
                 else {
-                    ArrayList<String> possibleAnswers = new ArrayList<String>();
                     possibleAnswers.add(answersJSON.getString(0));
-                    question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
+                }
+                
+                // create an answers object
+                question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
+
+                //Get images from server or local sources 
+                JSONArray imagesJSON = q.getJSONArray("images");
+                ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+
+                //If images, extract their strings and fetch them from the server
+                if (imagesJSON.length() != 0 && !imagesJSON.get(0).equals("")) {
+                    ArrayList<String> imageLinks = new ArrayList<String>();
+                    
+                    try {
+                        for (int k = 0; k < imagesJSON.length(); k++) {
+                            imageLinks.add(imagesJSON.getString(k));
+                        } 
+
+                        images = getQuestionImages(imageLinks);    
+                    } catch (JSONException e) {
+                        Log.e("Polavo","Error occured getting image links for Question ID: "+String.valueOf(question.getId()));
+                    }
                 }
 
-                //Get images from server or local sources
-                question.setImages(getQuestionImages(q.getJSONArray("images")));
+                question.setImages(images);        
                 questionList.add(question);// add it to the list 
             }
         } catch (JSONException e) {
@@ -85,8 +99,8 @@ public class QuestionList {
     }
 
     //gets all the images required for an image
-    private List<Bitmap> getQuestionImages(List<Strings> links) {
-        List<Bitmap> images = new ArrayList<Bitmap>();
+    private ArrayList<Bitmap> getQuestionImages(List<String> links) {
+        ArrayList<Bitmap> images = new ArrayList<Bitmap>();
         
         for (String link: links) {
             Bitmap bitmap;
@@ -101,7 +115,7 @@ public class QuestionList {
                 bitmap = httpCom.getImage(link);
             }
 
-            images.append(bitmap);
+            images.add(bitmap);
         }
 
         return images;

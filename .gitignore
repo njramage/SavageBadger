@@ -48,3 +48,6 @@ SurveyBadger/Backend/sec.py
 
 #ignore .idea folder
 **/.idea/
+
+#Database files
+*.db

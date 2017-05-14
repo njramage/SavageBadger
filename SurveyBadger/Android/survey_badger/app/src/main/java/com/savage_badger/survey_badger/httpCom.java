@@ -7,6 +7,7 @@ import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -192,7 +193,7 @@ public class httpCom {
         }
     }
     
-    public static bitmap getImage(String link) {
+    public static Bitmap getImage(String link) {
         BufferedReader reader = null;
         HttpURLConnection con = null;
        

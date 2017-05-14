@@ -34,7 +34,7 @@ def getQuestions(surveyID, user = None):
     #grab questions for survey
     cursor = db.retrieve("questions","Survey",surveyID) 
     for q in cursor:
-        question = {"id" :q['ID'] , "question" : q['Question'] , "type" : q['Answer_type'] , "answers" : q['Answer_text'].split(",")}
+        question = {"id" :q['ID'] , "question" : q['Question'] , "type" : q['Answer_type'] , "answers" : q['Answer_text'].split(","), "images" : q['Image_links'].split(",")}
         questions.append(question)
 
     #close db and return questions
