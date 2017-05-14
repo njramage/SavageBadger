@@ -50,4 +50,4 @@ SurveyBadger/Backend/sec.py
 **/.idea/
 
 #Database files
-*.db
+**.db
