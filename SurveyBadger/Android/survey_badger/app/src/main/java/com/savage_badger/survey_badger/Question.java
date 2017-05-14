@@ -2,12 +2,13 @@ package com.savage_badger.survey_badger;
 
 import java.util.List;
 import android.graphics.Bitmap;
+import android.support.v4.app.Fragment;
 
 /**
  * Created by nathan on 14/12/16.
  */
 
-public class Question {
+public class Question  {
 
     private int id;
     private String question;

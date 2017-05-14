@@ -1,5 +1,6 @@
 package com.savage_badger.survey_badger;
 
+import android.graphics.Bitmap;
 import android.icu.text.LocaleDisplayNames;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private String survey;
     private View main_Activity_View, number_Question_View, selection_Question_View;
     private TextView Question_Title;
+
+    private List<Bitmap> bitmapImages;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
         this.survey = "Transpotation_Survey";
         getQuestions.execute(this.survey);
+
+
+
     }
 
 /*    // gets survey questions as a JSON object
@@ -154,8 +162,11 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = fm.beginTransaction();// begin a fragment transcation
 
 
+
+
         if (currentQuestion < questions.size())
         {
+
             // if the question is a selection question
             if (questions.get(currentQuestion).getType().equals(getString(R.string.question_selection))) {
                 Log.i ("getting into Select", "testing");
@@ -170,7 +181,10 @@ public class MainActivity extends AppCompatActivity {
                  ft.add(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
                     ft.commit();
                 }
+
+                bitmapImages = questions.get(currentQuestion).getImages();
             }
+
 
             // if the question is a number question
             else if (questions.get(currentQuestion).getType().equals(getString(R.string.question_number))) {
@@ -308,6 +322,13 @@ public class MainActivity extends AppCompatActivity {
         answersList.add(answer);
         Log.i("Answer",String.valueOf(question)+":"+String.valueOf(person)+":"+result);
     }
+    public List<Bitmap> BitmapImages()
+    {
+       /// ArrayList questions = new ArrayList<Question>;
+        return bitmapImages;
+        // questions.get(currentQuestion).getType().equals(
+
+    }
 
     //Server connection tasks
     private class fetchTask extends AsyncTask<String, ArrayList<Question>, ArrayList<Question>> {
@@ -418,5 +439,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+
+
     }
 }

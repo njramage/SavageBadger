@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+
 /**
  * Created by nathan on 27/01/17.
  */
@@ -27,6 +29,7 @@ public class SelectionFragment extends Fragment {
     private static final String QUESTION_TEXT = "QUESTION_TEXT";
     private static final String QUESTION_ANSWERS = "QUESTION_ANSWERS";
     private static final String QUESTION_ID = "QUESTION_ID";
+
 
     private String[] answers;
     private String questionText;
@@ -148,31 +151,33 @@ public class SelectionFragment extends Fragment {
 
                // btn.setImageResource(H);
 
-
+               //if (answers[current_answer].equals(current_answer+".jpg"))
                 if (answers[current_answer].equals("Bus"))
                 {
                     buttonImage = R.drawable.bus;
-                    btn.setImageResource(buttonImage);
+                    //  btn.setImageResource(buttonImage);
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(0));
                 }
+
                 else if (answers[current_answer].equals("Car"))
                 {
                     buttonImage = R.drawable.car;
-                    btn.setImageResource(buttonImage);
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(1));
                 }
                 else if(answers[current_answer].equals("Ferry"))
                 {
                     buttonImage = R.drawable.ferry;
-                    btn.setImageResource(buttonImage);
+                      btn.setImageResource(buttonImage);
                 }
                 else if (answers[current_answer].equals("Train"))
                 {
                     buttonImage = R.drawable.train;
-                    btn.setImageResource(buttonImage);
+                      btn.setImageResource(buttonImage);
                 }
                 else if (answers[current_answer].equals("Tram"))
                 {
                     buttonImage = R.drawable.tram;
-                    btn.setImageResource(buttonImage);
+                      btn.setImageResource(buttonImage);
                 }
 
 

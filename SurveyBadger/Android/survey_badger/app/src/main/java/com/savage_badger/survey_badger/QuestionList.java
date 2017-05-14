@@ -1,5 +1,6 @@
 package com.savage_badger.survey_badger;
 
+import android.app.Fragment;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -90,7 +91,8 @@ public class QuestionList {
                     }
                 }
 
-                question.setImages(images);        
+                question.setImages(images);
+
                 questionList.add(question);// add it to the list 
             }
         } catch (JSONException e) {
