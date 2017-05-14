@@ -5,7 +5,10 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 from functools import wraps
 import os
 
-import handler as hl
+try: 
+    import handler as hl
+except:
+    import polavo.handler as hl
 
 #declare app
 app = Flask(__name__)
@@ -77,7 +80,7 @@ def getFromCode():
 #serve images
 @app.route('/surveyimages/<path:filename>', methods=["GET"])
 def getImage(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],'car.png')
+    return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
