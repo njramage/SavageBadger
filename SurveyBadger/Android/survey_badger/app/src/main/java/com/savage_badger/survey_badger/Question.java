@@ -1,7 +1,6 @@
 package com.savage_badger.survey_badger;
 
 import java.util.List;
-import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 
 /**
@@ -14,7 +13,7 @@ public class Question  {
     private String question;
     private String type;
     private List<String> answers;
-    private List<Bitmap> images;
+    private List<Image> images;
 
     // Used to create a question object
     public Question(int id, String question, String type, List<String> answers) {
@@ -59,11 +58,11 @@ public class Question  {
         return answers;
     }
     
-    public void setImages(List<Bitmap> images) {
+    public void setImages(List<Image> images) {
         this.images = images;
     }
 
-    public List<Bitmap> getImages() {
+    public List<Image> getImages() {
         return this.images;
     }
 }

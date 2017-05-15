@@ -74,7 +74,7 @@ public class QuestionList {
 
                 //Get images from server or local sources 
                 JSONArray imagesJSON = q.getJSONArray("images");
-                ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+                ArrayList<Image> images = new ArrayList<Image>();
 
                 //If images, extract their strings and fetch them from the server
                 if (imagesJSON.length() != 0 && !imagesJSON.get(0).equals("")) {
@@ -101,23 +101,23 @@ public class QuestionList {
     }
 
     //gets all the images required for an image
-    private ArrayList<Bitmap> getQuestionImages(List<String> links) {
-        ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+    private ArrayList<Image> getQuestionImages(List<String> links) {
+        ArrayList<Image> images = new ArrayList<Image>();
         
         for (String link: links) {
-            Bitmap bitmap;
+            Image img = new Image();
             //If the reference is to a local resource, grab from drawable folder
             if (link.contains("@drawable/")) {
                 //TODO: Handle local resources (Issues with application context)
                 //Get resource ID
                 //int imageResource = getResources().getIdentifier(link, null, getPackageName());
                 //bitmap = BitmapFactory.decodeResource(context.getResources(),getResources().getDrawable(imageResource));
-                bitmap = null;
+                img.setValue(link.replace("@drawable/",""));
             } else {
-                bitmap = httpCom.getImage(link);
+                img.setBitmap(httpCom.getImage(link));
+                img.setValue(link);
             }
-
-            images.add(bitmap);
+            images.add(img);
         }
 
         return images;
