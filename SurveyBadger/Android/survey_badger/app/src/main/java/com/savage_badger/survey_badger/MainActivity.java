@@ -186,7 +186,9 @@ public class MainActivity extends AppCompatActivity {
                     ft.commit();
                 }
 
+
                 bitmapImages = questions.get(currentQuestion).getImages();
+
             }
 
 
@@ -329,6 +331,8 @@ public class MainActivity extends AppCompatActivity {
     public List<Image> BitmapImages()
     {
        /// ArrayList questions = new ArrayList<Question>;
+
+
         return bitmapImages;
         // questions.get(currentQuestion).getType().equals(
 

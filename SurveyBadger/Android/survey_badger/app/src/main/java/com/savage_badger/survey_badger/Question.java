@@ -59,7 +59,9 @@ public class Question  {
     }
     
     public void setImages(List<Image> images) {
-        this.images = images;
+
+
+         this.images = images;
     }
 
     public List<Image> getImages() {

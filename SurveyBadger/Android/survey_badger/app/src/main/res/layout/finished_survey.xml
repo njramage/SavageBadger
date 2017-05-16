@@ -20,7 +20,7 @@
             android:id="@+id/badger_image"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/logofinal"
             android:layout_below="@id/text_thanks"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"/>

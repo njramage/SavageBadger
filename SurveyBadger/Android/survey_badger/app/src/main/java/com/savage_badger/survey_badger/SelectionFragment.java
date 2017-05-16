@@ -2,6 +2,7 @@ package com.savage_badger.survey_badger;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -110,6 +111,15 @@ public class SelectionFragment extends Fragment {
             {
                 numBtns = 3;
             }
+            if (answers[current_answer].equals("Not very"))
+            {
+                numBtns = 3;
+            }
+            if (answers[current_answer].equals("Not Noisy"))
+            {
+                numBtns = 3;
+            }
+
             for (int j = 0; j < numBtns; j++) {
                 int layoutMarginLeft = 100 + (100 * (j));
                 int layoutMarginTop = 50 + (80 * (i));
@@ -129,7 +139,7 @@ public class SelectionFragment extends Fragment {
                 else if (answers[current_answer].equals("Bus"))
                 {
                     layoutMarginLeft = 65 + (100 * (j));
-                    layoutMarginTop = 100 + (80 * (i));
+                    layoutMarginTop = 115 + (80 * (i));
 
                 }
                 else if (answers[current_answer ].equals("Ferry"))
@@ -138,17 +148,47 @@ public class SelectionFragment extends Fragment {
                      layoutMarginTop = 100 + (80 * (i));
 
                 }
-                else if (answers[current_answer].equals("Unsafe"))
+                else if (answers[current_answer].equals("Unsafe" ))
                 {
-                    layoutMarginLeft = 30 + (100 * (j));
+                    layoutMarginLeft = 20 + (100 * (j));
 
 
                 }
                 else if (answers[current_answer].equals("Neutral"))
                 {
-                    layoutMarginLeft = 55 + (100 * (j));
+                    layoutMarginLeft = 50 + (100 * (j));
                 }
                 else if (answers[current_answer].equals("Safe"))
+                {
+                    layoutMarginLeft = 80 + (100 * (j));
+
+                }
+                else if (answers[current_answer].equals("Not very" ))
+                {
+                    layoutMarginLeft = 20 + (100 * (j));
+
+
+                }
+                else if (answers[current_answer].equals("Neutral"))
+                {
+                    layoutMarginLeft = 50 + (100 * (j));
+                }
+                else if (answers[current_answer].equals("Quiet"))
+                {
+                    layoutMarginLeft = 80 + (100 * (j));
+
+                }
+                else if (answers[current_answer].equals("Not Noisy" ))
+                {
+                    layoutMarginLeft = 20 + (100 * (j));
+
+
+                }
+                else if (answers[current_answer].equals("Neutral"))
+                {
+                    layoutMarginLeft = 50 + (100 * (j));
+                }
+                else if (answers[current_answer].equals("Very Noisy"))
                 {
                     layoutMarginLeft = 80 + (100 * (j));
 
@@ -187,7 +227,9 @@ public class SelectionFragment extends Fragment {
                 ///IMAGE PLACING ON SCREENS.
                 Log.i("testing current anw", Integer.toString(current_answer));
                 //Log.i ("testing answers", answers[current_answer]);
-                btn.setBackgroundColor(2);
+
+
+                btn.setBackgroundColor(1);
 
 
                 final String btnAnswer = answers[current_answer];
@@ -208,13 +250,17 @@ public class SelectionFragment extends Fragment {
                 {
                    // buttonImage = R.drawable.bus;
                     //  btn.setImageResource(buttonImage);
-                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap());
+
+                    //btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap());
+
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap(), 400,400, false));
                 }
 
                 else if (answers[current_answer].equals("Car"))
                 {
                    // buttonImage = R.drawable.car;
                     btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(1).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(1).getBitmap(), 400,400, false));
 
 
                 }
@@ -222,27 +268,68 @@ public class SelectionFragment extends Fragment {
                 {
                     //buttonImage = R.drawable.ferry;
                       //btn.setImageResource(buttonImage);
-                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap());
+                   // btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap(), 500,500, false));
                 }
                 else if (answers[current_answer].equals("Train"))
                 {
                     //buttonImage = R.drawable.train;
                      // btn.setImageResource(buttonImage);
-                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(3).getBitmap());
+                 //   btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(3).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(3).getBitmap(), 500,500, false));
                 }
                 else if (answers[current_answer].equals("Unsafe"))
                 {
-                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(3).getBitmap());
+                   // btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap(), 450,450, false));
 
                 }
                 else if (answers[current_answer].equals("Neutral"))
                 {
-                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap());
+                  //  btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(1).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(1).getBitmap(), 450,450, false));
 
                 }
                 else if (answers[current_answer].equals("Safe"))
                 {
-                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(3).getBitmap());
+                  //  btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap(), 450,450, false));
+
+                }
+                else if (answers[current_answer].equals("Not very"))
+                {
+                    // btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap(), 450,450, false));
+
+                }
+                else if (answers[current_answer].equals("Neutral"))
+                {
+                    //  btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(1).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(1).getBitmap(), 450,450, false));
+
+                }
+                else if (answers[current_answer].equals("Quite"))
+                {
+                    //  btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap(), 450,450, false));
+
+                }
+                else if (answers[current_answer].equals("Not Noisy"))
+                {
+                    // btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap(), 450,450, false));
+
+                }
+                else if (answers[current_answer].equals("Neutral"))
+                {
+                    //  btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(1).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(1).getBitmap(), 450,450, false));
+
+                }
+                else if (answers[current_answer].equals("Very Noisy"))
+                {
+                    //  btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap());
+                    btn.setImageBitmap(Bitmap.createScaledBitmap( ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap(), 450,450, false));
 
                 }
                /* else if (answers[current_answer].equals("Tram"))
