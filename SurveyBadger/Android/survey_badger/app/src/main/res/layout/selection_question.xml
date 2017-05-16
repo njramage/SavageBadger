@@ -18,7 +18,8 @@
         android:text="Savage Badger"
         android:textSize="30dp"
         android:layout_centerHorizontal="true"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:layout_marginTop="50dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -95,21 +95,70 @@ public class SelectionFragment extends Fragment {
         RelativeLayout mRelativeLayout = (RelativeLayout) view.findViewById(R.id.button_container);
         for (int i = 0; i < numRows; i++)
         {
-            int numBtns;
+            int numBtns = 2;
             if (numCols > 0)// the row needs 3 buttons
             {
-                numBtns = 3;
+                //numBtns = 3;
             }
             else// calcualte how many buttons the row should have
             {
                 numBtns = numRows % 3;
 
             }
+
+            if (answers[current_answer].equals("Unsafe"))
+            {
+                numBtns = 3;
+            }
             for (int j = 0; j < numBtns; j++) {
-                int layoutMarginLeft = 30 + (100 * (j));
-                int layoutMarginTop = 30 + (80 * (i));
+                int layoutMarginLeft = 100 + (100 * (j));
+                int layoutMarginTop = 50 + (80 * (i));
+               // int layoutMaringRight = 300 + (100 * (j));
                 int layoutMaringRight = 0;
-                int layoutMaringBottom = 0;
+                int layoutMaringBottom = 0+ (80 * (i));;
+
+                if (answers[current_answer].equals("Car"))
+                {
+                     layoutMarginLeft = 65 + (100 * (j));
+                }
+                else if (answers[current_answer].equals("Train"))
+                {
+                    layoutMarginLeft = 100 + (100 * (j));
+
+                }
+                else if (answers[current_answer].equals("Bus"))
+                {
+                    layoutMarginLeft = 65 + (100 * (j));
+                    layoutMarginTop = 100 + (80 * (i));
+
+                }
+                else if (answers[current_answer ].equals("Ferry"))
+                {
+                    layoutMarginLeft = 100 + (100 * (j));
+                     layoutMarginTop = 100 + (80 * (i));
+
+                }
+                else if (answers[current_answer].equals("Unsafe"))
+                {
+                    layoutMarginLeft = 30 + (100 * (j));
+
+
+                }
+                else if (answers[current_answer].equals("Neutral"))
+                {
+                    layoutMarginLeft = 55 + (100 * (j));
+                }
+                else if (answers[current_answer].equals("Safe"))
+                {
+                    layoutMarginLeft = 80 + (100 * (j));
+
+                }
+
+
+
+
+                Log.i("testing numBtns", Integer.toString(numBtns));
+                Log.i ("testing J ", Integer.toString(j));
 
 
                 Context mContext = getContext();
@@ -124,7 +173,7 @@ public class SelectionFragment extends Fragment {
 
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                layoutParams.addRule(RelativeLayout.ALIGN_LEFT);// ALIGN_PARENT_LEFT);
                 layoutParams.setMargins(layoutMarginLeft, layoutMarginTop, layoutMaringRight, layoutMaringBottom);
 
                 btn.setLayoutParams(layoutParams);
@@ -136,11 +185,14 @@ public class SelectionFragment extends Fragment {
                 ///ISSUES LEFT
                 ///HAVING IT DYNAMICALLY SET BUTTON IMAGES
                 ///IMAGE PLACING ON SCREENS.
+                Log.i("testing current anw", Integer.toString(current_answer));
+                //Log.i ("testing answers", answers[current_answer]);
+                btn.setBackgroundColor(2);
 
 
                 final String btnAnswer = answers[current_answer];
-                Log.i ("testing string output", btnAnswer);
-                Log.i ("testing string output", "Bus");
+              //  Log.i ("testing string output", btnAnswer);
+             //   Log.i ("testing string output", "Bus");
 
                 int buttonImage = 0; // R.drawable.bus;
               //  Log.i("what is the int", Integer.toString(H));
@@ -154,31 +206,51 @@ public class SelectionFragment extends Fragment {
                //if (answers[current_answer].equals(current_answer+".jpg"))
                 if (answers[current_answer].equals("Bus"))
                 {
-                    buttonImage = R.drawable.bus;
+                   // buttonImage = R.drawable.bus;
                     //  btn.setImageResource(buttonImage);
-                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(0));
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(0).getBitmap());
                 }
 
                 else if (answers[current_answer].equals("Car"))
                 {
-                    buttonImage = R.drawable.car;
-                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(1));
+                   // buttonImage = R.drawable.car;
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(1).getBitmap());
+
+
                 }
                 else if(answers[current_answer].equals("Ferry"))
                 {
-                    buttonImage = R.drawable.ferry;
-                      btn.setImageResource(buttonImage);
+                    //buttonImage = R.drawable.ferry;
+                      //btn.setImageResource(buttonImage);
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap());
                 }
                 else if (answers[current_answer].equals("Train"))
                 {
-                    buttonImage = R.drawable.train;
-                      btn.setImageResource(buttonImage);
+                    //buttonImage = R.drawable.train;
+                     // btn.setImageResource(buttonImage);
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(3).getBitmap());
                 }
-                else if (answers[current_answer].equals("Tram"))
+                else if (answers[current_answer].equals("Unsafe"))
                 {
-                    buttonImage = R.drawable.tram;
-                      btn.setImageResource(buttonImage);
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(3).getBitmap());
+
                 }
+                else if (answers[current_answer].equals("Neutral"))
+                {
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(2).getBitmap());
+
+                }
+                else if (answers[current_answer].equals("Safe"))
+                {
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(3).getBitmap());
+
+                }
+               /* else if (answers[current_answer].equals("Tram"))
+                {
+                    //buttonImage = R.drawable.tram;
+                     // btn.setImageResource(buttonImage);
+                    btn.setImageBitmap(    ((MainActivity)getActivity()).BitmapImages().get(4).getBitmap());
+                }*/
 
 
 
@@ -209,7 +281,7 @@ public class SelectionFragment extends Fragment {
                        // Button b = (Button) view;
                        // ((MainActivity) getActivity()).saveAnswer(qID, person_id, b.getText().toString());
                         ((MainActivity) getActivity()).saveAnswer(qID, person_id, btnAnswer);
-                        ((MainActivity) getActivity()).selectionQuestion(view);
+                       ((MainActivity) getActivity()).selectionQuestion(view);
                         Log.i ("did they get the answer", btnAnswer);
                     }
                 });

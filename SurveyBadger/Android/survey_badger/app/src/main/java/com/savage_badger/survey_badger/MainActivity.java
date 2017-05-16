@@ -16,7 +16,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private View main_Activity_View, number_Question_View, selection_Question_View;
     private TextView Question_Title;
 
-    private List<Bitmap> bitmapImages;
+    private List<Image> bitmapImages;
 
 
     @Override
@@ -60,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
         this.survey = "Transpotation_Survey";
         getQuestions.execute(this.survey);
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
 
 
 
@@ -322,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
         answersList.add(answer);
         Log.i("Answer",String.valueOf(question)+":"+String.valueOf(person)+":"+result);
     }
-    public List<Bitmap> BitmapImages()
+    public List<Image> BitmapImages()
     {
        /// ArrayList questions = new ArrayList<Question>;
         return bitmapImages;
