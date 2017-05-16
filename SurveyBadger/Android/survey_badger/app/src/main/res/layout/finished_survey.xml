@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
-            android:text="Savage Badger thanks you for your submission!"
+            android:text="Polavo thanks you for your submission!"
             android:textSize="30dp"/>
 
         <ImageView
