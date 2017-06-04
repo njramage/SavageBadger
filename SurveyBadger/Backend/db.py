@@ -12,7 +12,14 @@ class Database:
         self.filename = kwargs.get('filename')
         self._db = sqlite3.connect(self.filename)
         self._db.row_factory = sqlite3.Row
+        self.init()
 
+    def init(self):
+        self._db.execute('create table IF NOT EXISTS users (ID INTEGER PRIMARY KEY NOT NULL, Name text, Email text, Type text, Units text)')
+        self._db.execute('create table IF NOT EXISTS tutorials (ID text PRIMARY KEY NOT NULL, Unit text, Tutor INTEGER, Semester text)')
+        self._db.execute('create table IF NOT EXISTS questions (ID INTEGER PRIMARY KEY NOT NULL, Survey INTEGER, Question text, Answer_type text, Answer_text text, Image_links text)')
+        self._db.execute('create table IF NOT EXISTS surveys (ID INTEGER PRIMARY KEY NOT NULL, Tutorial text, Date text, Attendance INTEGER, Early_leavers INTEGER, Code text, Expires text)')
+        self._db.execute('create table IF NOT EXISTS answers (ID INTEGER PRIMARY KEY NOT NULL, Question INTEGER, Person INTEGER, Result text)')
 
     def insert(self, table, row):
         keys = sorted(row.keys())
@@ -21,31 +28,48 @@ class Database:
         self._db.execute(q,values)
         self._db.commit()
 
-    def retrieve(self, table, key, val):
-        cursor = self._db.execute('select * from {} where {} = ?'.format(table, key), (val,))
+    def retrieve(self, table, keypairs = None):
+        if keypairs != None:
+            query = 'where'
+            keys = sorted(keypairs.keys())
+            values = tuple([keypairs[k] for k in keys])
+            for key in keys:
+                query += " {} = ? AND".format(key)
+            
+            query = query[:-4]
+            cursor = self._db.execute('select * from {} {}'.format(table, query),values)
+        else:
+            cursor = self._db.execute('select * from {}'.format(table))
         
         rows = [dict(row) for row in cursor.fetchall()]
         return rows
-                
-    def retrieveAll(self, table):
-        cursor = self._db.execute('select * from {}'.format(table))
-        
-        rows = [dict(row) for row in cursor.fetchall()]
-        return rows
+    
+    def retrieveQuery(self, query):
+        """ 
+            WARNING: NOT SAFE WITH USER INPUT. ONLY USE CLEAN AND TRUSTED VALUES
 
+            Performs table join select queries
+        """
+        cursor = self._db.execute("SELECT "+query)
+        rows = [dict(row) for row in cursor.fetchall()]
+        return rows
     
     def update(self, table, row, ID):
         #Create set method
         setStr = ""
         for k in row:
-            if k != 'ID':
-                setStr += "{} = {}, ".format(k, row[k])
+            if k != ID[0]:
+                #More precise type handling
+                if isinstance(row[k],str):
+                    setStr += "{} = '{}', ".format(k, row[k])
+                else:
+                    setStr += "{} = {}, ".format(k, row[k])
 
         #Remove trailing comma and space
         setStr = setStr[:(len(setStr)-2)]
-        print(setStr) 
+        #print(setStr) 
         #execute
-        self._db.execute('update {} set {}  where ID = ?'.format(table,setStr),(ID,))
+        self._db.execute('update {} set {}  where {} = ?'.format(table,setStr,ID[0]),(ID[1],))
         self._db.commit()
 
     def delete(self, table, key, val):
@@ -61,26 +85,7 @@ class Database:
         self._db.close()
         del self.filename
 
-    def __iter__(self):
-        cursor = self._db.execute('select * from {}'.format(self._table))
-        for row in cursor:
-            yield dict(row)
-
-
-def init():
-    db = Database(filename = 'Badger.db')
-    db.RunSQL('create table IF NOT EXISTS people (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, First_Name text, Last_Name text, DOB text, Gender text, Country ENUM, Suburb text, Job_title text, Interests text)')
-    db.RunSQL('create table IF NOT EXISTS questions (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL,  Survey INTEGER, Question text, Answer_type text, Answer_text text, Image_links text)')
-    db.RunSQL('create table IF NOT EXISTS subquestions (ID INTEGER PRIMARY KEY NOT NULL, Parent_ID INTEGER, Required_Answer text )')
-    db.RunSQL('create table IF NOT EXISTS company (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, Name text, Industries text, Num_surveys INTEGER)')
-    db.RunSQL('create table IF NOT EXISTS surveyTransaction (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, CompanyName text, Survey INTEGER, Cost INTEGER)')
-    db.RunSQL('create table IF NOT EXISTS survey (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, Name text, Topic text, Company INTEGER, Industry text)')
-    db.RunSQL('create table IF NOT EXISTS answers (ID INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL, Question INTEGER, Person INTEGER, Result text)')
-    db.close()
-
-
 if __name__ == "__main__":
     print("Initializing Database")
-    init()
-
+    db = Database(filename = "Polavo.db")
     print("Done")

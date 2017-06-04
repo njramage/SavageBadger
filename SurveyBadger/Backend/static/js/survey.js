@@ -59,7 +59,7 @@ function submitSurvey() {
                 console.log(data);
                 var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
                 var header = $('<h1>').html("Survey Submitted!");
-                var logo = $('<img alt="Polavo Logo" src="../../static/images/badger.png">');
+                var logo = $('<img alt="Polavo Logo" src="../../static/images/Logo.png">');
                 var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
                 var next = $('<a href="/">').html("Click here to fill out another survey");
 
@@ -289,7 +289,7 @@ function getAnswer() {
 function startPage() {
     var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
     
-    var heading = $('<h1>').html("Welcome to Polavo!");
+    var heading = $('<h1>').html("Welcome!");
     var instruction = $('<p>').html("Please enter the code for the survey you wish to complete");
     var wait = $('<p id="wait" hidden>').html("Please Wait");
     var codeEntry = $('<input type="text" id="code" size="20" style="font-size:28px;">');

@@ -42,7 +42,7 @@ SurveyBadger/Backend/sec.py
 
 #Ignore pycache
 **/__pycache__/
-
+**.pyc
 #Swap files
 **/*.py.swp
 
