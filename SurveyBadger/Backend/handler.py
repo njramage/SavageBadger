@@ -2,7 +2,7 @@
 from passlib.hash import sha256_crypt
 from datetime import datetime, timedelta
 import random
-import strings
+import string
 
 try:
     from db import Database
@@ -19,7 +19,7 @@ filen = "Polavo.db"
 
 def checkLogin(user,passwd):
     #Connect to databse
-    data = Database(filename = filen)
+    data = Database(filename = filename)
     actual = data.retrieve('users',{'User' : user})[0]
     data.close()
     if actual != [] and user == actual['User'] and sha256_crypt.verify(passwd, actual['Pass']):
@@ -27,7 +27,7 @@ def checkLogin(user,passwd):
     else:
         return False
 
-def getUserID(name):
+def getUserID(name,filename = filen):
     """
         Returns the user's ID from thier username
 
@@ -36,9 +36,9 @@ def getUserID(name):
         returns int User's ID or -1 if doesn't exist
     """
     #Connect to Database
-    db = Database(filename = filen)
+    db = Database(filename = filename)
 
-    user = data.retrieve('users',{'Name' : name})
+    user = db.retrieve('users',{'Name' : name})
 
     db.close()
 
@@ -51,57 +51,61 @@ def getUserID(name):
 # Student Methods
 #
 
-def getQuestions(code):
+def getQuestions(code,filename = filen):
     """
         Retrieves survey questions from a database 
 
         code : str : access code used to identify the survey
 
-        returns tuple : 0 - Boolean status
-                        1 - List of question dictonaries OR Error string
+        returns dict :  status - status of request
+                        survey - survey id 
+                        questions - List of question dictonaries 
+                        error - Error string (if applicable)
     """
     #Connect to database
-    db = Database(filename = filen)
+    db = Database(filename = filename)
 
     #Get the survey from access code
     survey = db.retrieve("surveys",{"Code" : code})
     if len(survey) == 0:
         #If code doesn't exist, return false
         db.close()
-        return (False,"Invalid Code")
+        return {"status" : False,"error" : "Invalid Code"}
     #Else check if code has expired
-    elif datetime.now() > datetime.strptime(survey[0]["Expires"], "%Y-%m-%d %H%M"):
-        return (False,"Survey has expired")
+    elif datetime.now() > datetime.strptime(survey[0]["Expires"], "%H%M %d/%m/%Y"):
+        return {"status" : False,"error" : "Survey has expired"}
 
     #grab questions for survey
-    cursor = db.retrieve("questions",{"Survey" : survey[0]["ID"]}) 
+    questions = []
+    cursor = db.retrieve("questions") 
     for q in cursor:
         question = {"id" :q['ID'] , "question" : q['Question'] , "type" : q['Answer_type'] , "answers" : q['Answer_text'].split(","), "images" : q['Image_links'].split(",")}
         questions.append(question)
 
     #close db and return questions
     db.close()
-    return (True,questions)
+    return {"status" : True, "survey" : survey[0]["ID"], "questions" : questions}
           
-def submit(user, answers):
+def submit(user, survey, answers,filename = filen):
     """
         Submits a survey result into the database
 
         user    : string     : the users string identifier 
+        survey  : int        : the survey ID of the completed survey 
         answers : list(dict) : list of survey questions IDs and results
 
 
         returns True if succesfully submitted, else False
     """
     #Connect to databse
-    db = Database(filename = filen)
+    db = Database(filename = filename)
 
     userID = getUserID(user)
 
     #Add answers to database
     try:
         for ans in answers:
-            db.insert("answers",{"Question" : int(ans['QuestionID']), "Person" : int(userID), "Result" : str(ans['Result'])})
+            db.insert("answers",{"Survey" : survey, "Question" : int(ans['Question']), "Person" : userID, "Result" : str(ans['Result'])})
     except Exception as e:
         print(e)
         #close db and return failure
@@ -116,7 +120,7 @@ def submit(user, answers):
 # Tutor methods
 #
 
-def getTutorClasses(tutor):
+def getTutorClasses(tutor,filename = filen):
     """
         Returns all the tutorial classes for a particular tutor
 
@@ -125,7 +129,7 @@ def getTutorClasses(tutor):
         return list(string) list of classes for that tutor
     """
     #Connect to databse
-    db = Database(filename = filen)
+    db = Database(filename = filename)
     
     #Get the Tutor's UserID
     userID = getUserID(tutor)
@@ -138,7 +142,7 @@ def getTutorClasses(tutor):
 
     return tutorials
 
-def createSurvey(session, attendence, early):
+def createSurvey(session, attendence, early,filename = filen):
     """
         Creates a survey entry in the database and returns the access code
 
@@ -150,7 +154,7 @@ def createSurvey(session, attendence, early):
         returns str access code for the survey
     """
     #Connect to databse
-    db = Database(filename = filen)
+    db = Database(filename = filename)
 
     #Create survey dictonary
     survey = {"Tutorial" : session, "Attendance" : attendance, "Early_leavers" : early}
@@ -176,14 +180,14 @@ def genCode(length):
 
         returns str of specified length
     """
-    return ''.join(random.SystemRandom().choice(string.ascii_uppercase string.ascii_lowercase + string.digits) for _ in range(length))
+    return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(length))
 
 
 #
 # Unit Coordinator classes
 #
 
-def getResults(uc):
+def getResults(uc,filename = filen):
     """
         Returns all the survey results for a unit coordinator 
 
@@ -195,7 +199,7 @@ def getResults(uc):
                     {survey date, [survey results] } } }  
     """
     #Connect to databse
-    db = Database(filename = filen)
+    db = Database(filename = filename)
 
     #Get the UC user entry
     user = db.retrieve('users',{'Name' : uc})[0]
@@ -215,9 +219,7 @@ def getResults(uc):
             #Get survey results
             surveys = db.retrieve("surveys",{"Tutorial" : tute["ID"]}) 
             for survey in surveys:
-                survey["results"] = db.retrieveQuery("SELECT answers.* FROM ((answers INNER JOIN questions ON answers.Question = questions.ID) 
-                                                        INNER JOIN surveys ON questions.Survey = surveys.ID) 
-                                                        WHERE surveys.ID = {}".format(survey["ID"]))
+                survey["results"] = db.retrieveQuery("SELECT answers.* FROM ((answers INNER JOIN questions ON answers.Question = questions.ID) INNER JOIN surveys ON questions.Survey = surveys.ID) WHERE surveys.ID = {}".format(survey["ID"]))
                 #Remove code and expiry from entry
                 survey.pop("Code",None)
                 survey.pop("Expires",None)

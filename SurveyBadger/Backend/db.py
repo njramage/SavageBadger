@@ -17,9 +17,9 @@ class Database:
     def init(self):
         self._db.execute('create table IF NOT EXISTS users (ID INTEGER PRIMARY KEY NOT NULL, Name text, Email text, Type text, Units text)')
         self._db.execute('create table IF NOT EXISTS tutorials (ID text PRIMARY KEY NOT NULL, Unit text, Tutor INTEGER, Semester text)')
-        self._db.execute('create table IF NOT EXISTS questions (ID INTEGER PRIMARY KEY NOT NULL, Survey INTEGER, Question text, Answer_type text, Answer_text text, Image_links text)')
+        self._db.execute('create table IF NOT EXISTS questions (ID INTEGER PRIMARY KEY NOT NULL, Question text, Answer_type text, Answer_text text, Image_links text)')
         self._db.execute('create table IF NOT EXISTS surveys (ID INTEGER PRIMARY KEY NOT NULL, Tutorial text, Date text, Attendance INTEGER, Early_leavers INTEGER, Code text, Expires text)')
-        self._db.execute('create table IF NOT EXISTS answers (ID INTEGER PRIMARY KEY NOT NULL, Question INTEGER, Person INTEGER, Result text)')
+        self._db.execute('create table IF NOT EXISTS answers (ID INTEGER PRIMARY KEY NOT NULL, Question INTEGER, Survey INTEGER, Person INTEGER, Result text)')
 
     def insert(self, table, row):
         keys = sorted(row.keys())

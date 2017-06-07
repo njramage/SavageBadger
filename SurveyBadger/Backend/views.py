@@ -1,5 +1,5 @@
-from Flask import Flask, request, url_for, session, jsonify, render_template, Response, send_from_directory, abort
-from Flask_httpauth import HTTPBasicAuth
+from flask import Flask, request, url_for, session, jsonify, render_template, Response, send_from_directory, abort
+from flask_httpauth import HTTPBasicAuth
 from itsdangerous import (TimedJSONWebSignatureSerializer
                                   as Serializer, BadSignature, SignatureExpired)
 from functools import wraps
@@ -71,10 +71,8 @@ def login():
 
 
 #create user account
-@app.route('/createuser', method=["POST"])
+@app.route('/createuser', methods=["POST"])
 def createUser():
-    
-
     return jsonify({"status" : True})
 
 
@@ -84,10 +82,10 @@ def createUser():
 @auth.login_required
 def getSurvey(code):
     questions = hl.getQuestions(code) 
-    if questions[0] == False:
-        return jsonify({"status" : False, "error" : questions[1]})
-    else:
-        return jsonify({"questions" : questions[1], "token" : gen_token(code).decode('utf-8'), "status" : True})
+    if questions["status"] == True:
+        questions["token"] = gen_token(code).decode('utf-8') 
+    
+    return jsonify(questions)
 
 #serve images
 @app.route('/surveyimages/<path:filename>', methods=["GET"])

@@ -26,9 +26,9 @@ class DatabaseTestCase(unittest.TestCase):
         self.db.insert("tutorials",{"id" : "MON - 2PM - GP-S504","tutor" : 2,"unit" : "CAB201","semester" : "17SEM2" })
         self.db.insert("tutorials",{"id" : "TUE - 10AM - GP-P504","tutor" : 1,"unit" : "CAB202","semester" : "17SEM2" })
         
-        self.db.insert("questions",{"Survey" : 1, "Question" : "How much are you enjoying this unit", 
+        self.db.insert("questions",{"Question" : "How much are you enjoying this unit", 
                                 "Answer_type" : "Selection", "Answer_text" : "1-5", "Image_links" : "None"})
-        self.db.insert("questions",{"Survey" : 2, "Question" : "How helpful do you think your tutor is to your learning?", 
+        self.db.insert("questions",{"Question" : "How helpful do you think your tutor is to your learning?", 
                                 "Answer_type" : "Selection", "Answer_text" : "1-5", "Image_links" : "None"})
         
         self.db.insert("surveys",{"Tutorial" : "MON - 2PM - GP-S504","Date" : "05/06/2017","Attendance" : 30,
@@ -36,8 +36,8 @@ class DatabaseTestCase(unittest.TestCase):
         self.db.insert("surveys",{"Tutorial" : "TUE - 10AM - GP-P504","Date" : "06/06/2017","Attendance" : 28,
                                 "Early_leavers" : 15,"Code" : "DEF456", "Expires" : "1222 06/06/2017"})
         
-        self.db.insert("answers",{"Question" : 1,"Person" : 3,"Result" : "4"})
-        self.db.insert("answers",{"Question" : 2,"Person" : 3,"Result" : "5"})
+        self.db.insert("answers",{"Question" : 1, "Survey" : 1, "Person" : 3,"Result" : "4"})
+        self.db.insert("answers",{"Question" : 2, "Survey" : 2, "Person" : 3,"Result" : "5"})
     
     
     #Insert tests
@@ -50,7 +50,7 @@ class DatabaseTestCase(unittest.TestCase):
         self.assertEqual(len(self.db.retrieve("tutorials")),1)
     
     def test_insert_questions(self):
-        self.db.insert("questions",{"Survey" : 1, "Question" : "How much are you enjoying this unit", 
+        self.db.insert("questions",{"Question" : "How much are you enjoying this unit", 
                                 "Answer_type" : "Selection", "Answer_text" : "1-5", "Image_links" : ""})
         self.assertEqual(len(self.db.retrieve("questions")),1)
     
@@ -60,7 +60,7 @@ class DatabaseTestCase(unittest.TestCase):
         self.assertEqual(len(self.db.retrieve("surveys")),1)
     
     def test_insert_answers(self):
-        self.db.insert("answers",{"Question" : 1,"Person" : 2,"Result" : "4"})
+        self.db.insert("answers",{"Question" : 1,"Survey" : 1,"Person" : 2,"Result" : "4"})
         self.assertEqual(len(self.db.retrieve("answers")),1)
 
     def test_insert_nonexistent_column(self):
@@ -94,7 +94,7 @@ class DatabaseTestCase(unittest.TestCase):
     
     def test_retrieve_questions_one(self):
         self.loadTestData()
-        self.assertEqual(len(self.db.retrieve("questions",{"survey" : 1 })),1)
+        self.assertEqual(len(self.db.retrieve("questions",{"ID" : 1 })),1)
 
     def test_retrieve_questions_all(self):
         self.loadTestData()
@@ -207,11 +207,11 @@ class DatabaseTestCase(unittest.TestCase):
     
     def test_update_questions(self):
         self.loadTestData()
-        origEntry = self.db.retrieve("questions",{"Survey" : 1})[0]
-        entry = self.db.retrieve("questions",{"Survey" : 1})[0]        
+        origEntry = self.db.retrieve("questions",{"ID" : 1})[0]
+        entry = self.db.retrieve("questions",{"ID" : 1})[0]        
         entry["Answer_text"] = "6-10"
-        self.db.update("questions",entry,("Survey",entry["Survey"]))
-        results = self.db.retrieve("questions",{"Survey" : 1})
+        self.db.update("questions",entry,("ID",entry["ID"]))
+        results = self.db.retrieve("questions",{"ID" : 1})
         newEntry = results[0]
         self.assertNotEqual(origEntry["Answer_text"],newEntry["Answer_text"])
     
@@ -268,8 +268,8 @@ class DatabaseTestCase(unittest.TestCase):
     
     def test_delete_questions(self):
         self.loadTestData()
-        self.db.delete("questions","Survey",1) 
-        self.assertEqual(len(self.db.retrieve("questions",{"survey" : 1})),0)
+        self.db.delete("questions","ID",1) 
+        self.assertEqual(len(self.db.retrieve("questions",{"ID" : 1})),0)
     
     def test_delete_surveys(self):
         self.loadTestData()
