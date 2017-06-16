@@ -51,3 +51,6 @@ SurveyBadger/Backend/sec.py
 
 #Database files
 **.db
+#Except test database
+!**/Backend/Polavo.db
+
