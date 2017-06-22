@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -27,6 +29,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.fragment;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String QUESTION_FRAGMENT = "QUESTION_FRAGMENT";
@@ -35,11 +39,18 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Question> questionsList;
     private ArrayList<Answer> answersList;
     private int currentQuestion;
-    private int person_id = 1;// defualt player id for testing
+    private int person_id = 1;// defualt value for testing
     private String token = null;
     private String survey;
-    private View main_Activity_View, number_Question_View, selection_Question_View;
+    private View main_Activity_View, number_Question_View, selection_Question_View, login_view;
     private TextView Question_Title;
+
+    /*
+    * Login varibles
+    */
+    private Button login_btn;
+    private EditText username, password;
+    private int counter = 10;
 
     private List<Image> bitmapImages;
 
@@ -47,11 +58,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        login_view = getLayoutInflater().inflate(R.layout.fragment_login, null);
         main_Activity_View = getLayoutInflater().inflate(R.layout.activity_main, null);
         number_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
         selection_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
-
-        getIntent().getIntExtra("userid", person_id);
 
         setContentView(main_Activity_View);
 
@@ -59,85 +69,27 @@ public class MainActivity extends AppCompatActivity {
 
         currentQuestion = 0;// Start at first question
 
-        fetchTask getQuestions = new fetchTask();
-
-        this.survey = "Transpotation_Survey";
-        getQuestions.execute(this.survey);
-
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
 
-
-
+        displayLogin();
     }
 
-/*    // gets survey questions as a JSON object
-    public void getSurvey(JSONObject s) {
-        // reset questions and answers
-        questionsList = new ArrayList<Question>();
+    /*
+     * Name: displayLogin
+     * Description: Displays the login fragment
+     * Input: None
+     * Output: None
+     */
+    public  void displayLogin() {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
 
-        answersList = new ArrayList<Answer>();
-
-        try {
-            this.token = s.getString("token");
-            createQuestions(s);/// convert JSON object into a list of question objects
-            displayQuestions(questionsList);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            //TODO Notify user of connection failure
-        }
-    }
-
-    // Creates a list of question objects
-    public void createQuestions(JSONObject jsonObject) {
-        Log.i("Questions",jsonObject.toString());
-
-        try {
-            // turns Question JSON object into a JSON array for easy manipulation
-            JSONArray questions = jsonObject.getJSONArray("questions");
-
-            // fill questions list
-            for (int i = 0; i < questions.length(); i++) { // iterate theough all the questions
-                JSONObject q = questions.getJSONObject(i);
-
-                // turns Answers JSON object into a JSON array for easy manipulation
-                JSONArray answersJSON = q.getJSONArray("answers");
-
-                if (answersJSON.length() > 1){
-                    try {
-                        // get all possible answers
-                        //JSONArray answers = answersJSON.getJSONArray("answers");
-
-                        // store them in an array for easy use
-                        ArrayList<String> possibleAnswers = new ArrayList<String>();
-
-                        // fill possible answers list
-                        for (int j = 0; j < answersJSON.length(); j++) {
-                            String possibleAnswer = answersJSON.getString(j);
-                            possibleAnswers.add(possibleAnswer);
-                        }
-
-                        // create an answers object
-                        Question question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
-
-                        questionsList.add(question);// add it to the list
-
-                    } catch (JSONException e) {
-                        //TODO: Exception message
-                    }
-                }
-                else {
-                    ArrayList<String> possibleAnswers = new ArrayList<String>();
-                    possibleAnswers.add(answersJSON.getString(0));
-                    Question question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
-                    questionsList.add(question);
-                }
-            }
-        } catch (JSONException e) {
-            //TODO: Exception message
-        }
-    }*/
+        // Create a new instance of a login fragment
+        LoginFragment loginFrag = new LoginFragment();
+        ft.add(R.id.fragment_container, loginFrag, QUESTION_FRAGMENT);
+        ft.commit();
+    }// End displayLogin()
 
     // create jsonArray to send answer back
     public void sendAnswers(ArrayList<Answer> answersList) {
@@ -166,9 +118,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentByTag(QUESTION_FRAGMENT);// find any active fragments with the QUESTION_FRAGMENT tag
         FragmentTransaction ft = fm.beginTransaction();// begin a fragment transcation
-
-
-
 
         if (currentQuestion < questions.size())
         {
@@ -270,6 +219,54 @@ public class MainActivity extends AppCompatActivity {
     public void setToken(String token) {
         this.token = token;
     }
+
+    /*
+     * Description: Login checks the enterd credentials against the user credentials in a database.
+     *              If there are correct then the user can login, else the attempts counter is
+     *              decremented.  If the coutner reeaches zero then the login button is disabled and
+     *              the application exits.
+     * Input: The the layout layout as a view
+     * Output: None
+     */
+    public void login(View view) {
+        // TODO: 22/06/2017 Add proper login authentication
+        username = (EditText) findViewById(R.id.username);
+        password = (EditText) findViewById(R.id.password);
+
+        if (username.getText().toString().equals("admin") && password.getText().toString().equals("admin")) {
+            //correcct password
+
+            int userid = 1;// // TODO: 22/06/2017 Get real user id from database
+
+            person_id = userid;
+
+            fetchTask getQuestions = new fetchTask();
+
+            this.survey = "Transpotation_Survey";
+            getQuestions.execute(this.survey);
+            login_btn = (Button) findViewById(R.id.login_btn);
+            login_btn.setEnabled(false);
+            Button cancel_btn = (Button) findViewById(R.id.cancel_btn);
+            cancel_btn.setEnabled(false);
+
+        } else {
+            //wrong password
+            counter--;// Decremment login attempt counter
+
+            if(counter==0)// No more login attempts allowed
+                login_btn.setEnabled(false);// Desable login button
+                finish();// Call onDestroy()
+        }
+    }// End login()
+
+    /*
+     * Description: Cleans up activity and closes the app
+     * Input: Input: The the login layout as a view
+     * Output: None
+     */
+    public void cancel(View view) {
+        finish();// Call onDestroy
+    }// End Cancel()
 
     // onClick method for a number question
     public void pickNumber(View view) {
