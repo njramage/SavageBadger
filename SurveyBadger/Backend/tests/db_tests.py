@@ -297,6 +297,11 @@ class DatabaseTestCase(unittest.TestCase):
         self.assertEqual(len(self.db.retrieve("answers")),2)
 
 if __name__ == '__main__':
+    filen = "Test.db"
+    try:
+        os.remove(filen)
+    except:
+        pass
     unittest.main()
 
 

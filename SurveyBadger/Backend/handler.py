@@ -27,6 +27,32 @@ def checkLogin(user,passwd):
     else:
         return False
 
+def checkExists(table, value, filename = filen):
+    """ 
+        Checks if a value exists in a table
+
+        table : str  : table to check
+        value : dict : value(s) to check 
+
+        returns True if exists, else false
+    """
+    db = Database(filename = filename)
+
+    try:
+        result = db.retrieve(table,value)
+    except:
+        db.close()
+        return False
+
+    db.close()
+
+    if len(result) == 0:
+        return False
+    else:
+        return True
+
+
+
 def getUserID(name,filename = filen):
     """
         Returns the user's ID from thier username
@@ -100,7 +126,13 @@ def submit(user, survey, answers,filename = filen):
     #Connect to databse
     db = Database(filename = filename)
 
-    userID = getUserID(user)
+    #Get userID
+    userID = getUserID(user,filename)
+
+    #Check values
+    if userID == -1 or not checkExists("surveys",{"ID" : survey},filename):
+        return False
+
 
     #Add answers to database
     try:
@@ -132,17 +164,17 @@ def getTutorClasses(tutor,filename = filen):
     db = Database(filename = filename)
     
     #Get the Tutor's UserID
-    userID = getUserID(tutor)
+    userID = getUserID(tutor,filename)
 
     #Get tutorials
-    tutorials = db.retrieve("questions",{"Tutor" : userID, "Semester" : "17SEM2"})
+    tutorials = db.retrieve("tutorials",{"Tutor" : userID, "Semester" : "17SEM2"})
 
     #close db
     db.close()
 
     return tutorials
 
-def createSurvey(session, attendence, early,filename = filen):
+def createSurvey(session, attendance, early,filename = filen):
     """
         Creates a survey entry in the database and returns the access code
 
@@ -155,6 +187,16 @@ def createSurvey(session, attendence, early,filename = filen):
     """
     #Connect to databse
     db = Database(filename = filename)
+    
+    #Check for errors
+    try:
+        if not checkExists("tutorials",{"ID" : session},filename) or isinstance(attendance, bool) or attendance <= 0 or isinstance(early, bool) or early < 0:
+            return "Invalid parameters"
+        elif not checkDate(session):
+            return "Incorrect Day"
+    except:
+        return "Invalid parameters"
+
 
     #Create survey dictonary
     survey = {"Tutorial" : session, "Attendance" : attendance, "Early_leavers" : early}
@@ -171,6 +213,39 @@ def createSurvey(session, attendence, early,filename = filen):
 
     return survey["Code"]
 
+def checkDate(ID):
+    """
+        Checks the day of the week of the tutorial and if it's meant to be on today
+
+        ID: str : the tutorial identifier string
+
+        returns True if today, else False
+    """
+    #gets the current weekday
+    today = datetime.now().weekday()
+
+    #gets the correct weekday for tutorial
+    dayStr = ID.split()[0]
+    if dayStr == "MON":
+        day = 0
+    elif dayStr == "TUE":
+        day = 1
+    elif dayStr == "WED":
+        day = 2
+    elif dayStr == "THU":
+        day = 3
+    elif dayStr == "FRI":
+        day = 4
+    elif dayStr == "SAT":
+        day = 5
+    elif dayStr == "SUN":
+        day = 6
+    else:
+        #Invalid value
+        return False
+
+    #Return comparison of weekdays
+    return today == day
 
 def genCode(length):
     """
@@ -180,8 +255,10 @@ def genCode(length):
 
         returns str of specified length
     """
-    return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(length))
-
+    try:
+        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(length))
+    except:
+        return ''
 
 #
 # Unit Coordinator classes
@@ -201,8 +278,16 @@ def getResults(uc,filename = filen):
     #Connect to databse
     db = Database(filename = filename)
 
+    #Check if user exists
+    if not checkExists("users",{"Name" : uc},filename): 
+        return []
+
     #Get the UC user entry
     user = db.retrieve('users',{'Name' : uc})[0]
+
+    #Check if user is a uc
+    if user["Type"] != "UC":
+        return []
 
     #Get the UC units
     unitCodes = user['Units'].split(",") 
@@ -212,14 +297,14 @@ def getResults(uc,filename = filen):
     for unit in unitCodes:
         tutorials = []
         for tute in db.retrieve("tutorials",{"Unit" : unit,"Semester" : "17SEM2"}):
-            #check if UC teachs this tutorial
+            #check if UC teaches this tutorial
             if tute["Tutor"] == user["ID"]:
                 continue
 
             #Get survey results
             surveys = db.retrieve("surveys",{"Tutorial" : tute["ID"]}) 
             for survey in surveys:
-                survey["results"] = db.retrieveQuery("SELECT answers.* FROM ((answers INNER JOIN questions ON answers.Question = questions.ID) INNER JOIN surveys ON questions.Survey = surveys.ID) WHERE surveys.ID = {}".format(survey["ID"]))
+                survey["results"] = db.retrieve("answers",{"Survey" : survey["ID"]})
                 #Remove code and expiry from entry
                 survey.pop("Code",None)
                 survey.pop("Expires",None)
@@ -230,7 +315,7 @@ def getResults(uc,filename = filen):
             tutorials.append(tute)
 
         #add unit to the units list
-        units.appened({"Code" : unit, "Tutorials" : tutorials})
+        units.append({"Code" : unit, "Tutorials" : tutorials})
    
 
     #Close DB
