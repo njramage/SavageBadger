@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         number_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
         selection_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
 
+        getIntent().getIntExtra("userid", person_id);
+
         setContentView(main_Activity_View);
 
         answersList = new ArrayList<Answer>();
