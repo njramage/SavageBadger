@@ -13,23 +13,23 @@ from db import Database
 
 def loadDatabase(db):
     #Unit coordinators
-    db.insert("users",{"Name" : "ucOne","Email" : "uc1@qut.edu.au","Type" : "UC","Units" : "CAB201"})
-    db.insert("users",{"Name" : "ucTwo","Email" : "uc2@qut.edu.au","Type" : "UC","Units" : "CAB202,CAB302"})
+    db.insert("users",{"Name" : "ucOne","Type" : "UC","Units" : "CAB201"})
+    db.insert("users",{"Name" : "ucTwo","Type" : "UC","Units" : "CAB202,CAB302"})
 
     #Tutors
-    db.insert("users",{"Name" : "tutorOne","Email" : "tutor1@qut.edu.au","Type" : "Tutor","Units" : "CAB201"})
-    db.insert("users",{"Name" : "tutorThree","Email" : "tutor2@qut.edu.au","Type" : "Tutor","Units" : "CAB302,CAB201"})
-    db.insert("users",{"Name" : "tutorFour","Email" : "tutor3@qut.edu.au","Type" : "Tutor","Units" : "CAB201,CAB202,CAB302"})
+    db.insert("users",{"Name" : "tutorOne","Type" : "Tutor","Units" : "CAB201"})
+    db.insert("users",{"Name" : "tutorThree","Type" : "Tutor","Units" : "CAB302,CAB201"})
+    db.insert("users",{"Name" : "tutorFour","Type" : "Tutor","Units" : "CAB201,CAB202,CAB302"})
 
     #Students
-    db.insert("users",{"Name" : "n0000001","Email" : "student1@qut.edu.au","Type" : "Student","Units" : "CAB201"})
-    db.insert("users",{"Name" : "n0000002","Email" : "student2@qut.edu.au","Type" : "Student","Units" : "CAB202"})
-    db.insert("users",{"Name" : "n0000003","Email" : "student3@qut.edu.au","Type" : "Student","Units" : "CAB302"})
-    db.insert("users",{"Name" : "n0000004","Email" : "student4@qut.edu.au","Type" : "Student","Units" : "CAB201,CAB202"})
-    db.insert("users",{"Name" : "n0000005","Email" : "student5@qut.edu.au","Type" : "Student","Units" : "CAB201,CAB302"})
-    db.insert("users",{"Name" : "n0000006","Email" : "student6@qut.edu.au","Type" : "Student","Units" : "CAB202,CAB302"})
-    db.insert("users",{"Name" : "n0000007","Email" : "student7@qut.edu.au","Type" : "Student","Units" : "CAB201,CAB202,CAB302"})
-    db.insert("users",{"Name" : "n0000008","Email" : "student8@qut.edu.au","Type" : "Student","Units" : "CAB202,CAB302,CAB201"})
+    db.insert("users",{"Name" : "n0000001","Type" : "Student","Units" : "CAB201"})
+    db.insert("users",{"Name" : "n0000002","Type" : "Student","Units" : "CAB202"})
+    db.insert("users",{"Name" : "n0000003","Type" : "Student","Units" : "CAB302"})
+    db.insert("users",{"Name" : "n0000004","Type" : "Student","Units" : "CAB201,CAB202"})
+    db.insert("users",{"Name" : "n0000005","Type" : "Student","Units" : "CAB201,CAB302"})
+    db.insert("users",{"Name" : "n0000006","Type" : "Student","Units" : "CAB202,CAB302"})
+    db.insert("users",{"Name" : "n0000007","Type" : "Student","Units" : "CAB201,CAB202,CAB302"})
+    db.insert("users",{"Name" : "n0000008","Type" : "Student","Units" : "CAB202,CAB302,CAB201"})
     
     #Tutorials
     db.insert("tutorials",{"id" : "MON - 2PM - GP-S504","tutor" : 3,"unit" : "CAB201","semester" : "17SEM2" })
