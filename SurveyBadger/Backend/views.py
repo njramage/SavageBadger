@@ -56,35 +56,59 @@ def authenticate():
     'You have to login with proper credentials', 401,
     {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
-#===========Main Client=======================
-#Web client
+
+#===========Authenitcation=============================
+#login
+@app.route('/login', methods=["POST"])
+def login():
+    content = request.get_json()
+    #Web client support
+    if content == None:
+        content = {'username' : request.values['Username'], 'password' : request.values['Password']}
+
+    if hl.checkLogin(content['username'], content['password']):
+        return jsonify({"status" :  True, "token" : gen_token(content['username']))
+    else:
+        return jsonify({"status" :  False})
+
+
+#===========Web Client Endpoints=======================
+#Home Page
 @app.route('/', methods=["GET"])
 def webClient():
     return render_template("index.html")
     #return render_template("maintenance.html")
 
-#login
-@app.route('/login', methods=["POST"])
-def login():
-    user, passwd = request.values['Username'], request.values['Password']
-    return jsonify({"status" :  hl.checkLogin(user, passwd)})
+#Perform survey
+@app.route('/survey/', methods=["GET"])
+@tokenAuth
+def survey():
+    return render_template("index.html")
 
+#Tutor portal
+@app.route('/tutor/', methods=["GET"])
+@tokenAuth
+def tutor():
+    return render_template("index.html")
 
-#create user account
-@app.route('/createuser', methods=["POST"])
-def createUser():
-    return jsonify({"status" : True})
+#UC portal
+@app.route('/dashboard/', methods=["GET"])
+@tokenAuth
+def tutor():
+    return render_template("index.html")
 
+#Unit editor (Unsure if needed)
+@app.route('/uniteditor/', methods=["GET","POST"])
+@tokenAuth
+def unitEditor():
+    return render_template("index.html")
 
-#===========Survey Endpoints==================
+#===========Backend Endpoints==================
 #get a survey
 @app.route('/getsurvey/<code>', methods=["GET"])
 @auth.login_required
 def getSurvey(code):
     questions = hl.getQuestions(code) 
-    if questions["status"] == True:
-        questions["token"] = gen_token(code).decode('utf-8') 
-    
     return jsonify(questions)
 
 #serve images
@@ -99,10 +123,32 @@ def submitSurvey():
     content = request.get_json()
     #Web client support
     if content == None:
-        content = {'answers' : request.values['answers']}
-    answers = content['answers']
-    return jsonify({"result" : hl.submit(answers)})
+        content = {'answers' : request.values['answers'], 'survey': request.values['survey'], 'user' : request.values['user']}
 
+    user = content["user"]
+    survey = content["survey"]
+    answers = content["answers"]
+
+    return jsonify({"result" : hl.submit(user, survey, answers)})
+
+#submit attendance
+@app.route('/submitattendance/', methods=["POST"])
+@tokenAuth
+def submitAttendance():
+    content = request.get_json()
+    #Web client support
+    if content == None:
+        content = {'tutorial' : request.values['tutorial'], 'attendance': request.values['attendance'], 'early' : request.values['early']}
+
+    tutorial = content["tutorial"]
+    attendance = content["attendance"]
+    early = content["early"]
+    
+    code = hl.createSurvey(tutorial, attendance, early) 
+    if code == "Invalid parameters" or code == "Incorrect Day":
+        return jsonify("status" : False, "error" : code)
+    else:
+        return jsonify("status" : True, "code" : code)
 
 #===========Web error Handling================
 @app.errorhandler(500)
@@ -112,6 +158,12 @@ def page_not_found(error):
 @app.errorhandler(404)
 def page_not_found(error):
         return render_template('404.html'), 404
+
+#============Legacy Endpoints=================
+#create user account
+@app.route('/createuser', methods=["POST"])
+def createUser():
+    return jsonify({"status" : True})
 
 #===========Main Method=======================
 if __name__ == "__main__":
