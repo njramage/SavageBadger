@@ -76,7 +76,7 @@ def login():
 #Home Page
 @app.route('/', methods=["GET"])
 def webClient():
-    return render_template("index.html", info = hl.getTutorClasses(7))
+    return render_template("index.html")
     #return render_template("maintenance.html")
 
 #Perform survey
@@ -164,6 +164,15 @@ def page_not_found(error):
 @app.route('/createuser', methods=["POST"])
 def createUser():
     return jsonify({"status" : True})
+
+
+@app.route('/UnitCord')
+def UnitCord():
+    return render_template("UnitCord.html")
+@app.route('/TutorForm')
+def TutorForm():
+    return render_template("TutorForm.html", info = hl.getTutorClasses(7))
+
 
 #===========Main Method=======================
 if __name__ == "__main__":
