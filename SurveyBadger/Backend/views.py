@@ -67,7 +67,7 @@ def login():
         content = {'username' : request.values['Username'], 'password' : request.values['Password']}
 
     if hl.checkLogin(content['username'], content['password']):
-        return jsonify({"status" :  True, "token" : gen_token(content['username']))
+        return jsonify({"status" :  True, "token" : gen_token(content['username'])})
     else:
         return jsonify({"status" :  False})
 
@@ -76,7 +76,7 @@ def login():
 #Home Page
 @app.route('/', methods=["GET"])
 def webClient():
-    return render_template("index.html")
+    return render_template("index.html", info = hl.getTutorClasses(7))
     #return render_template("maintenance.html")
 
 #Perform survey
@@ -94,7 +94,7 @@ def tutor():
 #UC portal
 @app.route('/dashboard/', methods=["GET"])
 @tokenAuth
-def tutor():
+def dashboard():
     return render_template("index.html")
 
 #Unit editor (Unsure if needed)
@@ -146,9 +146,9 @@ def submitAttendance():
     
     code = hl.createSurvey(tutorial, attendance, early) 
     if code == "Invalid parameters" or code == "Incorrect Day":
-        return jsonify("status" : False, "error" : code)
+        return jsonify({"status" : False, "error" : code})
     else:
-        return jsonify("status" : True, "code" : code)
+        return jsonify({"status" : True, "code" : code})
 
 #===========Web error Handling================
 @app.errorhandler(500)
