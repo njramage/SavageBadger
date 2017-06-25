@@ -81,21 +81,21 @@ def webClient():
 
 #Perform survey
 @app.route('/survey/', methods=["GET"])
-@tokenAuth
+#@tokenAuth
 def survey():
     return render_template("index.html")
 
 #Tutor portal
 @app.route('/tutor/', methods=["GET"])
-@tokenAuth
+#@tokenAuth
 def tutor():
-    return render_template("index.html")
+    return render_template("TutorForm.html", info = hl.getTutorClasses("tutor1"))
 
 #UC portal
 @app.route('/dashboard/', methods=["GET"])
-@tokenAuth
+#@tokenAuth
 def dashboard():
-    return render_template("index.html")
+    return render_template("UnitCord.html")
 
 #Unit editor (Unsure if needed)
 @app.route('/uniteditor/', methods=["GET","POST"])
@@ -164,15 +164,6 @@ def page_not_found(error):
 @app.route('/createuser', methods=["POST"])
 def createUser():
     return jsonify({"status" : True})
-
-
-@app.route('/UnitCord')
-def UnitCord():
-    return render_template("UnitCord.html")
-@app.route('/TutorForm')
-def TutorForm():
-    return render_template("TutorForm.html", info = hl.getTutorClasses(7))
-
 
 #===========Main Method=======================
 if __name__ == "__main__":

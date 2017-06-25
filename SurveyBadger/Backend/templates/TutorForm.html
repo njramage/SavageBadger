@@ -9,14 +9,13 @@
     <select size="1" id="Rank" title="" name="Rank">
 
     <option value="">-Select Your Tutorial-</option>
-           {% for tutorials in Polavo %}
-    <option value="TutorT1"> {{ tutorials.ID}}</option>
-    <option value="TutorT2"> {{tutorials.ID}}</option>
-        {% endfor %}
+    {% for tute in info %}
+        <option value="{{tute['ID']}}">{{tute['ID']}}</option>
+    {% endfor %}
 </select>
 
 
-<div class="container">
+<!--<div class="container">-->
     <div class="TutorT1">
 
        <form  onsubmit="return classCode();" >
@@ -27,14 +26,7 @@
         </form>
 
     </div>
-    <div class="TutorT2">
-          <form  onsubmit="return classCode();" >
-         Student Attendance: <input type="text" name="Attendance" required ><br>
-         Students Left: <input type="text" name="Left" required ><br>
-        <input type="submit" value="Submit"  >
-        </form>
-    </div>
-</div>
+         <!--</div>-->
 {##}
 {#<div class="second-level-container">#}
 {#    <div class="basic-ore-1">#}
