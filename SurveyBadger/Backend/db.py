@@ -88,4 +88,6 @@ class Database:
 if __name__ == "__main__":
     print("Initializing Database")
     db = Database(filename = "Polavo.db")
+    db.insert("surveys",{"Tutorial" : "MON - 2PM - GP-S504", "Date" : "05/06/2017", "Attendance" : 30, "Early_leavers" : "2", "Code" : "123456", "Expires" : "1200 05/06/2018"})
+    db.close() 
     print("Done")

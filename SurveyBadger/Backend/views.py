@@ -67,6 +67,7 @@ def login():
         content = {'username' : request.values['Username'], 'password' : request.values['Password']}
 
     if hl.checkLogin(content['username'], content['password']):
+        session
         return jsonify({"status" :  True, "token" : gen_token(content['username'])})
     else:
         return jsonify({"status" :  False})
@@ -106,7 +107,7 @@ def unitEditor():
 #===========Backend Endpoints==================
 #get a survey
 @app.route('/getsurvey/<code>', methods=["GET"])
-@auth.login_required
+#@auth.login_required
 def getSurvey(code):
     questions = hl.getQuestions(code) 
     return jsonify(questions)
@@ -118,7 +119,7 @@ def getImage(filename):
 
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
-@tokenAuth
+#@tokenAuth
 def submitSurvey():
     content = request.get_json()
     #Web client support
@@ -133,7 +134,7 @@ def submitSurvey():
 
 #submit attendance
 @app.route('/submitattendance/', methods=["POST"])
-@tokenAuth
+#@tokenAuth
 def submitAttendance():
     content = request.get_json()
     #Web client support
