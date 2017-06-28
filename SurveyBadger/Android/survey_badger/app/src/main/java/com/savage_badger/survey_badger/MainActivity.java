@@ -1,13 +1,12 @@
 package com.savage_badger.survey_badger;
 
-import android.graphics.Bitmap;
-import android.icu.text.LocaleDisplayNames;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,23 +15,28 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import static android.R.attr.fragment;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private static final String QUESTION_FRAGMENT = "QUESTION_FRAGMENT";
 
     private JSONObject jsonObject;
@@ -221,6 +225,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
+     * Name: checkLoginSuccess
+     * Description: Used to get a response from a server reads the input stream and turns it in
+     *              a Map key, value pair.
+     * Input: The input Stream
+     * Output: A key, value pair showing the result of the cridentail check.
+     */
+    private Map<String, Boolean> checkLoginSuccess(InputStream inputStream) {
+        Map<String, Boolean> map = new HashMap<String, Boolean>();
+        StringBuilder responseStrBuilder = new StringBuilder();
+        try {
+            BufferedReader streamReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            String inputStr;
+            while ((inputStr = streamReader.readLine()) != null)
+                responseStrBuilder.append(inputStr);
+
+            JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+            map.put("Status", jsonObject.getBoolean("Status"));
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "Unsupported Encoding Exception: ", e);
+        } catch (IOException e) {
+            Log.e(TAG, "IO Exception: ", e);
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON Exception: ", e);
+        }
+        return map;
+    }
+
+    /*
      * Description: Login checks the enterd credentials against the user credentials in a database.
      *              If there are correct then the user can login, else the attempts counter is
      *              decremented.  If the coutner reeaches zero then the login button is disabled and
@@ -232,30 +264,59 @@ public class MainActivity extends AppCompatActivity {
         // TODO: 22/06/2017 Add proper login authentication
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
+        Log.i(TAG, "Login");
+        // Send user and pass to be checked by server
+        try {
+            URL url = new URL(httpCom.BASEURL);// Build url
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");// Set Method to POST
 
-        if (username.getText().toString().equals("admin") && password.getText().toString().equals("admin")) {
-            //correcct password
+            /*
+              * Set request Key, Value pairs
+              * Username : <Username entered by user>
+              * Password : <Password entered by user>
+              */
+            urlConnection.setRequestProperty("Username", username.getText().toString());
+            urlConnection.setRequestProperty("Password", password.getText().toString());
 
-            int userid = 1;// // TODO: 22/06/2017 Get real user id from database
+            Log.i(TAG, "adding request params");
+            urlConnection.connect();
+            Log.i(TAG, "connected");
 
-            person_id = userid;
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            Map<String, Boolean> map = checkLoginSuccess(in);
+            Log.i(TAG, "got map");
+            urlConnection.disconnect();
+            Log.i(TAG, "disconnected");
 
-            fetchTask getQuestions = new fetchTask();
+            if (map.get("Status")) {
+                //correcct password
+                Log.i(TAG, "Login correct!");
 
-            this.survey = "Transpotation_Survey";
-            getQuestions.execute(this.survey);
-            login_btn = (Button) findViewById(R.id.login_btn);
-            login_btn.setEnabled(false);
-            Button cancel_btn = (Button) findViewById(R.id.cancel_btn);
-            cancel_btn.setEnabled(false);
+                int userid = 1;// // TODO: 22/06/2017 Get real user id from database
 
-        } else {
-            //wrong password
-            counter--;// Decremment login attempt counter
+                person_id = userid;
 
-            if(counter==0)// No more login attempts allowed
-                login_btn.setEnabled(false);// Desable login button
-                finish();// Call onDestroy()
+                fetchTask getQuestions = new fetchTask();
+
+                this.survey = "Transpotation_Survey";
+                getQuestions.execute(this.survey);
+                login_btn = (Button) findViewById(R.id.login_btn);
+                login_btn.setEnabled(false);
+                Button cancel_btn = (Button) findViewById(R.id.cancel_btn);
+                cancel_btn.setEnabled(false);
+            } else {
+                //wrong password
+                counter--;// Decremment login attempt counter
+
+                if(counter==0) {// No more login attempts allowed
+                    login_btn.setEnabled(false);// Desable login button
+                    finish();// Call onDestroy()
+                }
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Exception: ", e);
         }
     }// End login()
 
