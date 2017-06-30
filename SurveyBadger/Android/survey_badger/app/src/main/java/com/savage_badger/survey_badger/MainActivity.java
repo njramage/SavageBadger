@@ -427,71 +427,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class loginTask extends AsyncTask<String, Map<String, Boolean>, Map<String, Boolean>> {
+    private class loginTask extends AsyncTask<String, Boolean, Boolean> {
 
         @Override
-        protected Map<String, Boolean> doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
             Map<String, Boolean> map = new HashMap<String, Boolean>();
 
             Log.i(TAG, "Login");
             // Send user and pass to be checked by server
-            HttpURLConnection urlConnection = null;
-            try {
-                URL url = new URL(params[0]);// Build url
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("POST");// Set Method to POST
-
-            /*
-              * Crreate JSON object
+              /*
+              * Create JSON object
               * Username : <Username entered by user>
               * Password : <Password entered by user>
               */
+
+            try {
                 JSONObject loginDetails = new JSONObject();
-                loginDetails.put("Username", params[1].toString());
-                loginDetails.put("Password", params[2].toString());
+                loginDetails.put("username", params[1].toString());
+                loginDetails.put("password", params[2].toString());
 
                 Log.i(TAG, "Username type: " + params[1].getClass().getName());
                 Log.i(TAG, "Password type: " + params[2].getClass().getName());
 
-                urlConnection.setDoOutput(true);
-                urlConnection.setDoInput(true);
-                urlConnection.setInstanceFollowRedirects(false);
-                urlConnection.setRequestProperty("Content-Type", "application/json");
+                JSONObject result = httpCom.login(loginDetails);
 
-                // Write data to server
-                DataOutputStream dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
-                dataOutputStream.write(loginDetails.toString().getBytes("UTF-8"));
-                dataOutputStream.flush();
-                dataOutputStream.close();
-
-                Log.i(TAG, "adding request params");
-                Log.i(TAG, "connected");
-                int status = urlConnection.getResponseCode();
-                if (status == HttpURLConnection.HTTP_OK){
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    map = checkLoginSuccess(in);
-                    Log.i(TAG, "got map");
-                    urlConnection.disconnect();
-                    Log.i(TAG, "disconnected");
-                }
-                else if (status == HttpURLConnection.HTTP_BAD_METHOD) {
-                    Log.e(TAG, "Bad Method");
+                //Check the result of the query
+                if (result.has("status")) {
+                    return result.getBoolean("status");
                 } else {
-                    Log.e(TAG, String.valueOf(status));
+                    return false;
                 }
-
-            } catch (IOException e) {
-                Log.e(TAG, "IO Exception: ", e);
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 Log.e(TAG, "JSON Exception: ", e);
+                return false;
             }
-
-            return map;
         }
 
         @Override
-        protected void onPostExecute(Map<String, Boolean> result){
-            map = result;
+        protected void onPostExecute(Boolean result){
+            Log.i("Polavo","Login result: "+result.toString());
         }
 
     }
