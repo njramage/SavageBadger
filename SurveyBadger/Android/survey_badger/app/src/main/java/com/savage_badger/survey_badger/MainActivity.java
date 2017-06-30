@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private Button login_btn;
     private EditText username, password;
     private int counter = 10;
+    private Map<String, Boolean> map;// holds result from server
 
     private List<Image> bitmapImages;
 
@@ -75,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
+
+        map = new HashMap<String, Boolean>();
 
         displayLogin();
     }
@@ -264,32 +268,17 @@ public class MainActivity extends AppCompatActivity {
         // TODO: 22/06/2017 Add proper login authentication
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
-        Log.i(TAG, "Login");
-        // Send user and pass to be checked by server
-        try {
-            URL url = new URL(httpCom.BASEURL);// Build url
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("POST");// Set Method to POST
 
-            /*
-              * Set request Key, Value pairs
-              * Username : <Username entered by user>
-              * Password : <Password entered by user>
-              */
-            urlConnection.setRequestProperty("Username", username.getText().toString());
-            urlConnection.setRequestProperty("Password", password.getText().toString());
+        loginTask loginTask = new loginTask();
 
-            Log.i(TAG, "adding request params");
-            urlConnection.connect();
-            Log.i(TAG, "connected");
+        loginTask.execute("http://www.polavo.net/login/", username.getText().toString(), password.getText().toString());
 
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            Map<String, Boolean> map = checkLoginSuccess(in);
-            Log.i(TAG, "got map");
-            urlConnection.disconnect();
-            Log.i(TAG, "disconnected");
+        // Hault application until the map is filled
+        while(map.isEmpty()){}
 
-            if (map.get("Status")) {
+        if (map != null){
+            Log.i(TAG, String.valueOf(map.isEmpty()));
+            /*if (map.get("Status")) {
                 //correcct password
                 Log.i(TAG, "Login correct!");
 
@@ -313,11 +302,11 @@ public class MainActivity extends AppCompatActivity {
                     login_btn.setEnabled(false);// Desable login button
                     finish();// Call onDestroy()
                 }
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, "Exception: ", e);
+            }*/
+        } else {
+            Log.i(TAG, "Map is null");
         }
+
     }// End login()
 
     /*
@@ -398,6 +387,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
     //Server connection tasks
     private class fetchTask extends AsyncTask<String, ArrayList<Question>, ArrayList<Question>> {
 
@@ -433,47 +424,76 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Question> questions) {
             questionsList = questions;
             displayQuestions(questionsList);
-            
-            /*try {
-                if (s.has("questions")) {
-                    //getSurvey(s);
-                } else {
-                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); 
-                    alertDialog.setTitle("Fetch Failed");
-                    alertDialog.setMessage("Failed to retrieve the survey from the server. Please try again later");
-                    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int which) {
-                            finish();
-                        }
-                    });
-                    alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            MainActivity.this.finish();
-                        }
-                    }); 
-                    alertDialog.show();
-               }   
-        
-            } catch (Exception e) {
-                Log.e("Polavo","Error server connection failed");
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); 
-                alertDialog.setTitle("Connection Failed");
-                alertDialog.setMessage("Unable to reach the server. Check your internet connection and try again later");
-                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which) {
-                        finish();
-                    }
-                });
-                alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        MainActivity.this.finish();
-                    }
-                });
-                alertDialog.show();
-            } */
         }
+    }
+
+    private class loginTask extends AsyncTask<String, Map<String, Boolean>, Map<String, Boolean>> {
+
+        @Override
+        protected Map<String, Boolean> doInBackground(String... params) {
+            Map<String, Boolean> map = new HashMap<String, Boolean>();
+
+            Log.i(TAG, "Login");
+            // Send user and pass to be checked by server
+            HttpURLConnection urlConnection = null;
+            try {
+                URL url = new URL(params[0]);// Build url
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");// Set Method to POST
+
+            /*
+              * Crreate JSON object
+              * Username : <Username entered by user>
+              * Password : <Password entered by user>
+              */
+                JSONObject loginDetails = new JSONObject();
+                loginDetails.put("Username", params[1].toString());
+                loginDetails.put("Password", params[2].toString());
+
+                Log.i(TAG, "Username type: " + params[1].getClass().getName());
+                Log.i(TAG, "Password type: " + params[2].getClass().getName());
+
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setInstanceFollowRedirects(false);
+                urlConnection.setRequestProperty("Content-Type", "application/json");
+
+                // Write data to server
+                DataOutputStream dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
+                dataOutputStream.write(loginDetails.toString().getBytes("UTF-8"));
+                dataOutputStream.flush();
+                dataOutputStream.close();
+
+                Log.i(TAG, "adding request params");
+                Log.i(TAG, "connected");
+                int status = urlConnection.getResponseCode();
+                if (status == HttpURLConnection.HTTP_OK){
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                    map = checkLoginSuccess(in);
+                    Log.i(TAG, "got map");
+                    urlConnection.disconnect();
+                    Log.i(TAG, "disconnected");
+                }
+                else if (status == HttpURLConnection.HTTP_BAD_METHOD) {
+                    Log.e(TAG, "Bad Method");
+                } else {
+                    Log.e(TAG, String.valueOf(status));
+                }
+
+            } catch (IOException e) {
+                Log.e(TAG, "IO Exception: ", e);
+            }catch (JSONException e) {
+                Log.e(TAG, "JSON Exception: ", e);
+            }
+
+            return map;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, Boolean> result){
+            map = result;
+        }
+
     }
 
     //Server connection tasks
