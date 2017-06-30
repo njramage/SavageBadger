@@ -6,4 +6,8 @@
     <string name="question_time_duration">Time_duration</string>
     <string name="question_set_time">Set_time</string>
     <string name="question_money">Dollar_value</string>
+    <string name="login">Login</string>
+    <string name="cancel">Cancel</string>
+    <string name="username">Username: </string>
+    <string name="password">Password: </string>
 </resources>
