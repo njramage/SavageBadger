@@ -419,21 +419,11 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("Polavo","Error occured getting the survey from the server");
             }
-            Log.i(TAG, "In doInBackground of Fetch Task");
-            for (Iterator<Question> q = questionListCreator.getQustionList().iterator(); q.hasNext();){
-                Question question = q.next();
-                Log.i(TAG, question.getQuestion().toString());
-            }
             return questionListCreator.getQustionList();
         }
 
         @Override
         protected void onPostExecute(ArrayList<Question> questions) {
-            Log.i(TAG, "In Post execuite of Fetch Task");
-            for (Iterator<Question> q = questions.iterator(); q.hasNext();){
-                Question question = q.next();
-                Log.i(TAG, question.getQuestion().toString());
-            }
             questionsList = questions;
             displayQuestions(questionsList);
         }
