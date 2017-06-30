@@ -32,8 +32,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -271,14 +273,11 @@ public class MainActivity extends AppCompatActivity {
 
         loginTask loginTask = new loginTask();
 
-        loginTask.execute("http://www.polavo.net/login/", username.getText().toString(), password.getText().toString());
-
-        // Hault application until the map is filled
-        while(map.isEmpty()){}
-
-        if (map != null){
-            Log.i(TAG, String.valueOf(map.isEmpty()));
-            /*if (map.get("Status")) {
+        try {
+            Boolean result = loginTask.execute("http://www.polavo.net/login/", username.getText().toString(), password.getText().toString()).get();
+            Log.i(TAG, "Usersname: " + username.getText().toString() + "/");
+            Log.i(TAG, "password: " + password.getText().toString() + "/");
+            if (result) {
                 //correcct password
                 Log.i(TAG, "Login correct!");
 
@@ -288,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
 
                 fetchTask getQuestions = new fetchTask();
 
-                this.survey = "Transpotation_Survey";
+                this.survey = "123456";
                 getQuestions.execute(this.survey);
                 login_btn = (Button) findViewById(R.id.login_btn);
                 login_btn.setEnabled(false);
@@ -298,13 +297,17 @@ public class MainActivity extends AppCompatActivity {
                 //wrong password
                 counter--;// Decremment login attempt counter
 
-                if(counter==0) {// No more login attempts allowed
+                Log.d(TAG, "Wrong password or usename");
+
+                if (counter == 0) {// No more login attempts allowed
                     login_btn.setEnabled(false);// Desable login button
                     finish();// Call onDestroy()
                 }
-            }*/
-        } else {
-            Log.i(TAG, "Map is null");
+            }
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Interrupted: " + e);
+        } catch (ExecutionException e) {
+            Log.e(TAG, "Execution Expection: " + e);
         }
 
     }// End login()
@@ -400,28 +403,37 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected ArrayList<Question> doInBackground(String... params) {
             QuestionList questionListCreator = new QuestionList();
+            ArrayList<Question> questions = new ArrayList<Question>();
             JSONObject s = httpCom.getSurvey(params[0]);
             
             try {
-                if (s.has("questions") && s.has("token")) {
-                    //Set the token for survey submission
-                    setToken(s.getString("token"));
+                Log.i(TAG, "in try statement");
+                if (s.has("questions")) {
 
                     //Create question list
                     questionListCreator.createQuestions(s);
-                    Log.d("Polavo", "first question: " + questionListCreator.getQustionList().get(0));
+                    Log.i("Polavo", "first question: " + questionListCreator.getQustionList().get(0));
                 } else {
                     Log.e("Polavo","Error occured getting the survey from the server");
                 }
             } catch (Exception e) {
                 Log.e("Polavo","Error occured getting the survey from the server");
             }
-        
-            return questionListCreator.getQustionList(); 
+            Log.i(TAG, "In doInBackground of Fetch Task");
+            for (Iterator<Question> q = questionListCreator.getQustionList().iterator(); q.hasNext();){
+                Question question = q.next();
+                Log.i(TAG, question.getQuestion().toString());
+            }
+            return questionListCreator.getQustionList();
         }
 
         @Override
         protected void onPostExecute(ArrayList<Question> questions) {
+            Log.i(TAG, "In Post execuite of Fetch Task");
+            for (Iterator<Question> q = questions.iterator(); q.hasNext();){
+                Question question = q.next();
+                Log.i(TAG, question.getQuestion().toString());
+            }
             questionsList = questions;
             displayQuestions(questionsList);
         }
@@ -431,7 +443,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... params) {
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
 
             Log.i(TAG, "Login");
             // Send user and pass to be checked by server
@@ -445,9 +456,6 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject loginDetails = new JSONObject();
                 loginDetails.put("username", params[1].toString());
                 loginDetails.put("password", params[2].toString());
-
-                Log.i(TAG, "Username type: " + params[1].getClass().getName());
-                Log.i(TAG, "Password type: " + params[2].getClass().getName());
 
                 JSONObject result = httpCom.login(loginDetails);
 
