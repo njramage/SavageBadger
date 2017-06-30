@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.savage_badger.survey_badger.CodeFragment">
+
+    <ImageView
+        android:id="@+id/palavo_login_logo"
+        android:layout_width="250sp"
+        android:layout_height="200sp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/logofinal" />
+
+    <RelativeLayout
+        android:id="@+id/code_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/palavo_login_logo"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/code_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_code"
+            android:layout_centerVertical="true"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id = "@+id/code_check"
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:inputType = "text"
+            android:minWidth="100sp"
+            android:layout_toEndOf="@id/code_text"
+            android:layout_toRightOf="@id/code_text" />
+    </RelativeLayout>
+
+    <Button
+        android:id = "@+id/login_btn"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:onClick = "code_continue"
+        android:text = "@string/code_continue"
+        android:layout_below="@id/code_layout"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>

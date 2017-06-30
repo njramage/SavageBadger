@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,6 +62,11 @@ public class MainActivity extends AppCompatActivity {
     private int counter = 10;
     private Map<String, Boolean> map;// holds result from server
 
+    /*
+     * Code Check variables
+     */
+    private EditText entered_code;
+
     private List<Image> bitmapImages;
 
 
@@ -100,6 +107,32 @@ public class MainActivity extends AppCompatActivity {
         ft.add(R.id.fragment_container, loginFrag, QUESTION_FRAGMENT);
         ft.commit();
     }// End displayLogin()
+
+    /*
+     * Name: displayCodeCheck
+     * Description: Displays the code check fragment
+     * Input: None
+     * Output: None
+     */
+    public  void displayCodeCheck() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentByTag(QUESTION_FRAGMENT);// find any active fragments with the QUESTION_FRAGMENT tag
+        FragmentTransaction ft = fm.beginTransaction();
+
+        // Create a new instance of a login fragment
+        CodeFragment codefrag = new CodeFragment();
+
+        // if there are is an active fragment, replace the old fragment with the new one and commit
+        if (fragment != null) {
+            ft.replace(R.id.fragment_container, codefrag, QUESTION_FRAGMENT);
+            ft.commit();
+        }
+        else {// add the new framgent and commit
+            ft.add(R.id.fragment_container, codefrag, QUESTION_FRAGMENT);
+            ft.commit();
+        }
+
+    }// End displayCodeCheck()
 
     // create jsonArray to send answer back
     public void sendAnswers(ArrayList<Answer> answersList) {
@@ -224,41 +257,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    
-    //sets the token after server connection
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     /*
-     * Name: checkLoginSuccess
-     * Description: Used to get a response from a server reads the input stream and turns it in
-     *              a Map key, value pair.
-     * Input: The input Stream
-     * Output: A key, value pair showing the result of the cridentail check.
+     * Description: Checks the code entered by the user is a vaild survey code
+     * Input: The the layout layout as a view
+     * Output: None
      */
-    private Map<String, Boolean> checkLoginSuccess(InputStream inputStream) {
-        Map<String, Boolean> map = new HashMap<String, Boolean>();
-        StringBuilder responseStrBuilder = new StringBuilder();
-        try {
-            BufferedReader streamReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-            String inputStr;
-            while ((inputStr = streamReader.readLine()) != null)
-                responseStrBuilder.append(inputStr);
+    public void code_continue(View view) {
+        fetchTask getQuestions = new fetchTask();
 
-            JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
-            map.put("Status", jsonObject.getBoolean("Status"));
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "Unsupported Encoding Exception: ", e);
-        } catch (IOException e) {
-            Log.e(TAG, "IO Exception: ", e);
-        } catch (JSONException e) {
-            Log.e(TAG, "JSON Exception: ", e);
-        }
-        return map;
+        entered_code = (EditText) findViewById(R.id.code_check);
+
+        this.survey = entered_code.getText().toString();
+        getQuestions.execute(this.survey);
     }
 
     /*
+     * Name: Login
      * Description: Login checks the enterd credentials against the user credentials in a database.
      *              If there are correct then the user can login, else the attempts counter is
      *              decremented.  If the coutner reeaches zero then the login button is disabled and
@@ -285,14 +300,11 @@ public class MainActivity extends AppCompatActivity {
 
                 person_id = userid;
 
-                fetchTask getQuestions = new fetchTask();
-
-                this.survey = "123456";
-                getQuestions.execute(this.survey);
                 login_btn = (Button) findViewById(R.id.login_btn);
                 login_btn.setEnabled(false);
                 Button cancel_btn = (Button) findViewById(R.id.cancel_btn);
                 cancel_btn.setEnabled(false);
+                displayCodeCheck();
             } else {
                 //wrong password
                 counter--;// Decremment login attempt counter
@@ -313,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
     }// End login()
 
     /*
+     * Name: Cancel
      * Description: Cleans up activity and closes the app
      * Input: Input: The the login layout as a view
      * Output: None
@@ -337,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Main Activity", "Moved to next question");
 
     }
+
     public void selectionQuestion (View view)
     {
       //  saveAnswer(questionsList.get(currentQuestion).getId(), person_id, Integer.toString());
@@ -425,7 +439,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Question> questions) {
             questionsList = questions;
-            displayQuestions(questionsList);
+            if (questionsList != null){
+                displayQuestions(questionsList);
+            }
+            else {
+                Toast.makeText(MainActivity.this, "Wrong code, try again", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
