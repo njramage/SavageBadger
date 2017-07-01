@@ -1,0 +1,16 @@
+{% extends "header.html" %}
+
+{% block body %}
+
+
+<div class="container-fluid" align="center" style="margin-top: 10px">
+    <button><a href="UnitCord">UnitCord</a></button>
+    <button><a href="TutorForm">TutorForm</a></button>
+
+    <div class="container-fluid" id="question" style="padding:0;margin:0;">
+        <h2>Please wait</h2>
+    </div>
+</div>
+
+<script type= "text/javascript" src="{{ url_for('static', filename='js/survey.js') }}"></script>
+{% endblock %}

@@ -20,11 +20,11 @@ filen = "Polavo.db"
 def checkLogin(user,passwd):
  
     #Connect to databse
-#   data = Database(filename = filename)
-#   actual = data.retrieve('users',{'User' : user})[0]
-#   data.close()
-#   if actual != [] and user == actual['User'] and sha256_crypt.verify(passwd, actual['Pass']):
-    if user == "SEBADM" and passwd == "n@Twsb3qw9sdNSbnwo21rd":
+    data = Database(filename = filen)
+    actual = data.retrieve('users',{'Name' : user})
+    data.close()
+    if len(actual) == 1  and user == actual[0]['Name'] and passwd == "wordpass": #sha256_crypt.verify(passwd, actual[0]['Pass']):
+    #if user == "SEBADM" and passwd == "n@Twsb3qw9sdNSbnwo21rd":
         return True
     else:
         return False
@@ -74,6 +74,25 @@ def getUserID(name,filename = filen):
         return -1
     else:
         return user[0]['ID']
+
+
+def getUserType(user,filename = filen):
+    """
+        Gets a user's type, returns none if doesn't exist
+
+        user : int : User's ID
+
+        returns string of user type, none if doesn't exist
+    """
+    db = Database(filename = filename)
+    user = db.retrieve('users',{'ID' : user})
+    db.close()
+
+    if len(user) != 1:
+        return None
+    else:
+        return user[0]['Type']
+
 
 #
 # Student Methods
