@@ -54,3 +54,5 @@ SurveyBadger/Backend/sec.py
 #Except test database
 !**/Backend/Polavo.db
 
+#.idea files for android/pycharm usage
+**.idea/
