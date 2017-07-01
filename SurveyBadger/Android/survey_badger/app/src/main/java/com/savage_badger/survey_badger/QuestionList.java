@@ -23,6 +23,7 @@ public class QuestionList {
         ArrayList<Question> questionList = new ArrayList<Question>();
     }
 
+
     public ArrayList<Question> getQustionList() {
         return questionList;
     }
@@ -93,7 +94,7 @@ public class QuestionList {
 
                 question.setImages(images);
 
-                questionList.add(question);// add it to the list 
+                questionList.add(question);// add it to the list
             }
         } catch (JSONException e) {
             //TODO: Exception message

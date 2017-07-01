@@ -10,4 +10,6 @@
     <string name="cancel">Cancel</string>
     <string name="username">Username: </string>
     <string name="password">Password: </string>
+    <string name="code_continue">Continue</string>
+    <string name="enter_code">Code: </string>
 </resources>
