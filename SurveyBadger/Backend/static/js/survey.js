@@ -1,7 +1,7 @@
 //Globals
 var survey;
 var answers;
-var token;
+var id;
 var questionIndex;
 
 $(document).ready(function(){
@@ -14,30 +14,22 @@ function getSurvey() {
     $('#wait').toggle();
     $('#code').val("");
     //get data
-    $.ajax({
-            type: 'GET',
-            url: '/getsurveycode/',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader ("Authorization", "Basic " + btoa('WEBCODE' + ":" + code));
-            },
-            success: function(data) {
-                console.log(data);
-                if (data.status == "Failed") {
-                    alert("An error occured geting the survey. Please ensure the code you entered is correct");
-                    $('#wait').toggle();
-                    $('#code').val(code);
-                } else {
-                    survey = data.questions;
-                    token = data.token;
-                    console.log(survey);
-                    //reset question index and answers
-                    questionIndex = 0;
-                    answers = [];
-                    displayQuestion();
-                }
-            },
-            contentType: "application/json",
-            dataType: 'json'            
+    
+    $.get("/getsurvey/"+code, function(data) {
+        console.log(data);
+        if (data.status == "Failed") {
+            alert("An error occured geting the survey. Please ensure the code you entered is correct");
+            $('#wait').toggle();
+            $('#code').val(code);
+        } else {
+            survey = data.questions;
+            id = data.survey;
+            console.log(survey);
+            //reset question index and answers
+            questionIndex = 0;
+            answers = [];
+            displayQuestion();
+        }
     });
 };
 
@@ -46,8 +38,9 @@ function submitSurvey() {
     $('#question').html('<h2>Please wait</h2>');
 
     //var submitData = {'token' : token, 'answers' : answers};
-    var submitData = {'answers' : answers};
+    var submitData = {'answers' : answers,'survey' : id};
     console.log(submitData);
+    /*
     $.ajax({
             type: 'POST',
             url: '/submitsurvey/',
@@ -82,6 +75,25 @@ function submitSurvey() {
             },
             contentType: "application/json",
             dataType: 'json'
+    */
+    $.post("/submitsurvey/",submitData, function(data) {
+        console.log(data);
+        var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
+        var header = $('<h1>').html("Survey Submitted!");
+        var logo = $('<img alt="Polavo Logo" src="../../static/images/Logo.png">');
+        var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
+        var next = $('<a href="/">').html("Click here to fill out another survey");
+
+        div.append(div);
+        div.append(header);
+        div.append(logo);
+        div.append(thank);
+        div.append(next);
+        
+        $('#question').fadeOut('slow', function() {
+            $('#question').html(div.html());
+            $('#question').fadeIn('slow');
+        });
     });
 }
 

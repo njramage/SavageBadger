@@ -124,9 +124,9 @@ def submitSurvey():
     content = request.get_json()
     #Web client support
     if content == None:
-        content = {'answers' : request.values['answers'], 'survey': request.values['survey'], 'user' : request.values['user']}
+        content = {'answers' : request.values['answers'], 'survey': request.values['survey']}
 
-    user = content["user"]
+    user = 1#hl.getUserID(session["USERNAME"])
     survey = content["survey"]
     answers = content["answers"]
 
