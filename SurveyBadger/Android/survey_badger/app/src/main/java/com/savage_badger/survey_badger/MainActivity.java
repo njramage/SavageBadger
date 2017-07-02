@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         fetchTask getQuestions = new fetchTask();
 
-        this.survey = "Transpotation_Survey";
+        this.survey = "123456";
         getQuestions.execute(this.survey);
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
         currentQuestion = 0;// Start at first question
 
         fetchTask getQuestions = new fetchTask();
-        getQuestions.execute("Transpotation_Survey");
+        getQuestions.execute("123456");
     }
 
     // create a new answer and add it to the end of the answers list
