@@ -89,6 +89,25 @@ def getUserType(user,filename = filen):
     else:
         return user[0]['Type']
 
+def getUserName(user,filename = filen):
+    """
+        Gets a user's name, returns none if doesn't exist
+
+        user : int : User's ID
+
+        returns string of username, none if doesn't exist
+    """
+    db = Database(filename = filename)
+    user = db.retrieve('users',{'ID' : user})
+    db.close()
+
+    if len(user) != 1:
+        return None
+    else:
+        return user[0]['Name']
+
+
+
 
 #
 # Student Methods
@@ -317,7 +336,9 @@ def getResults(uc,filename = filen):
             #check if UC teaches this tutorial
             if tute["Tutor"] == user["ID"]:
                 continue
-
+            #Else replace ID with the tutor's name
+            else:
+                tute["Tutor"] = getUserName(tute["Tutor"]) 
             #Get survey results
             surveys = db.retrieve("surveys",{"Tutorial" : tute["ID"]}) 
             for survey in surveys:
