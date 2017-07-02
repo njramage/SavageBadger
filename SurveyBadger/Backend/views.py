@@ -266,10 +266,10 @@ def submitAttendance():
         return jsonify({"status" : True, "code" : code})
 
 # unit cordinator data
-@app.route('/unitdata/', methods=["GET"])
-def unitDate():
-
-    return jsonify({"unitData": hl.getResults('uc1')})
+@app.route('/getresults/', methods=["GET"])
+@login_uc
+def unitData():
+    return jsonify({"unitData": hl.getResults(session["USERNAME"])})
 
 #===========Web error Handling================
 @app.errorhandler(500)

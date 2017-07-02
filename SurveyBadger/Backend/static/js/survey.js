@@ -367,7 +367,7 @@ function unitCordSetup()
 
 
 
-        $.get("/unitdata/", function (data){
+        $.get("/getresults/", function (data){
 
             //console.log(data[0][0]['ID']);
 
