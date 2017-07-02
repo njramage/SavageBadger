@@ -240,7 +240,7 @@ def submitSurvey():
     if content == None:
         content = {'answers' : request.values['answers'], 'survey': request.values['survey']}
 
-    user = 1#hl.getUserID(session["USERNAME"])
+    user = hl.getUserID(session["USERNAME"])
     survey = content["survey"]
     answers = content["answers"]
 
