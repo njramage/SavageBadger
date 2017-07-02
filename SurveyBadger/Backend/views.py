@@ -265,6 +265,12 @@ def submitAttendance():
     else:
         return jsonify({"status" : True, "code" : code})
 
+# unit cordinator data
+@app.route('/unitdata/', methods=["GET"])
+def unitDate():
+
+    return jsonify({"unitData": hl.getResults('uc1')})
+
 #===========Web error Handling================
 @app.errorhandler(500)
 def page_not_found(error):

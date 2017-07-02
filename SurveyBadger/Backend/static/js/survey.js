@@ -320,15 +320,85 @@ function startPage() {
     $('#question').html(div); 
 }
 
+
 function classCode()
 {
-   alert("here is your code!");
-   return true;
+    attendance = parseInt(document.getElementById("Attendance").value);
+
+    var divDisplay = document.getElementById("tutorCode");
+    var left = parseInt(document.getElementById("Left").value);
+    var tutorSession = document.getElementById("TutorSession");
+    var tutorialSession = jQuery("#Rank option:selected").val();
+
+    var tutorial = {"tutorial": tutorialSession, "attendance":attendance, "early": left};
+/// PUT IN ERROR CODE IF ATTENDANCE AND LEFT ARENT INTS.
+
+      console.log(tutorial);
+
+    $.ajax({
+        type: 'Post',
+        url: '/submitattendance/',
+
+        data: JSON.stringify(tutorial),
+        success: function (data)
+        {
+              console.log(data);
+            var div = $('<div class = "container-fluid" id ="question" style = "padding:0;margin:0;">');
+            var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
+            var error = $('<p>').html(data["error"] );
+            var code = $('<p>').html( data.code);
+
+
+            div.append(div);
+            div.append(thank);
+            div.append(error);
+            div.append(code);
+
+            $('#TutorT1').html(div.html());
+        },
+        contentType: "application/json",
+        dataType: 'json'
+    });
+
+}
+function unitCordSetup()
+{
+
+
+
+
+        $.get("/unitdata/", function (data){
+
+            //console.log(data[0][0]['ID']);
+
+           //  console.log(data[0][0]);
+            console.log(data);
+                    console.log(data[data[0]]);
+            console.log(data[data.unitData["0"]]);
+            console.log(data[0]["Tutorials"][0]["ID"]);
+
+             console.log(data['ID']);
+
+           var div = $('<div class = "container-fluid" id ="question" style = "padding:0;margin:0;">');
+            var table = $('<table>');
+            var row = $('<tr>');
+            var cell = $('<td>').html(data[0][0]['ID']);
+
+            div.append(div);
+            row.append(cell);
+            table.append(row);
+
+            $('#unitcord').html(div.html());
+    });
+
+
+
 }
 
 
 
 $(document).ready(function() {
+
     $('#Rank').bind('change', function() {
         var elements = $('div.container').children().hide(); // hide all the elements
         var value = $(this).val();
@@ -337,6 +407,16 @@ $(document).ready(function() {
             elements.filter('.' + value).show(); // show the ones we want
         }
     }).trigger('change');
+
+    //
+    //
+    // $('.ClassCode').bind('change', function () {
+    //      elementsForCode = $('div.ClassCode').children().hide(); //HIDING THE CLASS CODE DIV.
+    //
+    //
+    //
+    //
+    // }).trigger('change');
 
     $('.second-level-select').bind('change', function() {
         var elements = $('div.second-level-container').children().hide(); // hide all the elements
@@ -347,3 +427,29 @@ $(document).ready(function() {
         }
     }).trigger('change');
 });
+
+function gettingTutorCode()
+{
+     alert("here is your code!" );
+
+    // var attendance = document.getElementById("Attendance").value;
+    // var left = document.getElementById("Left").value;
+    // var tutorSession = document.getElementById("TutorSession").value;
+    //
+    // var codeDisplay = document.getElementById("ClassCode");
+
+
+
+
+
+    // if (codeDisplay.style.display === "none")
+    // {
+    //     codeDisplay.style.display = "block";
+    // }
+    // else {
+    //     codeDisplay.style.display = "none";
+    // }
+    //
+
+
+}
