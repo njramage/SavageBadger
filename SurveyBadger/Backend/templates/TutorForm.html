@@ -8,30 +8,24 @@
 
     <select size="1" id="Rank" title="" name="Rank">
 
-    <option value="hello">-Select Your Tutorial-</option>
+    <option value="">-Select Your Tutorial-</option>
     {% for tute in info %}
-        <option id ="TutorialSession" ,value="{{tute['ID']}}">{{tute['ID']}}</option>
+        <option value="{{tute['ID']}}">{{tute['ID']}}</option>
     {% endfor %}
 </select>
 
 
 <!--<div class="container">-->
-    <div class="TutorT1", id= "TutorT1">
+    <div class="TutorT1">
 
-       <form  >
-         Student Attendance: <input type="text", id="Attendance",name="Attendance" required ><br>
-         Students Left: <input type="text", id="Left" ,name="Left" required><br>
-        <input type="button" id = "tutorSubmit" class = "tutorSubmit", value="Submit", onclick = "classCode()" >
+       <form  onsubmit="return classCode();" >
+         Student Attendance: <input type="text" name="Attendance" required ><br>
+         Students Left: <input type="text" name="Left" required><br>
+        <input type="submit" value="Submit"  >
 
         </form>
 
     </div>
-
-{##}
-{#    <div id="tutorCode", style = "display: none ">#}
-{#         CCCode: <input type ="text", id="Code", value ="code">#}
-{#    </div>#}
-
          <!--</div>-->
 {##}
 {#<div class="second-level-container">#}
