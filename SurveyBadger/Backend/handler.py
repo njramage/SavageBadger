@@ -71,6 +71,25 @@ def getUserID(name,filename = filen):
     else:
         return user[0]['ID']
 
+
+def getUserType(user,filename = filen):
+    """
+        Gets a user's type, returns none if doesn't exist
+
+        user : int : User's ID
+
+        returns string of user type, none if doesn't exist
+    """
+    db = Database(filename = filename)
+    user = db.retrieve('users',{'ID' : user})
+    db.close()
+
+    if len(user) != 1:
+        return None
+    else:
+        return user[0]['Type']
+
+
 #
 # Student Methods
 #

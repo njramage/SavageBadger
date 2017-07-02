@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.graphics.Bitmap;
@@ -22,31 +23,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.CookieManager;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class httpCom {
 	//Connection BASEURL
 	final static String BASEURL = "http://www.polavo.net/";
 
-    //final static String USERNAME = "SBSADM";
-    //final static String PASS = "W0htInTh3WuRld";
-
     final static int CONNECTTIMEOUT = 8000;
     final static int SOCKETTIMEOUT = 7000;
 
+
+    static final String COOKIES_HEADER = "Set-Cookie";
+    static final String COOKIE = "Cookie";
+
+    static CookieManager msCookieManager = new CookieManager();
+
     public static JSONObject sendAnswers(JSONObject data) {
 
-        //String USERNAME = "SBSENT";
-        //String PASS = "@N9sn3n9#NFN#";
 
         BufferedReader reader = null;
         HttpURLConnection con = null;
 
-        //for login
-        //byte[] loginBytes = (USERNAME + ":" + PASS).getBytes();
-        //StringBuilder loginBuilder = new StringBuilder().append("Basic ").append(Base64.encodeToString(loginBytes, Base64.DEFAULT));
 
         JSONObject postData = data;
 
@@ -68,18 +71,31 @@ public class httpCom {
             con.setRequestProperty("Content-Type",
                     "application/json");
 
-            //for login
-            //con.addRequestProperty("Authorization", loginBuilder.toString());
+            //set cookies
+            if (msCookieManager.getCookieStore().getCookies().size() > 0) {
+                //While joining the Cookies, use ',' or ';' as needed. Most of the server are using ';'
+                con.setRequestProperty(COOKIE ,
+                        TextUtils.join(";", msCookieManager.getCookieStore().getCookies()));
+            }
 
-            //httpURLConnection.setRequestProperty("charset", "utf-8");
-            //httpURLConnection.setRequestProperty("Content-Length",
-            //       Integer.toString(postDataLength));
             con.setConnectTimeout(10000);
             DataOutputStream dataOutputStream = new DataOutputStream(
                     con.getOutputStream());
             dataOutputStream.write(postData.toString().getBytes("UTF-8"));
             dataOutputStream.flush();
             dataOutputStream.close();
+
+            //Get cookies from response
+            Map<String, List<String>> headerFields = con.getHeaderFields();
+            List<String> cookiesHeader = headerFields.get(COOKIES_HEADER);
+
+            if (cookiesHeader != null) {
+                for (String cookie : cookiesHeader) {
+                    msCookieManager.getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
+                }
+            }
+
+            //Get and handle response code
             int status = con.getResponseCode();
             Log.i("HTTP", "Response " + String.valueOf(status));
             if (status == HttpURLConnection.HTTP_OK) {
@@ -157,6 +173,12 @@ public class httpCom {
             con.setRequestProperty("Content-Type",
                     "application/json");
 
+            //set cookies
+            if (msCookieManager.getCookieStore().getCookies().size() > 0) {
+                //While joining the Cookies, use ',' or ';' as needed. Most of the server are using ';'
+                con.setRequestProperty(COOKIE ,
+                        TextUtils.join(";", msCookieManager.getCookieStore().getCookies()));
+            }
 
             con.setConnectTimeout(10000);
             DataOutputStream dataOutputStream = new DataOutputStream(
@@ -164,6 +186,17 @@ public class httpCom {
             dataOutputStream.write(postData.toString().getBytes("UTF-8"));
             dataOutputStream.flush();
             dataOutputStream.close();
+
+            //Get cookies from response
+            Map<String, List<String>> headerFields = con.getHeaderFields();
+            List<String> cookiesHeader = headerFields.get(COOKIES_HEADER);
+
+            if (cookiesHeader != null) {
+                for (String cookie : cookiesHeader) {
+                    msCookieManager.getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
+                }
+            }
+
             int status = con.getResponseCode();
             Log.i("HTTP", "Response " + String.valueOf(status));
             if (status == HttpURLConnection.HTTP_OK) {
@@ -218,15 +251,10 @@ public class httpCom {
 
     public static JSONObject getSurvey(String id) {
 
-        String USERNAME = "SBSADM";
-        String PASS = "n@Twsb3qw9sdNSbnwo21rd";
 
         BufferedReader reader = null;
         HttpURLConnection con = null;
 
-        //for login
-        byte[] loginBytes = (USERNAME + ":" + PASS).getBytes();
-        StringBuilder loginBuilder = new StringBuilder().append("Basic ").append(Base64.encodeToString(loginBytes, Base64.DEFAULT));
 
         try {
             URL url = new URL(BASEURL + "getsurvey/" + id);
@@ -238,8 +266,12 @@ public class httpCom {
             con.setConnectTimeout(CONNECTTIMEOUT);
             con.setReadTimeout(SOCKETTIMEOUT);
 
-            //for login
-            con.addRequestProperty("Authorization", loginBuilder.toString());
+            //set cookies
+            if (msCookieManager.getCookieStore().getCookies().size() > 0) {
+                //While joining the Cookies, use ',' or ';' as needed. Most of the server are using ';'
+                con.setRequestProperty(COOKIE ,
+                        TextUtils.join(";", msCookieManager.getCookieStore().getCookies()));
+            }
 
             StringBuilder sb = new StringBuilder();
             reader = new BufferedReader((new InputStreamReader(con.getInputStream())));
@@ -250,11 +282,22 @@ public class httpCom {
             }
             JSONObject obj = new JSONObject(sb.toString());
 
+            //Get cookies from response
+            Map<String, List<String>> headerFields = con.getHeaderFields();
+            List<String> cookiesHeader = headerFields.get(COOKIES_HEADER);
+
+            if (cookiesHeader != null) {
+                for (String cookie : cookiesHeader) {
+                    msCookieManager.getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
+                }
+            }
+
             if (obj.has("questions")) {
                 Log.e("httpCom", "Retrieving Questions success");
                 return obj; 
             } else {
                 Log.e("httpCom", "Retrieving Questions failed");
+                Log.e("httpCom", "HTTP Request Code: "+ String.valueOf(con.getResponseCode()));
                 return null;
             }
         } catch (Exception e) {
