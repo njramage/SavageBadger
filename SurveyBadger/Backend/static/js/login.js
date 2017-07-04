@@ -1,3 +1,26 @@
+//Display login
+function displayLogin() {
+    //Make elements
+    div = $('<div class="container" align="center">');
+    username = $('<input type="text" class="form-control" placeholder = "Username" id="username" style="height: 44px;width: 300px">');
+    password = $('<input type="password" class="form-control" placeholder = "Password" id="password" style="height: 44px;width: 300px">');
+    submit = $('<button class="btn btn-success btn-lg btn-block" style="width: 300px;" onclick="login()">').html("Login");
+    
+    //Place and display them
+    div.append(username);
+    div.append($('<br>'));
+    div.append(password);
+    div.append($('<br>'));
+    div.append(submit);
+
+    $('#content').fadeOut('medium', function() {
+        $('#content').html(div.html());
+        $('#content').fadeIn('medium');
+    });
+}
+
+
+
 //Login into website
 function login() {
     

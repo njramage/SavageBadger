@@ -4,6 +4,9 @@ var answers;
 var id;
 var questionIndex;
 
+var questionDiv = '<div class="container-fluid" id="question" style="padding:0;margin:0;">'; 
+
+
 $(document).ready(function(){
     startPage();
 });
@@ -50,7 +53,7 @@ function submitSurvey() {
             data: JSON.stringify(submitData), 
             success: function(data) { 
                 console.log(data);
-                var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
+                var div = $(questionDiv);
                 var header = $('<h1>').html("Survey Submitted!");
                 var logo = $('<img alt="Polavo Logo" src="../../static/images/Logo.png">');
                 var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
@@ -78,7 +81,7 @@ function submitSurvey() {
     */
     $.post("/submitsurvey/",submitData, function(data) {
         console.log(data);
-        var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
+        var div = $(questionDiv);
         var header = $('<h1>').html("Survey Submitted!");
         var logo = $('<img alt="Polavo Logo" src="../../static/images/Logo.png">');
         var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
@@ -164,7 +167,7 @@ function applyEvents(type) {
 function displayQuestion() {
     console.log(survey[questionIndex]['type'])
     //New div and question header
-    var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
+    var div = $(questionDiv);
     var ques = $('<h1>').html(survey[questionIndex]['question']);
     div.append(ques);
     //Submit button
@@ -299,16 +302,16 @@ function getAnswer() {
 
 
 function startPage() {
-    var div = $('<div class="container-fluid" id="question" style="padding:0;margin:0;">');
+    var div = $(questionDiv);
     
-    var heading = $('<h1>').html("Welcome!");
-    var instruction = $('<p>').html("Please enter the code for the survey you wish to complete");
+//    var heading = $('<h1>').html("Welcome!");
+    var instruction = $('<p style="margin-top:4%;">').html("Please enter the code for the survey you wish to complete");
     var wait = $('<p id="wait" hidden>').html("Please Wait");
     var codeEntry = $('<input type="text" id="code" size="20" style="font-size:28px;">');
     var button = $('<button class="btn" onclick="getSurvey()">').html("Enter");
 
-    div.append(heading);
-    div.append($('<br/>'));
+  //  div.append(heading);
+  //  div.append($('<br/>'));
     div.append(instruction);
     //div.append($('<br/>'));
     div.append(wait);
