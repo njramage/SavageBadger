@@ -285,7 +285,6 @@ class FlaskTestCase(unittest.TestCase):
         rv = self.login('n0000001','wordpass')
         rv = self.app.get('/getsurvey/DEF456', follow_redirects=True)
         res = self.getJsonResult(rv)
-        print(res)
         assert rv.status_code == 200
         assert 'status' in res
         assert 'survey' in res
@@ -315,7 +314,7 @@ class FlaskTestCase(unittest.TestCase):
         
         rv = self.app.post('/submitsurvey',data=json.dumps(dict(
             survey=2,
-            results=results)),
+            answers=results)),
             content_type='application/json', 
             follow_redirects=True)
         
@@ -329,16 +328,14 @@ class FlaskTestCase(unittest.TestCase):
                 {"Question" : 4,"Result" : "3"},
                 {"Question" : 5,"Result" : "4"}]
         
-        rv = self.login('n0000001','wordpass')
-        
-        rv = self.app.post('/submitsurvey',data=json.dumps(dict(
+        login = self.login('n0000001','wordpass')
+        rv = self.app.post('/submitsurvey/',data=json.dumps(dict(
             survey=2,
-            results=results)),
+            answers=results)),
             content_type='application/json', 
             follow_redirects=True)
         
         assert rv.status_code == 200
-        print(rv.data)
         res = self.getJsonResult(rv)
         assert 'result' in res
         assert res['result'] == True
@@ -353,7 +350,7 @@ class FlaskTestCase(unittest.TestCase):
         rv = self.login('tutorOne','wordpass')
         rv = self.app.post('/submitsurvey',data=json.dumps(dict(
             survey=2,
-            results=results)),
+            answers=results)),
             content_type='application/json', 
             follow_redirects=True)
       
@@ -371,7 +368,7 @@ class FlaskTestCase(unittest.TestCase):
         
         rv = self.app.post('/submitsurvey',data=json.dumps(dict(
             survey=2,
-            results=results)),
+            answers=results)),
             content_type='application/json', 
             follow_redirects=True)
         
@@ -380,7 +377,7 @@ class FlaskTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     #Load database
-    filen = "Polavo.db"
+    filen = "Test_base.db"
     try:
         os.remove(filen)
     except:

@@ -116,6 +116,8 @@ def getQuestions(code,filename = filen):
         return {"status" : False,"error" : "Invalid Code"}
     #Else check if code has expired
     elif datetime.now() > datetime.strptime(survey[0]["Expires"], "%H%M %d/%m/%Y"):
+        print("now {}".format(datetime.now()))
+        print("expires {}".format(datetime.strptime(survey[0]["Expires"], "%H%M %d/%m/%Y")))
         return {"status" : False,"error" : "Survey has expired"}
 
     #grab questions for survey
@@ -149,7 +151,6 @@ def submit(user, survey, answers,filename = filen):
     #Check values
     if userID == -1 or not checkExists("surveys",{"ID" : survey},filename):
         return False
-
 
     #Add answers to database
     try:
@@ -222,7 +223,7 @@ def createSurvey(session, attendance, early,filename = filen):
     survey["Code"] = genCode(6)
 
     #Calculate expiry time
-    survey["Expires"] = (datetime.now() + timedelta(minutes = 30)).strftime("%Y-%m-%d %H%M")
+    survey["Expires"] = (datetime.now() + timedelta(minutes = 30)).strftime("%H%M %Y-%m-%d")
 
     #Insert survey into the database and return the access code
     db.insert("surveys",survey)

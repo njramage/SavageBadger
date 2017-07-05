@@ -130,6 +130,7 @@ def login():
 @login_logout
 def logout():
     cookie_val = request.cookies.get('session').split(".")[0]
+    session = {}
     app.permanent_session_lifetime = timedelta(seconds=1)
     store.delete(cookie_val)
     return redirect(url_for('webClient'))
@@ -235,12 +236,14 @@ def getImage(filename):
 @app.route('/submitsurvey/', methods=["POST"])
 @login_student
 def submitSurvey():
+    print("Submitting")
     content = request.get_json()
     #Web client support
     if content == None:
+        print("Still submitting")
         content = {'answers' : request.values['answers'], 'survey': request.values['survey']}
 
-    user = 1#hl.getUserID(session["USERNAME"])
+    user = "n0000001" #1#hl.getUserID(session["USERNAME"])
     survey = content["survey"]
     answers = content["answers"]
 

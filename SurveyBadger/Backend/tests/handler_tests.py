@@ -91,6 +91,8 @@ def loadDatabase(db):
     #CAB201
     valid = (datetime.now()+timedelta(minutes=30)).strftime("%H%M %d/%m/%Y")
     invalid = (datetime.now()-timedelta(minutes=30)).strftime("%H%M %d/%m/%Y")
+        
+    print("valid {}".format(valid))
 
     db.insert("surveys",{"Tutorial" : "MON - 2PM - GP-S504", "Date" : "05/06/2017", "Attendance" : 30, "Early_leavers" : "2",
         "Code" : "ABC123", "Expires" : invalid})

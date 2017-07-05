@@ -43,13 +43,10 @@ function submitSurvey() {
     //var submitData = {'token' : token, 'answers' : answers};
     var submitData = {'answers' : answers,'survey' : id};
     console.log(submitData);
-    /*
+    
     $.ajax({
             type: 'POST',
             url: '/submitsurvey/',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader ("Authorization", "Basic " + btoa('SBSENT' + ":" + token));
-            },
             data: JSON.stringify(submitData), 
             success: function(data) { 
                 console.log(data);
@@ -78,7 +75,8 @@ function submitSurvey() {
             },
             contentType: "application/json",
             dataType: 'json'
-    */
+    });
+    /*
     $.post("/submitsurvey/",submitData, function(data) {
         console.log(data);
         var div = $(questionDiv);
@@ -97,7 +95,7 @@ function submitSurvey() {
             $('#question').html(div.html());
             $('#question').fadeIn('slow');
         });
-    });
+    });*/
 }
 
 function updateSliderValue() {

@@ -44,7 +44,6 @@ function login() {
         
 }
 
-
 //Allow UC to pick login type
 function chooseLoginType() {
     //New div and with choice buttons
