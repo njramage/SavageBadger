@@ -240,7 +240,7 @@ def submitSurvey():
     if content == None:
         content = {'answers' : request.values['answers'], 'survey': request.values['survey']}
 
-    user = 1#hl.getUserID(session["USERNAME"])
+    user = hl.getUserID(session["USERNAME"])
     survey = content["survey"]
     answers = content["answers"]
 
@@ -264,6 +264,14 @@ def submitAttendance():
         return jsonify({"status" : False, "error" : code})
     else:
         return jsonify({"status" : True, "code" : code})
+
+
+# unit cordinator data
+@app.route('/getresults/', methods=["GET"])
+@login_uc
+def unitData():
+    return jsonify({"unitData": hl.getResults(session["USERNAME"])})
+
 
 #===========Web error Handling================
 @app.errorhandler(500)
