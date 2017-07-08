@@ -200,7 +200,7 @@ def unitEditor():
 @app.route('/getsurvey/<code>', methods=["GET"])
 @login_student
 def getSurvey(code):
-    questions = hl.getQuestions(code) 
+    questions = hl.getQuestions(code,session["USERNAME"])
     return jsonify(questions)
 
 #serve images
@@ -212,18 +212,17 @@ def getImage(filename):
 @app.route('/submitsurvey/', methods=["POST"])
 @login_student
 def submitSurvey():
-    print("Submitting")
     content = request.get_json()
     #Web client support
     if content == None:
-        print("Still submitting")
         content = {'answers' : request.values['answers'], 'survey': request.values['survey']}
 
-    user = hl.getUserID(session["USERNAME"])
+    user = session["USERNAME"]
     survey = content["survey"]
     answers = content["answers"]
-
-    return jsonify({"result" : hl.submit(user, survey, answers)})
+    
+    result = hl.submit(user, survey, answers)
+    return jsonify({"status" : result})
 
 #submit attendance
 @app.route('/submitattendance/', methods=["POST"])

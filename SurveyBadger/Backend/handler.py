@@ -106,18 +106,35 @@ def getUserName(user,filename = filen):
     else:
         return user[0]['Name']
 
+def checkSubmitted(user,survey,filename = filen):
+    """ 
+        Checks if the user has submitteded answers for this survey before
 
+        user   : int : User's ID
+        survey : int : the survey ID of the survey to check 
+
+        returns true if user has answers for this survey, else false
+    """
+    #Get the answers for this survey
+    db = Database(filename = filename)
+    answers = db.retrieve('answers',{'Survey' : survey,'Person' : user})
+    db.close()
+     
+    #Check if user has completed the survey and return result
+    print(answers)
+    return len(answers) > 0
 
 
 #
 # Student Methods
 #
 
-def getQuestions(code,filename = filen):
+def getQuestions(code,user,filename = filen):
     """
         Retrieves survey questions from a database 
 
         code : str : access code used to identify the survey
+        user : str : the users string identifier 
 
         returns dict :  status - status of request
                         survey - survey id 
@@ -137,7 +154,12 @@ def getQuestions(code,filename = filen):
     elif datetime.now() > datetime.strptime(survey[0]["Expires"], "%H%M %d/%m/%Y"):
         print("now {}".format(datetime.now()))
         print("expires {}".format(datetime.strptime(survey[0]["Expires"], "%H%M %d/%m/%Y")))
+        db.close()
         return {"status" : False,"error" : "Survey has expired"}
+    #Check if the user has already completed the survey
+    elif checkSubmitted(getUserID(user,filename),survey[0]["ID"],filename):
+        db.close()
+        return {"status" : False,"error" : "You have already completed this survey"}
 
     #grab questions for survey
     questions = []
@@ -169,12 +191,20 @@ def submit(user, survey, answers,filename = filen):
 
     #Check values
     if userID == -1 or not checkExists("surveys",{"ID" : survey},filename):
+        db.close()
+        return False 
+    #Check if the user has already completed the survey
+    elif checkSubmitted(userID,survey,filename):
+        db.close()
         return False
 
     #Add answers to database
     try:
+        print(db.retrieve('answers',{"Survey" : survey,"Person" : userID})) 
         for ans in answers:
             db.insert("answers",{"Survey" : survey, "Question" : int(ans['Question']), "Person" : userID, "Result" : str(ans['Result'])})
+        
+        print(db.retrieve('answers',{"Survey" : survey,"Person" : userID})) 
     except Exception as e:
         print(e)
         #close db and return failure

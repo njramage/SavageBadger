@@ -86,30 +86,24 @@ class HandlerTestCase(unittest.TestCase):
 
     #getQuestions tests
     def test_getQuestions_active(self):
-        questions = hl.getQuestions("DEF456",self.filen)
+        questions = hl.getQuestions("DEF456","n0000001",self.filen)
         self.assertTrue(questions["status"])
         self.assertEqual(questions["survey"],2)
         self.assertEqual(len(questions["questions"]),5)
     
     def test_getQuestions_expired(self):
-        questions = hl.getQuestions("ABC123",self.filen)
+        questions = hl.getQuestions("ABC123","n0000001",self.filen)
         self.assertFalse(questions["status"])
         self.assertEqual(questions["error"],"Survey has expired")
     
     def test_getQuestions_nonexistant(self):
-        questions = hl.getQuestions("aaaaaa",self.filen)
+        questions = hl.getQuestions("aaaaaa","n0000001",self.filen)
         self.assertFalse(questions["status"])
         self.assertEqual(questions["error"],"Invalid Code")
     
-    def test_getQuestions_wrongType(self):
-        questions = hl.getQuestions(123456,self.filen)
-        self.assertFalse(questions["status"])
-        self.assertEqual(questions["error"],"Invalid Code")
-
-    #submit tests
-    def test_submit_vaild(self):
-        user = "n0000001"
-        survey = 3 
+    def test_getQuestions_alreadyComplete(self):
+        user = "n0000002"
+        survey = 2 
         answers = [{"Question" : 1,"Result" : "1"},
                    {"Question" : 2,"Result" : "2"},
                    {"Question" : 3,"Result" : "3"},
@@ -117,12 +111,49 @@ class HandlerTestCase(unittest.TestCase):
                    {"Question" : 5,"Result" : "5"}]
 
         self.assertTrue(hl.submit(user, survey, answers, self.filen))
-        self.assertEqual(len(self.db.retrieve("answers",{"Survey" : 3})),10)
+        self.assertEqual(len(self.db.retrieve("answers",{"Survey" : 2})),15)
+            
+        questions = hl.getQuestions("DEF456","n0000002",self.filen)
+        self.assertFalse(questions["status"])
+        self.assertEqual(questions["error"],"You have already completed this survey")
+        
 
+    def test_getQuestions_wrongType(self):
+        questions = hl.getQuestions(123456,"n0000001",self.filen)
+        self.assertFalse(questions["status"])
+        self.assertEqual(questions["error"],"Invalid Code")
+
+    #submit tests
+    def test_submit_vaild(self):
+        user = "n0000001"
+        survey = 4 
+        answers = [{"Question" : 1,"Result" : "1"},
+                   {"Question" : 2,"Result" : "2"},
+                   {"Question" : 3,"Result" : "3"},
+                   {"Question" : 4,"Result" : "4"},
+                   {"Question" : 5,"Result" : "5"}]
+
+        self.assertTrue(hl.submit(user, survey, answers, self.filen))
+        self.assertEqual(len(self.db.retrieve("answers",{"Survey" : 4})),20)
+
+    def test_submit_multipleSubmission(self):
+        user = "n0000001"
+        survey = 4 
+        answers = [{"Question" : 1,"Result" : "1"},
+                   {"Question" : 2,"Result" : "2"},
+                   {"Question" : 3,"Result" : "3"},
+                   {"Question" : 4,"Result" : "4"},
+                   {"Question" : 5,"Result" : "5"}]
+
+        self.assertTrue(hl.submit(user, survey, answers, self.filen))
+        self.assertEqual(len(self.db.retrieve("answers",{"Survey" : 4})),20)
+        
+        self.assertFalse(hl.submit(user, survey, answers, self.filen))
+        self.assertEqual(len(self.db.retrieve("answers",{"Survey" : 4})),20)
 
     def test_submit_invaild_answers(self):
         user = "n0000001"
-        survey = 3
+        survey = 4
         answers = [{"Ques345n" : "b34b","wfew ew" : "1"},
                    {"Question" : 2,"Rew d" : "2"},
                    {"Ques34rn" : 3,"Reef t" : "3"},
@@ -130,11 +161,11 @@ class HandlerTestCase(unittest.TestCase):
                    {"Queewr34n" : 5,"Reer " : "5"}]
 
         self.assertFalse(hl.submit(user, survey, answers, self.filen))
-        self.assertEqual(len(self.db.retrieve("answers",{"Survey" : 3})),5)
+        self.assertEqual(len(self.db.retrieve("answers",{"Survey" : 4})),15)
 
     def test_submit_nonexistant_user(self):
         user = "n0000222"
-        survey = 3 
+        survey = 4 
         answers = [{"Question" : 1,"Result" : "1"},
                    {"Question" : 2,"Result" : "2"},
                    {"Question" : 3,"Result" : "3"},
@@ -158,7 +189,7 @@ class HandlerTestCase(unittest.TestCase):
 
     def test_submit_no_answers(self):
         user = "n0000001"
-        survey = 3 
+        survey = 4 
         answers = []
 
         self.assertTrue(hl.submit(user, survey, answers, self.filen))
@@ -166,7 +197,7 @@ class HandlerTestCase(unittest.TestCase):
 
     def test_submit_wrongType_user(self):
         user = True
-        survey = 3
+        survey = 4
         answers = [{"Question" : 1,"Result" : "1"},
                    {"Question" : 2,"Result" : "2"},
                    {"Question" : 3,"Result" : "3"},
@@ -190,7 +221,7 @@ class HandlerTestCase(unittest.TestCase):
         
     def test_submit_wrongType_answer(self):
         user = "n0000001"
-        survey = 3
+        survey = 4
         answers = {"Question1" : 1,"Result1" : "1",
                    "Question2" : 2,"Result2" : "2",
                    "Question3" : 3,"Result3" : "3",
@@ -227,7 +258,26 @@ class HandlerTestCase(unittest.TestCase):
     
     def test_checkExists_wrongvalue(self):
         self.assertFalse(hl.checkExists("users", {"Name":True}, self.filen))
+   
+    #checkSubmitted tests
+    def test_checkSubmitted_hasSubmitted(self):
+        self.assertTrue(hl.checkSubmitted(6,3,self.filen))
+
+    def test_checkSubmitted_hasNotSubmitted(self):
+        self.assertFalse(hl.checkSubmitted(6,4,self.filen))
+
+    def test_checkSubmitted_NonExistantSurvey(self):
+        self.assertFalse(hl.checkSubmitted(6,100,self.filen))
     
+    def test_checkSubmitted_NonExistantUser(self):
+        self.assertFalse(hl.checkSubmitted(100,3,self.filen))
+    
+    def test_checkSubmitted_invalidSurvey(self):
+        self.assertFalse(hl.checkSubmitted(6,"sdewdd",self.filen))
+    
+    def test_checkSubmitted_invalidUser(self):
+        self.assertFalse(hl.checkSubmitted("dwedd",3,self.filen))
+
     #getTutorClasses tests
     def test_getTutorClasses_valid(self):
         classes = hl.getTutorClasses("tutorFour",self.filen)
@@ -318,7 +368,7 @@ class HandlerTestCase(unittest.TestCase):
         self.assertEqual(hl.createSurvey(ID, attendance, early,self.filen),"Incorrect Day")
     
     def test_createSurvey_nonexistantTute(self):
-        ID = "MON - 2PM - GP-P504"
+        ID = "MON - 9PM - GP-P504"
         attendance = 28
         early = 2
         self.assertEqual(hl.createSurvey(ID, attendance, early,self.filen),"Invalid parameters")
@@ -428,43 +478,43 @@ class HandlerTestCase(unittest.TestCase):
         self.assertTrue(isinstance(code,str))
 
     def test_genCode_invalid(self):
-        self.assertEquals(len(hl.genCode(-2)),0)
+        self.assertEqual(len(hl.genCode(-2)),0)
 
     def test_genCode_wrongType(self):
-        self.assertEquals(len(hl.genCode("Asefsfd")),0)
+        self.assertEqual(len(hl.genCode("Asefsfd")),0)
 
     #getResults test
     def test_getResults_valid(self):
         results = hl.getResults("ucOne",self.filen)
         #Unit check
-        self.assertEquals(len(results),1)
+        self.assertEqual(len(results),1)
         #Tutorial check
-        self.assertEquals(len(results[0]["Tutorials"]),3)
+        self.assertEqual(len(results[0]["Tutorials"]),3)
         #Survey check
-        self.assertEquals(len(results[0]["Tutorials"][0]["Surveys"]),1)
-        self.assertEquals(len(results[0]["Tutorials"][1]["Surveys"]),1)
-        self.assertEquals(len(results[0]["Tutorials"][2]["Surveys"]),1)
+        self.assertEqual(len(results[0]["Tutorials"][0]["Surveys"]),1)
+        self.assertEqual(len(results[0]["Tutorials"][1]["Surveys"]),1)
+        self.assertEqual(len(results[0]["Tutorials"][2]["Surveys"]),1)
         #Results check
-        self.assertEquals(len(results[0]["Tutorials"][0]["Surveys"][0]["results"]),10)
-        self.assertEquals(len(results[0]["Tutorials"][1]["Surveys"][0]["results"]),10)
-        self.assertEquals(len(results[0]["Tutorials"][2]["Surveys"][0]["results"]),5)
+        self.assertEqual(len(results[0]["Tutorials"][0]["Surveys"][0]["results"]),10)
+        self.assertEqual(len(results[0]["Tutorials"][1]["Surveys"][0]["results"]),10)
+        self.assertEqual(len(results[0]["Tutorials"][2]["Surveys"][0]["results"]),5)
 
 
     def test_getResults_valid_hiddenTutes(self):
         results = hl.getResults("ucTwo",self.filen)
         #Unit check
-        self.assertEquals(len(results),2)
+        self.assertEqual(len(results),2)
         #Tutorial check
-        self.assertEquals(len(results[0]["Tutorials"]),1)
-        self.assertEquals(len(results[1]["Tutorials"]),2)
+        self.assertEqual(len(results[0]["Tutorials"]),1)
+        self.assertEqual(len(results[1]["Tutorials"]),2)
         #Survey check
-        self.assertEquals(len(results[0]["Tutorials"][0]["Surveys"]),1)
-        self.assertEquals(len(results[1]["Tutorials"][0]["Surveys"]),1)
-        self.assertEquals(len(results[1]["Tutorials"][1]["Surveys"]),1)
+        self.assertEqual(len(results[0]["Tutorials"][0]["Surveys"]),1)
+        self.assertEqual(len(results[1]["Tutorials"][0]["Surveys"]),1)
+        self.assertEqual(len(results[1]["Tutorials"][1]["Surveys"]),1)
         #Results check
-        self.assertEquals(len(results[0]["Tutorials"][0]["Surveys"][0]["results"]),10)
-        self.assertEquals(len(results[1]["Tutorials"][0]["Surveys"][0]["results"]),15)
-        self.assertEquals(len(results[1]["Tutorials"][1]["Surveys"][0]["results"]),10)
+        self.assertEqual(len(results[0]["Tutorials"][0]["Surveys"][0]["results"]),10)
+        self.assertEqual(len(results[1]["Tutorials"][0]["Surveys"][0]["results"]),15)
+        self.assertEqual(len(results[1]["Tutorials"][1]["Surveys"][0]["results"]),10)
         
         #Additonal check to make sure UC's tute was hidden
         tutorials = [x["ID"] for x in results[0]["Tutorials"]]
@@ -473,10 +523,10 @@ class HandlerTestCase(unittest.TestCase):
         
 
     def test_getResults_invalid(self):
-        self.assertEquals(len(hl.getResults("n0000001",self.filen)),0)
+        self.assertEqual(len(hl.getResults("n0000001",self.filen)),0)
 
     def test_getResults_wrongType(self):
-        self.assertEquals(len(hl.getResults(True,self.filen)),0)
+        self.assertEqual(len(hl.getResults(True,self.filen)),0)
 
 
 

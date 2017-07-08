@@ -20,8 +20,8 @@ function getSurvey() {
     
     $.get("/getsurvey/"+code, function(data) {
         console.log(data);
-        if (data.status == "Failed") {
-            alert("An error occured geting the survey. Please ensure the code you entered is correct");
+        if (data["status"] == false) {
+            alert("Error: "+data["error"]);
             $('#wait').toggle();
             $('#code').val(code);
         } else {
@@ -49,13 +49,23 @@ function submitSurvey() {
             url: '/submitsurvey/',
             data: JSON.stringify(submitData), 
             success: function(data) { 
+                //Check the result of the submissiom
                 console.log(data);
-                var div = $(questionDiv);
-                var header = $('<h1>').html("Survey Submitted!");
-                var logo = $('<img alt="Polavo Logo" src="../../static/images/Logo.png">');
-                var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
-                var next = $('<a href="/">').html("Click here to fill out another survey");
+                if (data["status"] == true) {
+                    var div = $(questionDiv);
+                    var header = $('<h1>').html("Survey Submitted!");
+                    var logo = $('<img alt="Polavo Logo" src="../../static/images/Logo.png">');
+                    var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
+                    var next = $('<a href="/">').html("Click here to fill out another survey");
 
+                } else {
+                    var div = $(questionDiv);
+                    var header = $('<h1>').html("Failed to submit survey");
+                    var logo = null;
+                    var thank = $('<p>').html("Unfortunately, an error occured submitting your results. Please try again later.");
+                    var next = $('<a href="/">').html("Click here to fill out another survey");
+    
+                }
                 div.append(div);
                 div.append(header);
                 div.append(logo);
@@ -66,6 +76,7 @@ function submitSurvey() {
                     $('#question').html(div.html());
                     $('#question').fadeIn('slow');
                 });
+
             },
             statusCode: {
                 401: function() {
@@ -235,7 +246,7 @@ function displayQuestion() {
 
 function getAnswer() {
     //Create answer object
-    var ans = {QuestionID : questionIndex, PersonID : 1, Result : ''};
+    var ans = {Question : questionIndex, Result : ''};
 
     //Get Result based on question type 
     switch(survey[questionIndex]['type']) {
@@ -276,7 +287,7 @@ function getAnswer() {
                     selected.push($("#Select"+opt).val());
                 }
             } 
-            ans.Result = selected;
+            ans.Result = selected[0];
             break;
         case 'Dollar_value':
             ans.Result = "$"+$('#entry').val();
