@@ -2,16 +2,10 @@
 $(document).ready(function(){
     //Functions to run off start
     unitCordSetup();
-
-
 });
 
 function unitCordSetup()
 {
-
-
-
-
         $.get("/getresults/", function (data){
 
             //console.log(data[0][0]['ID']);

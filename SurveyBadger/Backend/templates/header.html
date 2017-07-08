@@ -17,6 +17,21 @@
     </div>
     -->
     <!--</nav> -->
+    <script>
+        function switchMode() {
+            var page = window.location.pathname;
+            if (page == "/dashboard/") {
+                window.location.replace("/tutor"); 
+            } else {
+                window.location.replace("/dashboard"); 
+            }
+        }
+    </script>
+    <!-- Switch between tutor and UC portals -->
+    {% if options["UC"] %}
+        <button class="btn btn-default" style="float : left; margin-left:10px; margin-top:10px;" onclick="switchMode()">Switch Mode</button>
+    {% endif %}
+    <!-- Logout button -->
     {% if options["LoggedIn"] %}
         <a href="/logout" class="btn btn-default" style="float : right; margin-right:10px; margin-top:10px;">Logout</a>
     {% endif %}

@@ -118,9 +118,7 @@ def login():
         session.permanent = True
         session["USERNAME"] = content['username']
         session["USERTYPE"] = hl.getUserType(hl.getUserID(content['username']))
-        #If a UC, give them the choice of what account to login as
         status = {"status" : True}
-        status["choice"] = True if session["USERTYPE"] == "UC" else False
         return jsonify(status)
     else:
         return jsonify({"status" :  False})
@@ -130,30 +128,10 @@ def login():
 @login_logout
 def logout():
     cookie_val = request.cookies.get('session').split(".")[0]
+    session = {}
     app.permanent_session_lifetime = timedelta(seconds=1)
     store.delete(cookie_val)
     return redirect(url_for('webClient'))
-
-#toggle UC login in as a tutor
-@app.route('/tutormode', methods=["GET"])
-@login_uc
-def toggle():
-    #Incase unseen error
-    try:
-        #Check check
-        if "TUTORMODE" not in session:
-            session["TUTORMODE"] = False
-        if session["TUTORMODE"] == False:
-            session["TUTORMODE"] = True
-        else:
-            session["TUTORMODE"] = False
-
-        return jsonify({"status" : True})
-
-    except:
-        #clear tutor mode of safety
-        session["TUTORMODE"] = None
-        return jsonify({"status" :  False})
 
 
 #redirect logged in users to correct portals
@@ -175,11 +153,10 @@ def login_redirect():
 def getOptions():
     options = {}
     #check if user logged in
-    if "USERNAME" in session:
-        options["LoggedIn"] = True
-    else:
-        options["LoggedIn"] = False
-
+    options["LoggedIn"] = True if "USERNAME" in session else False
+    #Check if user is a UC
+    options["UC"] = True if "USERTYPE" in session and session["USERTYPE"] == "UC" else False
+    
     return options
 
 
@@ -235,9 +212,11 @@ def getImage(filename):
 @app.route('/submitsurvey/', methods=["POST"])
 @login_student
 def submitSurvey():
+    print("Submitting")
     content = request.get_json()
     #Web client support
     if content == None:
+        print("Still submitting")
         content = {'answers' : request.values['answers'], 'survey': request.values['survey']}
 
     user = hl.getUserID(session["USERNAME"])
