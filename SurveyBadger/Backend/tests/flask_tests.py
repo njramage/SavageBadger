@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 import sys
 from shutil import copyfile
@@ -5,6 +7,8 @@ import unittest
 import tempfile
 import json
 import time
+import re
+import subprocess
 
 #Change to src directory for testing and importing
 sys.path.append(os.path.abspath('..'))
@@ -45,7 +49,6 @@ class FlaskTestCase(unittest.TestCase):
         assert 'status' in rv
         assert rv['status'] == True
         rv = self.logout()
-        print(rv.data)
         assert b'Welcome' in rv.data
         assert b'>Logout<' not in rv.data
 
@@ -376,10 +379,23 @@ if __name__ == '__main__':
     except:
         pass
     setupDatabase(filen)
-    #Start redis
-    os.system('redis-server &') 
-    #Sleep to let redis start
-    time.sleep(2)
+    #Check if redis server is running
+    redis = False
+    s = subprocess.Popen(["ps", "e"],stdout=subprocess.PIPE)
+    for x in s.stdout:
+        if re.search(b'redis-server', x):
+            redis = True
+
+    if not redis:
+        opt = input("Redis-server is not running. Would you like to run it now?[y/n] ")
+        if opt.lower() == "y":
+            #Start redis
+            os.system('redis-server &') 
+            #Sleep to let redis start
+            #time.sleep(2)
+        else:
+            print("Aborting")
+            sys.exit()
     #Run tests
     unittest.main()
     

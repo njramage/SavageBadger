@@ -3,6 +3,7 @@ from passlib.hash import sha256_crypt
 from datetime import datetime, timedelta
 import random
 import string
+import os.path
 
 try:
     from db import Database
@@ -10,8 +11,9 @@ except:
     from polavo.db import Database
 
 #Database file
-#filen = "/var/www/polavo/polavo/Polavo.db"
-filen = "Polavo.db"
+filen = "/var/www/polavo/polavo/Polavo.db"
+if not os.path.exists(filen):
+    filen = "Polavo.db"
 
 #
 # General methods
