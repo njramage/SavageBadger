@@ -121,7 +121,6 @@ def checkSubmitted(user,survey,filename = filen):
     db.close()
      
     #Check if user has completed the survey and return result
-    print(answers)
     return len(answers) > 0
 
 
@@ -152,8 +151,8 @@ def getQuestions(code,user,filename = filen):
         return {"status" : False,"error" : "Invalid Code"}
     #Else check if code has expired
     elif datetime.now() > datetime.strptime(survey[0]["Expires"], "%H%M %d/%m/%Y"):
-        print("now {}".format(datetime.now()))
-        print("expires {}".format(datetime.strptime(survey[0]["Expires"], "%H%M %d/%m/%Y")))
+        #print("now {}".format(datetime.now()))
+        #print("expires {}".format(datetime.strptime(survey[0]["Expires"], "%H%M %d/%m/%Y")))
         db.close()
         return {"status" : False,"error" : "Survey has expired"}
     #Check if the user has already completed the survey
@@ -200,11 +199,8 @@ def submit(user, survey, answers,filename = filen):
 
     #Add answers to database
     try:
-        print(db.retrieve('answers',{"Survey" : survey,"Person" : userID})) 
         for ans in answers:
-            db.insert("answers",{"Survey" : survey, "Question" : int(ans['Question']), "Person" : userID, "Result" : str(ans['Result'])})
-        
-        print(db.retrieve('answers',{"Survey" : survey,"Person" : userID})) 
+            db.insert("answers",{"Survey" : survey, "Question" : int(ans['Question']), "Person" : userID, "Result" : str(ans['Result'])})    
     except Exception as e:
         print(e)
         #close db and return failure

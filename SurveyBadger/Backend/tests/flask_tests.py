@@ -4,6 +4,7 @@ from shutil import copyfile
 import unittest
 import tempfile
 import json
+import time
 
 #Change to src directory for testing and importing
 sys.path.append(os.path.abspath('..'))
@@ -22,7 +23,7 @@ class FlaskTestCase(unittest.TestCase):
         self.app = views.app.test_client()
 
     def tearDown(self):
-        pass
+        self.logout()
 
     def getJsonResult(self,rv):
         return json.loads(rv.data.decode('UTF-8'))
@@ -42,32 +43,27 @@ class FlaskTestCase(unittest.TestCase):
     def test_login_student(self):
         rv = self.login('n0000001','wordpass')
         assert 'status' in rv
-        assert 'choice' in rv
         assert rv['status'] == True
-        assert rv['choice'] == False
         rv = self.logout()
+        print(rv.data)
         assert b'Welcome' in rv.data
-        assert b'Logout' not in rv.data
+        assert b'>Logout<' not in rv.data
 
     def test_login_tutor(self):
         rv = self.login('tutorOne','wordpass')
         assert 'status' in rv
-        assert 'choice' in rv
         assert rv['status'] == True
-        assert rv['choice'] == False
         rv = self.logout()
         assert b'Welcome' in rv.data
-        assert b'Logout' not in rv.data
+        assert b'>Logout<' not in rv.data
     
     def test_login_uc(self):
         rv = self.login('ucOne','wordpass')
         assert 'status' in rv
-        assert 'choice' in rv
         assert rv['status'] == True
-        assert rv['choice'] == True
         rv = self.logout()
         assert b'Welcome' in rv.data
-        assert b'Logout' not in rv.data
+        assert b'>Logout<' not in rv.data
     
     def test_login_bad_password(self):
         rv = self.login('ucOne','password')
@@ -78,43 +74,18 @@ class FlaskTestCase(unittest.TestCase):
         rv = self.login('n1111111','wordpass')
         assert 'status' in rv
         assert rv['status'] == False
-    
-    #tutormode tests
-    def test_tutormode_no_login(self):
-        rv = self.app.get('/tutormode', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Login' in rv.data
-    
-    def test_tutormode_student(self):
-        rv = self.login('n0000001','wordpass')
-        rv = self.app.get('/tutormode', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Please wait' in rv.data
-    
-    def test_tutormode_tutor(self):
-        rv = self.login('tutorOne','wordpass')
-        rv = self.app.get('/tutormode', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Select Your Tutorial' in rv.data
-    
-    def test_tutormode_uc(self):
-        rv = self.login('ucOne','wordpass')
-        rv = self.app.get('/tutormode', follow_redirects=True)
-        assert rv.status_code == 200
-        res = self.getJsonResult(rv)
-        assert 'status' in res
-        assert res['status'] == True
-    
+     
     #Getoptions tests
     def test_getOptions_no_login(self):
-        rv = self.app.get('/', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Login' in rv.data
-        opts = views.getOptions()
-        assert 'LoggedIn' in opts
-        assert opts['LoggedIn'] == False
+        with self.app as c:
+            rv = self.app.get('/', follow_redirects=True)
+            assert rv.status_code == 200
+            assert b'Login' in rv.data
+            opts = views.getOptions()
+            assert 'LoggedIn' in opts
+            assert opts['LoggedIn'] == False
         
-    def test_getOptions_login(self):
+    def test_getOptions_studentLogin(self):
         with self.app as c:
             rv = self.login('n0000001','wordpass')
             rv = self.app.get('/', follow_redirects=True)
@@ -122,12 +93,34 @@ class FlaskTestCase(unittest.TestCase):
             assert b'Please wait' in rv.data
             opts = views.getOptions()
             assert 'LoggedIn' in opts
+            assert 'UC' in opts
             assert opts['LoggedIn'] == True
+            assert opts['UC'] == False
 
-    def test_getOptions_no_login(self):
-        rv = self.app.get('/tutormode', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Login' in rv.data
+    def test_getOptions_tutorLogin(self):
+        with self.app as c:
+            rv = self.login('tutorOne','wordpass')
+            rv = self.app.get('/', follow_redirects=True)
+            assert rv.status_code == 200
+            assert b'Select Your Tutorial' in rv.data
+            opts = views.getOptions()
+            assert 'LoggedIn' in opts
+            assert 'UC' in opts
+            assert opts['LoggedIn'] == True
+            assert opts['UC'] == False
+    
+    def test_getOptions_UCLogin(self):
+        with self.app as c:
+            rv = self.login('ucOne','wordpass')
+            #assert rv['status'] == True
+            rv = self.app.get('/', follow_redirects=True)
+            assert rv.status_code == 200
+            assert b'Switch Mode' in rv.data
+            opts = views.getOptions()
+            assert 'LoggedIn' in opts
+            assert 'UC' in opts
+            assert opts['LoggedIn'] == True
+            assert opts['UC'] == True
     
     #Index tests
     def test_home_no_login(self):
@@ -335,8 +328,8 @@ class FlaskTestCase(unittest.TestCase):
         
         assert rv.status_code == 200
         res = self.getJsonResult(rv)
-        assert 'result' in res
-        assert res['result'] == True
+        assert 'status' in res
+        assert res['status'] == True
 
     def test_submitSurvey_tutor(self):
         results = [{"Question" : 1,"Result" : "4"},
@@ -376,13 +369,17 @@ class FlaskTestCase(unittest.TestCase):
 if __name__ == '__main__':
     #Load database
     filen = "Test_base.db"
+    redisStore = "dump.rdb"
     try:
         os.remove(filen)
+        os.remove(redisStore)
     except:
         pass
     setupDatabase(filen)
     #Start redis
     os.system('redis-server &') 
+    #Sleep to let redis start
+    time.sleep(2)
     #Run tests
     unittest.main()
     
