@@ -62,7 +62,7 @@ function classCode()
         {
               console.log(data);
             var div = $('<div class = "container-fluid" id ="question" style = "padding:0;margin:0;">');
-           // var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
+           
             var error = $('<p>').html(data["error"] );
             var code = $('<p>').html( data.code);
 
