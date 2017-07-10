@@ -98,8 +98,6 @@ function detailedTutorial(intel)
     var x = intel.rowIndex - 1;
 
 
-  //  for (unitIndex in units)
-   // {
         var unit = units[unitIndex]["Tutorials"][x];
     console.log (unit["Surveys"][0]["results"].length);
        var questionAverages = getQuestionScores(unit["Surveys"][0]["results"]);
@@ -107,46 +105,9 @@ function detailedTutorial(intel)
     console.log ("question 1 score");
     console.log(questionAverages[1]);
 
-       // for (tuteIndex in unit["Tutorials"])
-       // {
-       //     console.log(unit["Tutorials"][x]["ID"])
-       // }
-   // }
-  //  $.get("/getresults", function (data)
-  //  {
-        // console.log("helllo" +intel.rowIndex);
-        // var x = intel.rowIndex - 1;
-        //
-        // var units = data["unitData"];
-        //
-        //
-        //  console.log(units[0]["Tutorials"][x]["ID"]);
-        //  console.log(units[0]["Tutorials"][x]["Tutor"]);
-        //  console.log(units[0]["Tutorials"][x]["Surveys"][0]["Attendance"]);
-        //  console.log(units[0]["Tutorials"][x]["ID"]);
-        // console.log( units[0]["Tutorials"][x]["Surveys"][0]["results"][0]["Question"]);
-        //
-        // if (  units[0]["Tutorials"][x]["Surveys"][0]["results"][0]["Question"] == 1 )
-        // {
-        //     console.log("ya did it");
-        //      console.log(units[0]["Tutorials"][x]["Surveys"][0]["results"][0]["Result"] );
-        //
-        // }
 
+    var main = $('<div>');
 
-
-        // console.log(units[0]["Tutorials"]);
-      //   console.log(units[0]["Tutorials"][0]["ID"]);
-
-       // console.log(units[0]["Tutorials"][intel]);
-
-      //  console.log(units[0]["Tutorials"][intel]["ID"]);
-
-
-
-
-
-  //  })
 
 }
 
