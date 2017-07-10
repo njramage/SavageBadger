@@ -1,6 +1,7 @@
 //Global constants 
 var weeks = 13;
 var units = [];
+var intel = 0;
 
 
 //Run intial setup and display
@@ -28,10 +29,12 @@ function unitCordSetup()
 //Displays and overview of all the data
 function displayOverview() {
     //Makes a main content div
-    var main = $('<div>'); 
+    var main = $('<div>');
+
 
     //Loops over all the units given
     for (unitIndex in units) {
+
         //get unit object
         var unit = units[unitIndex];
     
@@ -55,15 +58,16 @@ function displayOverview() {
         //Loop over tutorials and make rows with results
         for (tuteIndex in unit["Tutorials"]) {
             var tute = unit["Tutorials"][tuteIndex];
-            var row = $('<tr>');
+            var row = $('<tr onclick="detailedTutorial(this)">');
 
             //Tutorial name
-            row.append($('<td style="width:auto;white-space:nowrap;text-align:right;">').html(tute["ID"]));
+            row.append($('<td style="width:auto;white-space:nowrap;text-align:right;" ">').html(tute["ID"]));
 
             //Iterate over each week and generate an average score
             for (week = 0; week < weeks; week++) {
                 //Check if the there is results for this tutorial for that week
-                var cell = $('<td style="width:auto;white-space:nowrap;text-align:center;">'); 
+
+                var cell = $('<td style="width:auto;white-space:nowrap;text-align:center;" >');
                 if (week >= tute["Surveys"].length) {
                     cell.html("-");
                 } else {
@@ -71,8 +75,10 @@ function displayOverview() {
                 }
                 row.append(cell);
             }
+            console.log(intel);
             
             table.append(row);
+            intel++;
         } 
 
         //Place unit elements into the div
@@ -85,6 +91,98 @@ function displayOverview() {
     var mainhtml = main.html();
     $('#content').html(mainhtml);
 }//End displayOverview
+
+//displays a detailed review for each tutorial.
+function detailedTutorial(intel)
+{
+    var x = intel.rowIndex - 1;
+
+
+  //  for (unitIndex in units)
+   // {
+        var unit = units[unitIndex]["Tutorials"][x];
+    console.log (unit["Surveys"][0]["results"].length);
+       var questionAverages = getQuestionScores(unit["Surveys"][0]["results"]);
+
+    console.log ("question 1 score");
+    console.log(questionAverages[1]);
+
+       // for (tuteIndex in unit["Tutorials"])
+       // {
+       //     console.log(unit["Tutorials"][x]["ID"])
+       // }
+   // }
+  //  $.get("/getresults", function (data)
+  //  {
+        // console.log("helllo" +intel.rowIndex);
+        // var x = intel.rowIndex - 1;
+        //
+        // var units = data["unitData"];
+        //
+        //
+        //  console.log(units[0]["Tutorials"][x]["ID"]);
+        //  console.log(units[0]["Tutorials"][x]["Tutor"]);
+        //  console.log(units[0]["Tutorials"][x]["Surveys"][0]["Attendance"]);
+        //  console.log(units[0]["Tutorials"][x]["ID"]);
+        // console.log( units[0]["Tutorials"][x]["Surveys"][0]["results"][0]["Question"]);
+        //
+        // if (  units[0]["Tutorials"][x]["Surveys"][0]["results"][0]["Question"] == 1 )
+        // {
+        //     console.log("ya did it");
+        //      console.log(units[0]["Tutorials"][x]["Surveys"][0]["results"][0]["Result"] );
+        //
+        // }
+
+
+
+        // console.log(units[0]["Tutorials"]);
+      //   console.log(units[0]["Tutorials"][0]["ID"]);
+
+       // console.log(units[0]["Tutorials"][intel]);
+
+      //  console.log(units[0]["Tutorials"][intel]["ID"]);
+
+
+
+
+
+  //  })
+
+}
+
+function getQuestionScores(answers)
+{
+    var score = [];
+    var average = [];
+    for (i = 0; i <= 5; i++)
+    {
+        score[i] = 0;
+        average[i] = 0;
+
+    }
+       console.log (score);
+    console.log (average);
+
+    for (answer in answers)
+    {
+        score[answers[answer]["Question"]] += Math.round(answers[answer]["Result"]);
+
+
+    }
+      console.log (score);
+    console.log (average);
+    for (total in score)
+    {
+       // average[total] = Math.round(score[total]/(result.length/score.length - 1))
+        console.log(score[total]);
+        average[total] = Math.round(score[total]/30);
+    }
+      console.log (score);
+    console.log (average);
+    return average;
+
+}
+
 
 //Calculates the average score for a week for a particular tutorial
 function getWeekScore(results) {
