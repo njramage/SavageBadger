@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -353,10 +354,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void selectionQuestion (View view)
     {
-      //  saveAnswer(questionsList.get(currentQuestion).getId(), person_id, Integer.toString());
+        SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
+        int result = seekbar.getProgress() + 1;
+        saveAnswer(questionsList.get(currentQuestion).getId(), person_id, String.valueOf(result));
         currentQuestion++;
         displayQuestions(questionsList);
-        //saveAnswer(questionsList.get(currentQuestion).getId(), person_id, );
 
 
     }
@@ -419,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
             QuestionList questionListCreator = new QuestionList();
             ArrayList<Question> questions = new ArrayList<Question>();
             JSONObject s = httpCom.getSurvey(params[0]);
-            
+            Log.i(TAG, "getting survey with code");
             try {
                 Log.i(TAG, "in try statement");
                 if (s.has("questions")) {
@@ -433,6 +435,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("Polavo","Error occured getting the survey from the server");
             }
+            Log.i(TAG, "return statement");
             return questionListCreator.getQustionList();
         }
 
