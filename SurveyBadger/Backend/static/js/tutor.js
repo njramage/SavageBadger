@@ -68,7 +68,7 @@ function classCode()
 
 
             div.append(div);
-   
+
             div.append(error);
             div.append(code);
 

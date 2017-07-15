@@ -189,6 +189,29 @@ def tutor():
 def dashboard():
     return render_template("UnitCord.html", options = getOptions())
 
+
+@app.route('/signup/')
+def signUp():
+    # signUpPath = request.form['signUpFormPath']
+    return render_template("SignUp.html", options = getOptions())
+
+
+@app.route('/signupData/', methods=["POST"])
+def signupData():
+    signUpPathUsername = request.form['signUpFormPathUsername']
+    signUpPathEmail = request.form['signUpFormPathEmail']
+    signUpPathPassword = request.form["signUpFormPathPsw"]
+    signUpPathPasswordRepeat = request.form["signUpFormPathPswR"]
+
+    print(signUpPathUsername)
+    print(signUpPathEmail)
+    print(signUpPathPassword)
+    print(signUpPathPasswordRepeat)
+
+
+    return render_template("index.html", options = getOptions())
+
+
 #Unit editor (Unsure if needed)
 @app.route('/uniteditor/', methods=["GET","POST"])
 @login_uc

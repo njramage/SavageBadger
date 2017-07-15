@@ -5,13 +5,16 @@ function displayLogin() {
     username = $('<input type="text" class="form-control" placeholder = "Username" id="username" style="height: 44px;width: 300px">');
     password = $('<input type="password" class="form-control" placeholder = "Password" id="password" style="height: 44px;width: 300px">');
     submit = $('<button class="btn btn-success btn-lg btn-block" style="width: 300px;" onclick="login()">').html("Login");
-    
+    SignUp = $('<button class="btn btn-success btn-lg btn-block" style="width: 300px;" onclick="signup()">').html("Sign Up");
+
     //Place and display them
     div.append(username);
     div.append($('<br>'));
     div.append(password);
     div.append($('<br>'));
     div.append(submit);
+    div.append($('<br>'));
+    div.append(SignUp);
 
     $('#content').fadeOut('medium', function() {
         $('#content').html(div.html());
@@ -36,6 +39,13 @@ function login() {
             $("#password").val("");
         }
     });
-        
+
 }
+
+function signup()
+{
+       window.location='/signup/';
+}
+
+
 
