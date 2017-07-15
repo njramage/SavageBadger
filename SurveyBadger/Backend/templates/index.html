@@ -2,25 +2,23 @@
 
 {% block body %}
 
-<div id="failed" class="alert alert-danger" align="center" style="text-align: center; margin-top:2px; margin-left:2px; margin-right:2px;" hidden>
-    <strong>Invalid Username and Password</strong>
-</div>
+{% if error != "" %}
+    <div id="failed" class="alert alert-danger" align="center" style="text-align: center; margin-top:2px; margin-left:2px; margin-right:2px;">
+        <strong>{{error}}</strong>
+    </div>
+{% endif %}
 
 <div id="content" class="container-fluid" align="center" style="margin-top: 120px"> 
     <h1>Welcome to PAaS!</h1>
-    <h3>Click the button below to start<h3>
+    <h3>Login below to start!<h3>
     <br>
-    <button class="btn btn-primary btn-lg btn-block" style="width: 300px;" onclick="displayLogin()">Login with QUT Credentials</button>
-
-<!--    <div class="container" align="center">
-        <input type="text" class="form-control" placeholder = "Username" id="username" style="height: 44px;width: 300px"><br>
-        <input type="password" class="form-control" placeholder = "Password" id="password" style="height: 44px;width: 300px"><br>
-        <button class="btn btn-success btn-lg btn-block" style="width: 300px;" onclick="login()">Login</button>
-      </form>
-</div> -->
+    
+    <form action="" method="post">
+        <input type="text" class="form-control" placeholder = "Username" name="username" style="height: 44px;width: 300px"><br>
+        <input type="password" class="form-control" placeholder = "Password" name="password" style="height: 44px;width: 300px"><br>
+        <button type="submit" value="login" class="btn btn-success btn-lg btn-block" style="width: 300px;">Login</button>
+    </form>
 </div>
 
-
-<script type= "text/javascript" src="{{ url_for('static', filename='js/login.js') }}"></script>
 {% endblock %}
 

@@ -1,13 +1,8 @@
-from flask import Flask, request, url_for, session, jsonify, render_template, Response, send_from_directory, abort, redirect 
-from flask_kvsession import KVSessionExtension
-from simplekv.memory.redisstore import RedisStore
- 
-from flask_httpauth import HTTPBasicAuth
+from flask import Flask, request, url_for, session, jsonify, render_template, Response, send_from_directory, abort, redirect, flash 
 from itsdangerous import (TimedJSONWebSignatureSerializer
                                   as Serializer, BadSignature, SignatureExpired)
 from functools import wraps
 import os
-import redis
 from datetime import timedelta
 
 try: 
@@ -15,97 +10,75 @@ try:
 except:
     import polavo.handler as hl
 
-#declare app and redis store
-auth = HTTPBasicAuth()
-
-store = RedisStore(redis.StrictRedis())
-  
+#declare app
 app = Flask(__name__)
-KVSessionExtension(store, app)
 
-def gen_token(user, expiration = 600):
-    s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
-    return s.dumps({ 'user': user })
+#Global json responses
+STATUS_TRUE = {"status" : True}
+STATUS_FALSE = {"status" : False} 
 
-def verify_token(token):
-    s = Serializer(app.config['SECRET_KEY'])
-    try:
-        data = s.loads(token)
-    except SignatureExpired:
-        return False # valid token, but expired
-    except BadSignature:
-        return False # invalid token
-    
-    return True
+#===========Authenitcation=============================
+#Login required
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'LoggedIn' in session:
+            return f(*args, **kwargs) 
+        else:
+            flash("You must be signed in first")
+            return redirect(url_for("webClient"))
 
-#Decorators for API
-#Student login
+    return wrap
+
+#Login student
 def login_student(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if 'USERNAME' in session and session['USERTYPE'] == "Student":
-            return f(*args, **kwargs)
+        if 'LoggedIn' in session and session['Usertype'] == "Student":
+            return f(*args, **kwargs) 
         else:
-            return redirect(url_for('webClient'))
+            flash("You must be a student to visit this page")
+            return loginRedirect()
+
     return wrap
 
-#Tutor and UC
+#Login staff
 def login_staff(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if 'USERNAME' in session and session['USERTYPE'] != "Student":
-            return f(*args, **kwargs)
+        if 'LoggedIn' in session and session['Usertype'] != "Student":
+            return f(*args, **kwargs) 
         else:
-            return redirect(url_for('webClient'))
+            flash("You must be a staff member to visit this page")
+            return loginRedirect()
+
     return wrap
 
-#UC only
+
+#Login UC 
 def login_uc(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if 'USERNAME' in session and session['USERTYPE'] == "UC":
-            return f(*args, **kwargs)
+        if 'LoggedIn' in session and session['Usertype'] == "UC":
+            return f(*args, **kwargs) 
         else:
-            return redirect(url_for('webClient'))
+            flash("You must be a UC to visit this page")
+            return loginRedirect()
+
     return wrap
 
-#All users for logout
-def login_logout(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'USERNAME' in session:
-            return f(*args, **kwargs)
-        else:
-            return redirect(url_for('webClient'))
-    return wrap
-
-
-@auth.verify_password
-def verify_password(username, password):
-    if hl.checkLogin(username, password):
-        return True
-    #logging.info(str(username),str(password))
-    return False
-
-def tokenAuth(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        auth = request.authorization
-        if verify_token(auth.password) or verify_token(request.get_json()['token']) :
-            return f(*args, **kwargs)
-
-        return authenticate()
-    return wrapper
-
-def authenticate():
-    """Sends a 401 response that enables basic auth"""
-    return Response(
-    'Could not verify your access level for that URL.\n'
-    'You have to login with proper credentials', 401,
-    {'WWW-Authenticate': 'Basic realm="Login Required"'})
-
-
-#===========Authenitcation=============================
+#login redirect
+def loginRedirect():
+    #Student
+    if session['Usertype'] == "Student": 
+        return redirect(url_for("survey"))
+    #Tutor
+    elif session['Usertype'] == "Tutor":
+        return redirect(url_for("tutor"))
+    #UC
+    elif session['Usertype'] == "UC":
+        return redirect(url_for("dashboard"))
+    
 #login
 @app.route('/login', methods=["POST"])
 def login():
@@ -115,59 +88,44 @@ def login():
         content = {'username' : request.values['Username'], 'password' : request.values['Password']}
 
     if hl.checkLogin(content['username'], content['password']):
-        session.permanent = True
-        session["USERNAME"] = content['username']
-        session["USERTYPE"] = hl.getUserType(hl.getUserID(content['username']))
-        status = {"status" : True}
-        return jsonify(status)
+        return jsonify(STATUS_TRUE)
     else:
-        return jsonify({"status" :  False})
+        return jsonify(STATUS_FALSE)
 
 #logout
-@app.route('/logout', methods=["GET"])
-@login_logout
+@app.route('/logout/', methods=["GET"])
+@login_required
 def logout():
-    cookie_val = request.cookies.get('session').split(".")[0]
-    session = {}
-    app.permanent_session_lifetime = timedelta(seconds=1)
-    store.delete(cookie_val)
-    return redirect(url_for('webClient'))
+    session.clear()
+    flash("You have been sucessfully logged out")
+    return redirect(url_for("webClient"))
 
-
-#redirect logged in users to correct portals
-def login_redirect():
-    #Student
-    if session["USERTYPE"] == "Student":
-        return redirect(url_for('survey'))
-    #Tutor or UC as tutor
-    elif session["USERTYPE"] == "Tutor" or (session["USERTYPE"] == "UC" and "TUTORMODE" in session):
-        return redirect(url_for('tutor'))
-    #UC
-    elif session["USERTYPE"] == "UC":
-        return redirect(url_for('dashboard'))
-    #Incase there was an error, log the user out
-    else:
-        return redirect(url_for('logout'))
-
-#options for html display (eg if logged in or not)
+#login options
 def getOptions():
     options = {}
-    #check if user logged in
-    options["LoggedIn"] = True if "USERNAME" in session else False
-    #Check if user is a UC
-    options["UC"] = True if "USERTYPE" in session and session["USERTYPE"] == "UC" else False
-    
+    #Login status
+    options['LoggedIn'] = True if 'LoggedIn' in session and session['LoggedIn'] else False
+    #UC Switch mode
+    options['Switch'] = True if 'Usertype' in session and session['Usertype'] == "UC" else False
     return options
-
 
 #===========Web Client Endpoints=======================
 #Home Page
-@app.route('/', methods=["GET"])
+@app.route('/', methods=["GET","POST"])
 def webClient():
-    if "USERNAME" in session:
-        return login_redirect()
-    else:
-        return render_template("index.html", options = getOptions())
+    if 'LoggedIn' in session:
+        return loginRedirect()
+
+    if request.method == "POST":
+        if hl.checkLogin(request.form['username'], request.form['password']):
+            session['LoggedIn'] = True
+            session['Username'] = request.form['username']
+            session['Usertype'] = hl.getUserType(hl.getUserID(request.form['username']))
+            return loginRedirect()
+        else:
+            return render_template("index.html", error = "Invalid username or password", options = getOptions())
+
+    return render_template("index.html", error = "", options = getOptions())
     
     #return render_template("maintenance.html")
 
@@ -181,7 +139,7 @@ def survey():
 @app.route('/tutor/', methods=["GET"])
 @login_staff
 def tutor():
-    return render_template("TutorForm.html", info = hl.getTutorClasses(session["USERNAME"]), options = getOptions())
+    return render_template("TutorForm.html", info = hl.getTutorClasses(session["Username"]), options = getOptions())
 
 #UC portal
 @app.route('/dashboard/', methods=["GET"])
@@ -189,18 +147,12 @@ def tutor():
 def dashboard():
     return render_template("UnitCord.html", options = getOptions())
 
-#Unit editor (Unsure if needed)
-@app.route('/uniteditor/', methods=["GET","POST"])
-@login_uc
-def unitEditor():
-    return render_template("survey.html", options = getOptions()) 
-
 #===========Backend Endpoints==================
 #get a survey
 @app.route('/getsurvey/<code>', methods=["GET"])
 @login_student
 def getSurvey(code):
-    questions = hl.getQuestions(code,session["USERNAME"])
+    questions = hl.getQuestions(code,session['Username'])
     return jsonify(questions)
 
 #serve images
@@ -217,7 +169,7 @@ def submitSurvey():
     if content == None:
         content = {'answers' : request.values['answers'], 'survey': request.values['survey']}
 
-    user = session["USERNAME"]
+    user = session['Username']
     survey = content["survey"]
     answers = content["answers"]
     
@@ -248,17 +200,17 @@ def submitAttendance():
 @app.route('/getresults/', methods=["GET"])
 @login_uc
 def unitData():
-    return jsonify({"unitData": hl.getResults(session["USERNAME"])})
+    return jsonify({"unitData": hl.getResults(session['Username'])})
 
 
 #===========Web error Handling================
 @app.errorhandler(500)
 def page_not_found(error):
-    return render_template('500.html', options = {}), 500
+    return render_template('500.html'), 500
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html', options = {}), 404
+    return render_template('404.html'), 404
 
 @app.errorhandler(405)
 def method_not_allowed(error):
@@ -268,14 +220,12 @@ def method_not_allowed(error):
 #create user account
 @app.route('/createuser', methods=["POST"])
 def createUser():
-    return jsonify({"status" : True})
+    return jsonify(STATUS_TRUE)
 
 #===========Main Method=======================
 if __name__ == "__main__":
     #FAKE KEY
     #USE FOR TESTING ONLY
     app.secret_key = 'nwb1g382gb197qweh1o02yhhe324n2hoih41928h31824hron123h84ro1u4r'
-    app.config['UPLOAD_FOLDER'] = os.path.dirname(os.getcwd()+"/static/images/") 
-    app.permanent_session_lifetime = timedelta(minutes=5)
-    
+    app.config['UPLOAD_FOLDER'] = os.path.dirname(os.getcwd()+"/static/images/")  
     app.run(debug=True)
