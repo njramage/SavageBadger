@@ -29,55 +29,97 @@ class FlaskTestCase(unittest.TestCase):
     def tearDown(self):
         self.logout()
 
-    def getJsonResult(self,rv):
-        return json.loads(rv.data.decode('UTF-8'))
-
-
-    def login(self, username, password):
-        return self.getJsonResult(self.app.post('/login',data=json.dumps(dict(
+    def json_login(self, username, password):
+        return self.getJsonResult(self.app.post('/login/',data=json.dumps(dict(
             username=username,
             password=password)),
             content_type='application/json', 
             follow_redirects=True))
 
+    def login(self, username, password):
+        return self.app.post('/',data=dict(
+            username=username,
+            password=password),
+            follow_redirects=True)
+
+    def getJsonResult(self,rv):
+        return json.loads(rv.data.decode('UTF-8'))
+    
     def logout(self):
         return self.app.get('/logout', follow_redirects=True)
 
     #Login tests
     def test_login_student(self):
         rv = self.login('n0000001','wordpass')
-        assert 'status' in rv
-        assert rv['status'] == True
+        assert rv.status_code == 200
+        assert b'>Logout<' in rv.data
         rv = self.logout()
+        assert rv.status_code == 200
         assert b'Welcome' in rv.data
         assert b'>Logout<' not in rv.data
 
     def test_login_tutor(self):
         rv = self.login('tutorOne','wordpass')
-        assert 'status' in rv
-        assert rv['status'] == True
+        assert rv.status_code == 200
+        assert b'>Logout<' in rv.data
         rv = self.logout()
         assert b'Welcome' in rv.data
         assert b'>Logout<' not in rv.data
     
     def test_login_uc(self):
         rv = self.login('ucOne','wordpass')
-        assert 'status' in rv
-        assert rv['status'] == True
+        assert rv.status_code == 200
+        assert b'>Logout<' in rv.data
         rv = self.logout()
         assert b'Welcome' in rv.data
         assert b'>Logout<' not in rv.data
     
     def test_login_bad_password(self):
         rv = self.login('ucOne','password')
-        assert 'status' in rv
-        assert rv['status'] == False
+        assert b'Welcome' in rv.data
+        assert b'>Logout<' not in rv.data
     
     def test_login_bad_password(self):
         rv = self.login('n1111111','wordpass')
+        assert b'Welcome' in rv.data
+        assert b'>Logout<' not in rv.data
+    
+    #Login json tests
+    def test_json_login_student(self):
+        rv = self.json_login('n0000001','wordpass')
+        assert 'status' in rv
+        assert rv['status'] == True
+        rv = self.logout()
+        assert b'Welcome' in rv.data
+        assert b'>Logout<' not in rv.data
+
+    def test_json_login_tutor(self):
+        rv = self.json_login('tutorOne','wordpass')
+        assert 'status' in rv
+        assert rv['status'] == True
+        rv = self.logout()
+        assert b'Welcome' in rv.data
+        assert b'>Logout<' not in rv.data
+                                                                                                                        
+    def test_json_login_uc(self):
+        rv = self.json_login('ucOne','wordpass')
+        assert 'status' in rv
+        assert rv['status'] == True
+        rv = self.logout()
+        assert b'Welcome' in rv.data
+        assert b'>Logout<' not in rv.data
+                                                                                                                                                                                    
+    def test_json_login_bad_password(self):
+        rv = self.json_login('ucOne','password')
         assert 'status' in rv
         assert rv['status'] == False
-     
+    
+    def test_json_login_bad_password(self):
+        rv = self.json_login('n1111111','wordpass')
+        assert 'status' in rv
+        assert rv['status'] == False
+
+
     #Getoptions tests
     def test_getOptions_no_login(self):
         with self.app as c:
@@ -96,9 +138,9 @@ class FlaskTestCase(unittest.TestCase):
             assert b'Please wait' in rv.data
             opts = views.getOptions()
             assert 'LoggedIn' in opts
-            assert 'UC' in opts
+            assert 'Switch' in opts
             assert opts['LoggedIn'] == True
-            assert opts['UC'] == False
+            assert opts['Switch'] == False
 
     def test_getOptions_tutorLogin(self):
         with self.app as c:
@@ -108,9 +150,9 @@ class FlaskTestCase(unittest.TestCase):
             assert b'Select Your Tutorial' in rv.data
             opts = views.getOptions()
             assert 'LoggedIn' in opts
-            assert 'UC' in opts
+            assert 'Switch' in opts
             assert opts['LoggedIn'] == True
-            assert opts['UC'] == False
+            assert opts['Switch'] == False
     
     def test_getOptions_UCLogin(self):
         with self.app as c:
@@ -121,9 +163,9 @@ class FlaskTestCase(unittest.TestCase):
             assert b'Switch Mode' in rv.data
             opts = views.getOptions()
             assert 'LoggedIn' in opts
-            assert 'UC' in opts
+            assert 'Switch' in opts
             assert opts['LoggedIn'] == True
-            assert opts['UC'] == True
+            assert opts['Switch'] == True
     
     #Index tests
     def test_home_no_login(self):
@@ -220,55 +262,7 @@ class FlaskTestCase(unittest.TestCase):
         rv = self.app.get('/dashboard', follow_redirects=True)
         assert rv.status_code == 200
         assert b'Weekly Overview' in rv.data
-
-    #Unit Editor tests
-    def test_unitEditor_no_login(self):
-        rv = self.app.get('/uniteditor', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Login' in rv.data
-
-    def test_unitEditor_student(self):
-        rv = self.login('n0000001','wordpass')
-        rv = self.app.get('/uniteditor', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Please wait' in rv.data
-    
-    def test_unitEditor_tutor(self):
-        rv = self.login('tutorOne','wordpass')
-        rv = self.app.get('/uniteditor', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Select Your Tutorial' in rv.data
-    
-    def test_unitEditor_UC(self):
-        rv = self.login('ucOne','wordpass')
-        rv = self.app.get('/uniteditor', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Please wait' in rv.data
-    
-    #Unit Editor tests
-    def test_unitEditor_no_login(self):
-        rv = self.app.get('/uniteditor', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Login' in rv.data
-
-    def test_unitEditor_student(self):
-        rv = self.login('n0000001','wordpass')
-        rv = self.app.get('/uniteditor', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Please wait' in rv.data
-    
-    def test_unitEditor_tutor(self):
-        rv = self.login('tutorOne','wordpass')
-        rv = self.app.get('/uniteditor', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Select Your Tutorial' in rv.data
-    
-    def test_unitEditor_UC(self):
-        rv = self.login('ucOne','wordpass')
-        rv = self.app.get('/uniteditor', follow_redirects=True)
-        assert rv.status_code == 200
-        assert b'Please wait' in rv.data
-    
+ 
     #Get Survey tests
     def test_getSurvey_no_login(self):
         rv = self.app.get('/getsurvey/DEF456', follow_redirects=True)

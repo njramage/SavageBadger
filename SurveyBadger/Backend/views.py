@@ -1,17 +1,26 @@
-from flask import Flask, request, url_for, session, jsonify, render_template, Response, send_from_directory, abort, redirect, flash 
-from itsdangerous import (TimedJSONWebSignatureSerializer
-                                  as Serializer, BadSignature, SignatureExpired)
-from functools import wraps
+#Std imports
 import os
 from datetime import timedelta
 
+#Flask imports
+import redis
+from flask import Flask, request, url_for, session, jsonify, render_template, Response, send_from_directory, abort, redirect, flash 
+from flask_kvsession import KVSessionExtension
+from simplekv.memory.redisstore import RedisStore
+from functools import wraps
+
+#Module imports
 try: 
     import handler as hl
 except:
     import polavo.handler as hl
 
 #declare app
+store = RedisStore(redis.StrictRedis())
+store.ttl_support = True
+
 app = Flask(__name__)
+KVSessionExtension(store,app)
 
 #Global json responses
 STATUS_TRUE = {"status" : True}
@@ -69,6 +78,9 @@ def login_uc(f):
 
 #login redirect
 def loginRedirect():
+    #Not logged in
+    if 'Usertype' not in session:
+        return redirect(url_for("webClient")) 
     #Student
     if session['Usertype'] == "Student": 
         return redirect(url_for("survey"))
@@ -80,14 +92,17 @@ def loginRedirect():
         return redirect(url_for("dashboard"))
     
 #login
-@app.route('/login', methods=["POST"])
+@app.route('/login/', methods=["POST"])
 def login():
     content = request.get_json()
     #Web client support
     if content == None:
-        content = {'username' : request.values['Username'], 'password' : request.values['Password']}
+        content = {'username' : request.values['username'], 'password' : request.values['password']}
 
     if hl.checkLogin(content['username'], content['password']):
+        session['LoggedIn'] = True
+        session['Username'] = content['username']
+        session['Usertype'] = hl.getUserType(hl.getUserID(content['username']))
         return jsonify(STATUS_TRUE)
     else:
         return jsonify(STATUS_FALSE)
@@ -96,7 +111,10 @@ def login():
 @app.route('/logout/', methods=["GET"])
 @login_required
 def logout():
+    cookie_val = request.cookies.get('session').split(".")[0]
+    app.permanent_session_lifetime = timedelta(minutes = 1)
     session.clear()
+    store.delete(cookie_val)
     flash("You have been sucessfully logged out")
     return redirect(url_for("webClient"))
 
@@ -206,11 +224,11 @@ def unitData():
 #===========Web error Handling================
 @app.errorhandler(500)
 def page_not_found(error):
-    return render_template('500.html'), 500
+    return render_template('500.html', options = {}), 500
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html'), 404
+    return render_template('404.html', options = {}), 404
 
 @app.errorhandler(405)
 def method_not_allowed(error):
@@ -222,10 +240,14 @@ def method_not_allowed(error):
 def createUser():
     return jsonify(STATUS_TRUE)
 
+#===========App config=======================
+def config(key = ''):
+    app.secret_key = key if key != '' else 'nwb1g382gb197qweh1o02yhhe324n2hoih41928h31824hron123h84ro1u4r'
+    app.config['UPLOAD_FOLDER'] = os.path.dirname(os.getcwd()+"/static/images/")  
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes = 10)
+
+
 #===========Main Method=======================
 if __name__ == "__main__":
-    #FAKE KEY
-    #USE FOR TESTING ONLY
-    app.secret_key = 'nwb1g382gb197qweh1o02yhhe324n2hoih41928h31824hron123h84ro1u4r'
-    app.config['UPLOAD_FOLDER'] = os.path.dirname(os.getcwd()+"/static/images/")  
-    app.run(debug=True)
+    config()
+    app.run(debug=True,host='0.0.0.0')
