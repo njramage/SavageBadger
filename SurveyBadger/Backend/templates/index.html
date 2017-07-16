@@ -1,6 +1,19 @@
-{% extends "header.html" %}
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 
-{% block body %}
+	<script src="../../static/js/jquery-3.1.0.js"></script>
+    <style>
+        body {
+            background-color: #ddf2da;
+        }
+    </style>
+</head>
+
+
+{% block body  %}
 
 {% if error != "" %}
     <div id="failed" class="alert alert-danger" align="center" style="text-align: center; margin-top:2px; margin-left:2px; margin-right:2px;">
@@ -8,17 +21,25 @@
     </div>
 {% endif %}
 
-<div id="content" class="container-fluid" align="center" style="margin-top: 120px"> 
-    <h1>Welcome to PAaS!</h1>
-    <h3>Login below to start!<h3>
+<div id="content" class="container-fluid" align="center" style="margin-top: 120px">
+    <h1>Welcome to PAaS!</h1
+    <h3>Login below to start!</h3>
+    <br>
     <br>
     
     <form action="" method="post">
-        <input type="text" class="form-control" placeholder = "Username" name="username" style="height: 44px;width: 300px"><br>
-        <input type="password" class="form-control" placeholder = "Password" name="password" style="height: 44px;width: 300px"><br>
-        <button type="submit" value="login" class="btn btn-success btn-lg btn-block" style="width: 300px;">Login</button>
+        <input type="text" class="form-control" placeholder = "Username" name="username" style="height: 44px;width: 300px; outline-color: #888c8a; background-color: #d8d8d8 "><br>
+        <input type="password" class="form-control" placeholder = "Password" name="password" style="height: 44px;width: 300px;  outline-color: #888c8a; background-color: #d8d8d8 "><br>
+        <button type="submit" value="login" class="btn btn-success btn-lg btn-block" style="width: 300px;  background-color: #dddddd; outline-color: #666666; color: black; ">Login</button>
+
     </form>
+     <form action ='/signup/'>
+             <button type="submit" value="SignUp" class="btn btn-success btn-lg btn-block" style="width: 300px;  background-color: #dddddd; outline-color: #666666; color: black; ">Sign Up</button>
+     </form>
+
 </div>
+
+
 
 {% endblock %}
 

@@ -58,7 +58,8 @@ function displayOverview() {
         //Loop over tutorials and make rows with results
         for (tuteIndex in unit["Tutorials"]) {
             var tute = unit["Tutorials"][tuteIndex];
-            var row = $('<tr onclick="detailedTutorial(this)">');
+            var row = $('<tr onclick="detailedTutorial(this,unitIndex)">');
+
 
             //Tutorial name
             row.append($('<td style="width:auto;white-space:nowrap;text-align:right;" ">').html(tute["ID"]));
@@ -93,9 +94,12 @@ function displayOverview() {
 }//End displayOverview
 
 //displays a detailed review for each tutorial.
-function detailedTutorial(intel)
+
+
+function detailedTutorial(intel, tut)
 {
     var x = intel.rowIndex - 1;
+    console.log ("what is XXx", x);
 
 
         //var unit = units[unitIndex]["Tutorials"][x];
@@ -117,6 +121,9 @@ function detailedTutorial(intel)
     console.log(questionAverages[4]);
     console.log(questionAverages[5]);
     console.log("break again");
+      console.log ("what is x", x);
+    console.log ("what is Intel", intel);
+    console.log("tutorial id", tut);
   //  console.log(unit);
     //console.log(unit["Surveys"][0]["Attendance"]);
    // console.log(unit["Surveys"][0]["Early_leavers"]);

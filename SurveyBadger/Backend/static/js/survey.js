@@ -182,7 +182,7 @@ function displayQuestion() {
     var ques = $('<h1>').html(survey[questionIndex]['question']);
     div.append(ques);
     //Submit button
-    var next = $('<button class="btn" id="submit" onclick="getAnswer()" style="margin-top:20px"  >').html("Submit");
+    var next = $('<button class="btn" id="submit"  style="background-color: #dddddd; outline-color: #666666; color: black; onclick="getAnswer()" style="margin-top:20px"  >').html("Submit");
     //Determine type of question
     switch(survey[questionIndex]['type']) {
         case 'Time_duration':
@@ -318,8 +318,8 @@ function startPage() {
 //    var heading = $('<h1>').html("Welcome!");
     var instruction = $('<p style="margin-top:4%;">').html("Please enter the code for the survey you wish to complete");
     var wait = $('<p id="wait" hidden>').html("Please Wait");
-    var codeEntry = $('<input type="text" id="code" size="20" style="font-size:28px;">');
-    var button = $('<button class="btn" onclick="getSurvey()">').html("Enter");
+    var codeEntry = $('<input type="text" id="code" size="20" style="font-size:28px; outline-color: #888c8a; background-color: #efeded">');
+    var button = $('<button class="btn" style="background-color: #dddddd; outline-color: #666666; color: black; " onclick="getSurvey()">').html("Enter");
 
   //  div.append(heading);
   //  div.append($('<br/>'));

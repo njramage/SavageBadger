@@ -178,13 +178,17 @@ def signupData():
     signUpPathPassword = request.form["signUpFormPathPsw"]
     signUpPathPasswordRepeat = request.form["signUpFormPathPswR"]
 
+    userSignUpData = {"Name" : signUpPathUsername, "Email" : signUpPathEmail, "Password" : signUpPathPassword}
+
+    res = hl.editUserData(userSignUpData)
+    # needs error checking stuff
     print(signUpPathUsername)
     print(signUpPathEmail)
     print(signUpPathPassword)
     print(signUpPathPasswordRepeat)
 
 
-    return render_template("index.html", options = getOptions())
+    return render_template("index.html",  options = getOptions())
 
 #===========Backend Endpoints==================
 #get a survey

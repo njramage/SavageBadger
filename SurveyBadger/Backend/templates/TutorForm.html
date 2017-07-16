@@ -1,4 +1,21 @@
-{% extends "header.html" %}
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+	<script src="../../static/js/jquery-3.1.0.js"></script>
+    <style>
+        body {
+            background-color: #ddf2da;
+        }
+        .left
+        {
+            margin-left: 35px;
+        }
+    </style>
+</head>
+
 
 {% block body %}
 
@@ -19,9 +36,10 @@
       <div class="TutorT1", id= "TutorT1">
 
        <form  >
-         Student Attendance: <input type="text", id="Attendance",name="Attendance" required ><br>
-         Students Left: <input type="text", id="Left" ,name="Left" required><br>
-        <input type="button" id = "tutorSubmit" class = "tutorSubmit", value="Submit", onclick = "classCode()" >
+           <br>
+         Student Attendance: <input type="text", id="Attendance" style=" outline-color: #888c8a; background-color: #efeded" name="Attendance" required ><br><br>
+         Students Left: <input type="text", class = "Left" id="Left" style=" outline-color: #888c8a; background-color: #efeded "  name="Left" required><br><br>
+        <input type="button" id = "tutorSubmit" class = "tutorSubmit", style="background-color: #dddddd; outline-color: #666666; color: black; " value="Submit", onclick = "classCode()" >
 
         </form>
 

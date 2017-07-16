@@ -1,5 +1,11 @@
-{% extends "header.html" %}
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 
+	<script src="../../static/js/jquery-3.1.0.js"></script>
+
+</head>
 
 {% block body %}
 
@@ -7,21 +13,21 @@
 <form action ="{{ url_for('signupData') }}", method="post">
 <div class="container">
     <label><b>Username</b></label>
-    <input type ="text" placeholder="Enter Username" name = signUpFormPathUsername" required>
+    <input type ="text" placeholder="Enter Username" style=" outline-color: #888c8a; background-color: #efeded"  name = signUpFormPathUsername" required>
 
     <label><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name = "signUpFormPathEmail"  required>
+    <input type="text" placeholder="Enter Email" style=" outline-color: #888c8a; background-color: #efeded"  name = "signUpFormPathEmail"  required>
 
     <label><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name = "signUpFormPathPsw"  required>
+    <input type="password" placeholder="Enter Password" style=" outline-color: #888c8a; background-color: #efeded"  name = "signUpFormPathPsw"  required>
 
     <label><b>Repeat Password</b></label>
-    <input type="password" placeholder="Repeat Password" name = "signUpFormPathPswR"  required>
+    <input type="password" placeholder="Repeat Password" style=" outline-color: #888c8a; background-color: #efeded" name = "signUpFormPathPswR"  required>
 
 
 
 
-    <button type="submit"  >Sign Up</button>
+    <button type="submit" style="background-color: #dddddd; outline-color: #666666; color: black;  ">Sign Up</button>
 
   </div>
     </form>
@@ -49,6 +55,9 @@ button {
     cursor: pointer;
     width: 100%;
 }
+   body {
+            background-color: #ddf2da;
+        }
 
 /* Extra styles for the cancel button */
 .cancelbtn {
