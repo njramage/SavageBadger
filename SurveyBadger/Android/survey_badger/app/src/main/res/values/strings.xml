@@ -7,10 +7,14 @@
     <string name="question_set_time">Set_time</string>
     <string name="question_money">Dollar_value</string>
     <string name="login">Login</string>
-    <string name="cancel">Cancel</string>
-    <string name="username">Username: </string>
-    <string name="password">Password: </string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
     <string name="code_continue">Continue</string>
-    <string name="enter_code">Code: </string>
-    <string name="submit">Submit</string>
+    <string name="enter_code">Enter Code</string>
+    <string name="submit">Submit!</string>
+    <string name="login_logo_description">Polavo Logo</string>
+    <string name="signup">Sign Up!</string>
+    <string name="email">Email</string>
+    <string name="confirm_pass">Confirm Password</string>
+    <string name="review">Review your responses</string>
 </resources>
