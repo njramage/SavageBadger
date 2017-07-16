@@ -258,7 +258,56 @@ class HandlerTestCase(unittest.TestCase):
     
     def test_checkExists_wrongvalue(self):
         self.assertFalse(hl.checkExists("users", {"Name":True}, self.filen))
-   
+    
+    #checkLogin tests
+    def test_checkLogin_student(self):
+        self.assertTrue(hl.checkLogin("n0000001","wordpass", self.filen))
+
+    def test_checkLogin_tutor(self):
+        self.assertTrue(hl.checkLogin("tutorOne","wordpass", self.filen))
+
+    def test_checkLogin_uc(self):
+        self.assertTrue(hl.checkLogin("ucOne","wordpass", self.filen))
+    
+    def test_checkLogin_nonExistent_user(self):
+        self.assertFalse(hl.checkLogin("n0000500","wordpass", self.filen))
+
+    def test_checkLogin_incorrect_password(self):
+        self.assertFalse(hl.checkLogin("n0000001","password", self.filen))
+
+    def test_checkLogin_wrong_type(self):
+        self.assertFalse(hl.checkLogin(True,{"test":True}, self.filen))
+
+    #editUserData tests
+    def test_editUserData_newUser(self):
+        user = {"Name" : "n0000010", "Email" : "n0000010@test.com", "Password" : "wordpass"}
+        res = hl.editUserData(user, filename = self.filen)
+        self.assertTrue(res['status'])
+        self.assertTrue(hl.checkExists("users", {"Name":"n0000010"}, self.filen))
+
+    def test_editUserData_updateUser(self):
+        ID = hl.getUserID("n0000001",self.filen)
+        user = {"ID" : ID, "Name" : "n0000001", "Password" : "newpassword"}
+        res = hl.editUserData(user, True, filename = self.filen)
+        self.assertTrue(res['status'])
+        self.assertTrue(hl.checkExists("users", {"Name":"n0000001","Password" : "newpassword"}, self.filen))
+
+    def test_editUserData_invalid_newUser(self):
+        user = {"Name" : "n0000001", "Email" : "n0000001@test.com", "Password" : "wordpass"}
+        res = hl.editUserData(user, filename = self.filen)
+        self.assertFalse(res['status'])
+    
+    def test_editUserData_invalid_updateUser_nouser(self):
+        user = {"ID" : 200, "Name" : "n0000010", "Email" : "n0000010@test.com", "Password" : "wordpass"}
+        res = hl.editUserData(user, True, filename = self.filen)
+        self.assertFalse(res['status'])
+
+    def test_editUserData_invalid_updateUser_existing(self):
+        ID = hl.getUserID("n0000001",self.filen)
+        user = {"ID" : ID, "Name" : "n0000001", "Email" : "n0000002@test.com"}
+        res = hl.editUserData(user, True, filename = self.filen)
+        self.assertFalse(res['status'])
+
     #checkSubmitted tests
     def test_checkSubmitted_hasSubmitted(self):
         self.assertTrue(hl.checkSubmitted(6,3,self.filen))

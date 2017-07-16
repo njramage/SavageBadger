@@ -173,10 +173,10 @@ def getSurvey(code):
     questions = hl.getQuestions(code,session['Username'])
     return jsonify(questions)
 
-#serve images
-@app.route('/surveyimages/<path:filename>', methods=["GET"])
-def getImage(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
+#serve images DISABLED
+#@app.route('/surveyimages/<path:filename>', methods=["GET"])
+#def getImage(filename):
+#    return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
 #submit answers
 @app.route('/submitsurvey/', methods=["POST"])
@@ -250,4 +250,4 @@ def config(key = ''):
 #===========Main Method=======================
 if __name__ == "__main__":
     config()
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True)

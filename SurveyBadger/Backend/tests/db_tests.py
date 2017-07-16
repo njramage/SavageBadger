@@ -19,9 +19,9 @@ class DatabaseTestCase(unittest.TestCase):
         os.remove("Test.db")
 
     def loadTestData(self):
-        self.db.insert("users",{"Name" : "testuc","Type" : "UC","Units" : "CAB202"})
-        self.db.insert("users",{"Name" : "testtutor","Type" : "Tutor","Units" : "CAB201"})
-        self.db.insert("users",{"Name" : "nTESTUSR","Type" : "Student","Units" : "CAB201,CAB202"})
+        self.db.insert("users",{"Name" : "testuc", "Email" : "testuc@test.com", "Password" : "123456", "Type" : "UC","Units" : "CAB202"})
+        self.db.insert("users",{"Name" : "testtutor","Email" : "testtutor@test.com", "Password" : "123456","Type" : "Tutor","Units" : "CAB201"})
+        self.db.insert("users",{"Name" : "nTESTUSR","Email" : "nTESTUSR@test.com", "Password" : "123456", "Type" : "Student","Units" : "CAB201,CAB202"})
         
         self.db.insert("tutorials",{"id" : "MON - 2PM - GP-S504","tutor" : 2,"unit" : "CAB201","semester" : "17SEM2" })
         self.db.insert("tutorials",{"id" : "TUE - 10AM - GP-P504","tutor" : 1,"unit" : "CAB202","semester" : "17SEM2" })
@@ -42,7 +42,7 @@ class DatabaseTestCase(unittest.TestCase):
     
     #Insert tests
     def test_insert_users(self):
-        self.db.insert("users",{"Name" : "testuser","Type" : "Tutor","Units" : "CAB201"})
+        self.db.insert("users",{"Name" : "testuser", "Email" : "testuser@test.com", "Password" : "123456", "Type" : "Tutor","Units" : "CAB201"})
         self.assertEqual(len(self.db.retrieve("users")),1)
 
     def test_insert_tutorials(self):
