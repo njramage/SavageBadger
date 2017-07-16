@@ -15,7 +15,7 @@ class Database:
         self.init()
 
     def init(self):
-        self._db.execute('create table IF NOT EXISTS users (ID INTEGER PRIMARY KEY NOT NULL, Name text, Type text, Units text)')
+        self._db.execute('create table IF NOT EXISTS users (ID INTEGER PRIMARY KEY NOT NULL, Name text, Email text, Password text, Type text, Units text)')
         self._db.execute('create table IF NOT EXISTS tutorials (ID text PRIMARY KEY NOT NULL, Unit text, Tutor INTEGER, Semester text)')
         self._db.execute('create table IF NOT EXISTS questions (ID INTEGER PRIMARY KEY NOT NULL, Question text, Answer_type text, Answer_text text, Image_links text)')
         self._db.execute('create table IF NOT EXISTS surveys (ID INTEGER PRIMARY KEY NOT NULL, Tutorial text, Date text, Attendance INTEGER, Early_leavers INTEGER, Code text, Expires text)')
@@ -55,6 +55,13 @@ class Database:
         return rows
     
     def update(self, table, row, ID):
+        """
+            Updates an existing entry
+
+            table : str   : Table the entry resides
+            row   : dict  : New values to insert into the database
+            ID    : tuple : Key/value pair of the row's identifier 
+        """
         #Create set method
         setStr = ""
         for k in row:

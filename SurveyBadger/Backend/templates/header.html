@@ -11,30 +11,27 @@
 <body>
     <!-- <nav class="navbar navbar-fixed-top"> -->
     <img src="{{ url_for('static', filename='images/banner.png') }}" class="img-responsive" alt="Responsive image"> 
-    <!--
-    <div class="container-fluid" align="center">
-        <h2>Polavo</h2>
-    </div>
-    -->
-    <!--</nav> -->
-    <script>
-        function switchMode() {
-            var page = window.location.pathname;
-            if (page == "/dashboard/") {
-                window.location.replace("/tutor"); 
-            } else {
-                window.location.replace("/dashboard"); 
-            }
-        }
-    </script>
-    <!-- Switch between tutor and UC portals -->
-    {% if options["UC"] %}
-        <button class="btn btn-default" style="float : left; margin-left:10px; margin-top:10px;" onclick="switchMode()">Switch Mode</button>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-warning" role="alert" align="center" style="text-align: center; margin-top:2px; margin-left:2px; margin-right:2px;">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if options['Switch'] %}
+        {% if request.path == "/dashboard/" %}
+            <a href="/tutor/" class="btn btn-default" style="float:left;margin-left:10px;margin-top:10px;">Switch Mode</a>
+        {% else %}
+            <a href="/dashboard/" class="btn btn-default" style="float:left;margin-left:10px;margin-top:10px;">Switch Mode</a>
+        {% endif %}
     {% endif %}
-    <!-- Logout button -->
-    {% if options["LoggedIn"] %}
-        <a href="/logout" class="btn btn-default" style="float : right; margin-right:10px; margin-top:10px;">Logout</a>
+    {% if options['LoggedIn'] %}
+        <a href="/logout/" class="btn btn-default" style="float:right;margin-right:10px;margin-top:10px;">Logout</a>
     {% endif %}
+
     {% block body %}{% endblock %}
 </body>
 </html>

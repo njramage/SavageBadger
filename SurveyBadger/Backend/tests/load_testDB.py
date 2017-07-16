@@ -1,5 +1,6 @@
 from db import Database
 from datetime import datetime, timedelta
+from passlib.hash import sha256_crypt
 
 def getDatabase(filen):
     return Database(filename = filen)
@@ -7,24 +8,26 @@ def getDatabase(filen):
 def setupDatabase(filen):
     db = Database(filename = filen) 
     
+    password = sha256_crypt.encrypt("wordpass")
+
     #Unit coordinators
-    db.insert("users",{"Name" : "ucOne","Type" : "UC","Units" : "CAB201"})
-    db.insert("users",{"Name" : "ucTwo","Type" : "UC","Units" : "CAB202,CAB302"})
+    db.insert("users",{"Name" : "ucOne","Email" : "ucOne@test.com","Password" : password,"Type" : "UC","Units" : "CAB201"})
+    db.insert("users",{"Name" : "ucTwo","Email" : "ucTwo@test.com","Password" : password,"Type" : "UC","Units" : "CAB202,CAB302"})
 
     #Tutors
-    db.insert("users",{"Name" : "tutorOne","Type" : "Tutor","Units" : "CAB201"})
-    db.insert("users",{"Name" : "tutorThree","Type" : "Tutor","Units" : "CAB302,CAB201"})
-    db.insert("users",{"Name" : "tutorFour","Type" : "Tutor","Units" : "CAB201,CAB202,CAB302"})
+    db.insert("users",{"Name" : "tutorOne","Email" : "tutorOne@test.com","Password" : password,"Type" : "Tutor","Units" : "CAB201"})
+    db.insert("users",{"Name" : "tutorThree","Email" : "tutorThree@test.com","Password" : password,"Type" : "Tutor","Units" : "CAB302,CAB201"})
+    db.insert("users",{"Name" : "tutorFour","Email" : "tutorFour@test.com","Password" : password,"Type" : "Tutor","Units" : "CAB201,CAB202,CAB302"})
 
     #Students
-    db.insert("users",{"Name" : "n0000001","Type" : "Student","Units" : "CAB201"})
-    db.insert("users",{"Name" : "n0000002","Type" : "Student","Units" : "CAB202"})
-    db.insert("users",{"Name" : "n0000003","Type" : "Student","Units" : "CAB302"})
-    db.insert("users",{"Name" : "n0000004","Type" : "Student","Units" : "CAB201,CAB202"})
-    db.insert("users",{"Name" : "n0000005","Type" : "Student","Units" : "CAB201,CAB302"})
-    db.insert("users",{"Name" : "n0000006","Type" : "Student","Units" : "CAB202,CAB302"})
-    db.insert("users",{"Name" : "n0000007","Type" : "Student","Units" : "CAB201,CAB202,CAB302"})
-    db.insert("users",{"Name" : "n0000008","Type" : "Student","Units" : "CAB202,CAB302,CAB201"})
+    db.insert("users",{"Name" : "n0000001","Email" : "n0000001@test.com","Password" : password,"Type" : "Student","Units" : "CAB201"})
+    db.insert("users",{"Name" : "n0000002","Email" : "n0000002@test.com","Password" : password,"Type" : "Student","Units" : "CAB202"})
+    db.insert("users",{"Name" : "n0000003","Email" : "n0000003@test.com","Password" : password,"Type" : "Student","Units" : "CAB302"})
+    db.insert("users",{"Name" : "n0000004","Email" : "n0000004@test.com","Password" : password,"Type" : "Student","Units" : "CAB201,CAB202"})
+    db.insert("users",{"Name" : "n0000005","Email" : "n0000005@test.com","Password" : password,"Type" : "Student","Units" : "CAB201,CAB302"})
+    db.insert("users",{"Name" : "n0000006","Email" : "n0000006@test.com","Password" : password,"Type" : "Student","Units" : "CAB202,CAB302"})
+    db.insert("users",{"Name" : "n0000007","Email" : "n0000007@test.com","Password" : password,"Type" : "Student","Units" : "CAB201,CAB202,CAB302"})
+    db.insert("users",{"Name" : "n0000008","Email" : "n0000008@test.com","Password" : password,"Type" : "Student","Units" : "CAB202,CAB302,CAB201"})
     
     #Tutorials
     db.insert("tutorials",{"id" : "MON - 2PM - GP-S504","tutor" : 3,"unit" : "CAB201","semester" : "17SEM2" })

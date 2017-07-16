@@ -17,7 +17,9 @@ function getSurvey() {
     $('#wait').toggle();
     $('#code').val("");
     //get data
-    
+    console.log(code);
+    console.log("/getsurvey/"+code);
+
     $.get("/getsurvey/"+code, function(data) {
         console.log(data);
         if (data["status"] == false) {
@@ -56,7 +58,7 @@ function submitSurvey() {
                     var header = $('<h1>').html("Survey Submitted!");
                     var logo = $('<img alt="Polavo Logo" src="../../static/images/Logo.png">');
                     var thank = $('<p>').html("Thank you for completing our survey! We appreicate your generosity.");
-                    var next = $('<a href="/">').html("Click here to fill out another survey");
+                    var next = $('<a href="/survey">').html("Click here to fill out another survey");
 
                 } else {
                     var div = $(questionDiv);

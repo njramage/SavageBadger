@@ -19,14 +19,6 @@ if not os.path.exists(filen):
 # General methods
 #
 
-def checkLogin(user,passwd):
- 
-    #Connect to databse
-    if checkExists("users",{"Name":user}) and passwd == "wordpass":
-        return True
-    else:
-        return False
-
 def checkExists(table, value, filename = filen):
     """ 
         Checks if a value exists in a table
@@ -125,6 +117,84 @@ def checkSubmitted(user,survey,filename = filen):
     #Check if user has completed the survey and return result
     return len(answers) > 0
 
+#
+# User management Methods 
+#
+
+def checkLogin(user,passwd,filename = filen): 
+    """
+        Confirms the validity of a username/password pair
+
+        user   : str : The users name
+        passwd : str : The user's password
+
+        returns true if correct else false
+
+    """
+    db = Database(filename = filename)
+    user = db.retrieve('users',{'Name' : user})
+    db.close()
+    
+    #Check user exists
+    if len(user) != 1:
+        return False
+
+    #Check password
+    if sha256_crypt.verify(passwd,user[0]["Password"]):
+        return True
+    else:
+        return False
+
+def editUserData(user,update = False,filename = filen):
+    """
+        Adds/updates user data
+
+        user   : dict : The users details
+        update : bool : Update an existing user (User ID must be present in user 
+
+        returns dict :  status - status of request
+                        error - Error string (if applicable)
+    """
+    # If new user, check if credentials exist
+    if not update: 
+        if checkExists("users",{"Name" : user['Name']},filename) or checkExists("users",{"Email" : user['Email']},filename):
+            return {"status" : False, "error" : "Username or Email already in use"}
+        # Add user to the database
+        else:
+            try:
+                db = Database(filename = filename)
+                user['Type'] = "Student"
+                user['Units'] = ''
+                db.insert('users',user)
+            except:
+                db.close()
+                return {"status" : False, "error" : "An error occured adding user to database"}
+    # Else update
+    else:
+        if checkExists("users",{"ID" : user['ID']},filename): 
+            try:
+                db = Database(filename = filename)
+                oldUser = db.retrieve("users",{'ID': user['ID']})[0]
+                # Check if new user values are in use
+                if "Name" in user:
+                    if oldUser['Name'] != user['Name'] and checkExists("users",{"Name" : user["name"]},filename): 
+                        return {"status" : False, "error" : "Username already in use"}
+                
+                if "Email" in user:
+                    if oldUser['Email'] != user['Email'] and checkExists("users",{"Email" : user["Email"]},filename):
+                        return {"status" : False, "error" : "Email already in use"}
+                
+                #Update entry
+                db.update('users',user,("ID",oldUser['ID']))
+            except:
+                db.close()
+                return {"status" : False, "error" : "An error occured updating the users data"}
+        else:
+            return {"status" : False, "error" : "User does not exist"}
+    
+    #safe exit
+    db.close()
+    return {"status" : True}
 
 #
 # Student Methods
