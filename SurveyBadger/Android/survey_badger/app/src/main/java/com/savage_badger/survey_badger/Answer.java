@@ -10,19 +10,16 @@ import org.json.JSONObject;
 public class Answer {
 
     private int questionID;
-    private int personID;
     private String result;
 
     // Used to create an Answer object
     public Answer() {
         questionID = 0;
-        personID = 0;
         result = "No result";
     }
 
-    public Answer(int questionID, int personID, String result) {
-        this.questionID = questionID;
-        this.personID = personID;
+    public Answer(int questionID, String result) {
+        this.questionID = questionID;;
         this.result = result;
     }
 
@@ -34,14 +31,6 @@ public class Answer {
 
     public int getQuestionID() {
         return questionID;
-    }
-
-    public void setPersonID(int id) {
-        personID = id;
-    }
-
-    public int getPersonID() {
-        return personID;
     }
 
     public void setResult(String answer) {
@@ -56,8 +45,7 @@ public class Answer {
     public JSONObject toJson() {
         JSONObject answerJSON = new JSONObject();
         try {
-            answerJSON.put("QuestionID", questionID);
-            answerJSON.put("PersonID", personID);
+            answerJSON.put("Question", questionID);
             answerJSON.put("Result", result);
             return answerJSON;
         } catch (JSONException e) {

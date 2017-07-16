@@ -54,13 +54,13 @@ public class SelectionFragment extends Fragment {
     public static SelectionFragment newInstance(Question question) {
 
         // Translate answers list into an array
-        String[] answersToArray = new String[question.getAnswers().size()];
-        question.getAnswers().toArray(answersToArray);
+        //String[] answersToArray = new String[question.getAnswers().size()];
+        //question.getAnswers().toArray(answersToArray);
 
         // Create a bundle to hold arguments
         Bundle args = new Bundle();
         args.putString(QUESTION_TEXT, question.getQuestion());
-        args.putStringArray(QUESTION_ANSWERS, answersToArray);
+        //args.putStringArray(QUESTION_ANSWERS, answersToArray);
         args.putInt(QUESTION_ID, question.getId());
 
         // create a fragment and set arguements to it
@@ -78,7 +78,7 @@ public class SelectionFragment extends Fragment {
         if (getArguments() != null) {
             qID = getArguments().getInt(QUESTION_ID);
             questionText = getArguments().getString(QUESTION_TEXT);
-            answers = getArguments().getStringArray(QUESTION_ANSWERS);
+            //answers = getArguments().getStringArray(QUESTION_ANSWERS);
             Log.i("Question ID",String.valueOf(qID));
         }
     }

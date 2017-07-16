@@ -4,11 +4,10 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.savage_badger.survey_badger.MainActivity"
-    android:background="#ddf2da">
+    tools:context="com.savage_badger.survey_badger.MainActivity">
 
     <FrameLayout
-        android:id="@+id/fragment_container"
+        android:id="@+id/login_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>
 

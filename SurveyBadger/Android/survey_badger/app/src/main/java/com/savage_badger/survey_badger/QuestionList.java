@@ -1,6 +1,8 @@
 package com.savage_badger.survey_badger;
 
 import android.app.Fragment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -16,7 +18,7 @@ import android.graphics.BitmapFactory;
  * Created by nrama on 9/05/2017.
  */
 
-public class QuestionList {
+public class QuestionList{
     ArrayList<Question> questionList;
 
     public QuestionList() {
@@ -26,6 +28,10 @@ public class QuestionList {
 
     public ArrayList<Question> getQustionList() {
         return questionList;
+    }
+
+    public QuestionList(ArrayList<Question> questions) {
+        questionList = questions;
     }
 
     public void setQuestionList(ArrayList<Question> questions) {
@@ -71,7 +77,7 @@ public class QuestionList {
                 }
                 
                 // create an answers object
-                question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"), possibleAnswers);
+                question = new Question(q.getInt("id"), q.getString("question"), q.getString("type"));//, possibleAnswers);
 
                 //Get images from server or local sources 
                 JSONArray imagesJSON = q.getJSONArray("images");
@@ -92,7 +98,7 @@ public class QuestionList {
                     }
                 }
 
-                question.setImages(images);
+                //question.setImages(images);
 
                 questionList.add(question);// add it to the list
             }

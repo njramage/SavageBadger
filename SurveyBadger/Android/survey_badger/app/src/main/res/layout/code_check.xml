@@ -1,48 +1,61 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.savage_badger.survey_badger.CodeFragment">
+    tools:context="com.savage_badger.survey_badger.CodeFragment"
+    android:background="#ddf2da">
 
     <ImageView
         android:id="@+id/palavo_login_logo"
-        android:layout_width="250sp"
-        android:layout_height="200sp"
+        android:layout_width="134dp"
+        android:layout_height="122dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/logofinal" />
+        android:src="@drawable/logofinal"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintVertical_bias="0.049" />
 
-    <RelativeLayout
-        android:id="@+id/code_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/palavo_login_logo"
-        android:layout_centerHorizontal="true">
+    <EditText
+        android:id="@+id/code_check"
+        android:layout_width="217dp"
+        android:layout_height="55dp"
+        android:background="@drawable/login_textbox_background"
+        android:hint="@string/enter_code"
+        android:inputType="text"
+        android:minWidth="100sp"
+        android:textAlignment="center"
+        android:layout_marginLeft="29dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/imageButton"
+        android:layout_marginRight="8dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="72dp"
+        app:layout_constraintTop_toBottomOf="@+id/palavo_login_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintVertical_bias="0.0" />
 
-        <TextView
-            android:id="@+id/code_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/enter_code"
-            android:layout_centerVertical="true"
-            android:textSize="20sp"/>
-
-        <EditText
-            android:id = "@+id/code_check"
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:inputType = "text"
-            android:minWidth="100sp"
-            android:layout_toEndOf="@id/code_text"
-            android:layout_toRightOf="@id/code_text" />
-    </RelativeLayout>
-
-    <Button
-        android:id = "@+id/login_btn"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="56dp"
+        android:layout_height="59dp"
+        android:background="@drawable/next_button_style"
         android:onClick = "code_continue"
-        android:text = "@string/code_continue"
-        android:layout_below="@id/code_layout"
-        android:layout_centerHorizontal="true"/>
+        app:srcCompat="@drawable/sign_up_arrow"
+        android:alpha=".75"
+        android:layout_marginRight="41dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/palavo_login_logo"
+        android:layout_marginTop="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintVertical_bias="0.0" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -49,11 +50,11 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Question> questionsList;
     private ArrayList<Answer> answersList;
     private int currentQuestion;
-    private int person_id = 1;// defualt value for testing
     private String token = null;
     private String survey;
     private View main_Activity_View, number_Question_View, selection_Question_View, login_view;
     private TextView Question_Title;
+    private ListView listView;
 
     /*
     * Login varibles
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        login_view = getLayoutInflater().inflate(R.layout.fragment_login, null);
+        //login_view = getLayoutInflater().inflate(R.layout.fragment_login, null);
         main_Activity_View = getLayoutInflater().inflate(R.layout.activity_main, null);
         number_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
         selection_Question_View = getLayoutInflater().inflate(R.layout.number_question, null);
@@ -90,61 +91,24 @@ public class MainActivity extends AppCompatActivity {
 
         map = new HashMap<String, Boolean>();
 
-        displayLogin();
+        Bundle bundle = getIntent().getExtras();
+        questionsList = bundle.getParcelableArrayList("questions");
+        survey = bundle.getString("survey");
+        displayQuestions(questionsList);
+
+        //displayLogin();
     }
-
-    /*
-     * Name: displayLogin
-     * Description: Displays the login fragment
-     * Input: None
-     * Output: None
-     */
-    public  void displayLogin() {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-
-        // Create a new instance of a login fragment
-        LoginFragment loginFrag = new LoginFragment();
-        ft.add(R.id.fragment_container, loginFrag, QUESTION_FRAGMENT);
-        ft.commit();
-    }// End displayLogin()
-
-    /*
-     * Name: displayCodeCheck
-     * Description: Displays the code check fragment
-     * Input: None
-     * Output: None
-     */
-    public  void displayCodeCheck() {
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentByTag(QUESTION_FRAGMENT);// find any active fragments with the QUESTION_FRAGMENT tag
-        FragmentTransaction ft = fm.beginTransaction();
-
-        // Create a new instance of a login fragment
-        CodeFragment codefrag = new CodeFragment();
-
-        // if there are is an active fragment, replace the old fragment with the new one and commit
-        if (fragment != null) {
-            ft.replace(R.id.fragment_container, codefrag, QUESTION_FRAGMENT);
-            ft.commit();
-        }
-        else {// add the new framgent and commit
-            ft.add(R.id.fragment_container, codefrag, QUESTION_FRAGMENT);
-            ft.commit();
-        }
-
-    }// End displayCodeCheck()
 
     // create jsonArray to send answer back
     public void sendAnswers(ArrayList<Answer> answersList) {
         JSONObject data = new JSONObject();
         try {
-            data.put("token",this.token);
+            data.put("survey",this.survey);
 
             //Put all answers into a JSONArray to send to server
             JSONArray answers = new JSONArray();
-            for (Answer ans:answersList) {
-                answers.put(ans.toJson());
+            for (int i = 0; i < answersList.size(); i++) {
+                answers.put(answersList.get(i).toJson());
             }
             data.put("answers", answers);
 
@@ -155,17 +119,42 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // overrides the back button to decrement the current question id
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "Back pressed");
+        if (currentQuestion > 0)
+        {
+            currentQuestion--;
+            FragmentManager fm = getSupportFragmentManager();
+            fm.popBackStack();
+            Log.d(TAG, "Current question: " + String.valueOf(currentQuestion + 1));
+        }
+    }
+
+
+    // pops fragment backstack and decrements the current question id
+    public void previousQuestion(View view) {
+        Log.d(TAG, "Back pressed");
+        if (currentQuestion > 0)
+        {
+            currentQuestion--;
+            FragmentManager fm = getSupportFragmentManager();
+            fm.popBackStack();
+            Log.d(TAG, "Current question: " + String.valueOf(currentQuestion + 1));
+        }
+    }
+
     // display questions
     public void displayQuestions(final ArrayList<Question> questions) {
         Log.i ("in displayQuestions", "test");
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentByTag(QUESTION_FRAGMENT);// find any active fragments with the QUESTION_FRAGMENT tag
-        FragmentTransaction ft = fm.beginTransaction();// begin a fragment transcation
+        FragmentTransaction ft = fm.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null);// begin a fragment transcation
 
         if (currentQuestion < questions.size())
         {
-
             // if the question is a selection question
             if (questions.get(currentQuestion).getType().equals(getString(R.string.question_selection))) {
                 Log.i ("getting into Select", "testing");
@@ -174,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 {
                     ft.replace(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
                     ft.commit();
+                    TextView tv = (TextView) findViewById(R.id.textView2);
+                    tv.setText("YOLO");
                 }
                 else
                 {
@@ -182,13 +173,12 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
-                bitmapImages = questions.get(currentQuestion).getImages();
+                //bitmapImages = questions.get(currentQuestion).getImages();
 
             }
 
-
             // if the question is a number question
-            else if (questions.get(currentQuestion).getType().equals(getString(R.string.question_number))) {
+            /*else if (questions.get(currentQuestion).getType().equals(getString(R.string.question_number))) {
                 // create a new instance of a Number Fragment
                 NumberFragment numberFragment = NumberFragment.newInstance(questions.get(currentQuestion));
 
@@ -246,12 +236,10 @@ public class MainActivity extends AppCompatActivity {
                     ft.add(R.id.fragment_container, numberFragment, QUESTION_FRAGMENT);
                     ft.commit();
                 }
-            }
+            }*/
         }
         else { /// end of survey show confirmation screen
-            Log.d("Main Activity", "Finished Survey");
             if (fragment != null) {
-                sendAnswers(answersList);
                 FinishedSurveyFragment finisedFragment = new FinishedSurveyFragment();
                 ft.replace(R.id.fragment_container, finisedFragment, QUESTION_FRAGMENT);
                 ft.commit();
@@ -259,89 +247,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*
-     * Description: Checks the code entered by the user is a vaild survey code
-     * Input: The the layout layout as a view
-     * Output: None
-     */
-    public void code_continue(View view) {
-        fetchTask getQuestions = new fetchTask();
-
-        entered_code = (EditText) findViewById(R.id.code_check);
-
-        this.survey = entered_code.getText().toString();
-        getQuestions.execute(this.survey);
-    }
-
-    /*
-     * Name: Login
-     * Description: Login checks the enterd credentials against the user credentials in a database.
-     *              If there are correct then the user can login, else the attempts counter is
-     *              decremented.  If the coutner reeaches zero then the login button is disabled and
-     *              the application exits.
-     * Input: The the layout layout as a view
-     * Output: None
-     */
-    public void login(View view) {
-        // TODO: 22/06/2017 Add proper login authentication
-        username = (EditText) findViewById(R.id.username);
-        password = (EditText) findViewById(R.id.password);
-
-        loginTask loginTask = new loginTask();
-
-        try {
-            Boolean result = loginTask.execute("http://www.polavo.net/login/", username.getText().toString(), password.getText().toString()).get();
-            Log.i(TAG, "Usersname: " + username.getText().toString() + "/");
-            Log.i(TAG, "password: " + password.getText().toString() + "/");
-            if (result) {
-                //correcct password
-                Log.i(TAG, "Login correct!");
-
-                int userid = 1;// // TODO: 22/06/2017 Get real user id from database
-
-                person_id = userid;
-
-                login_btn = (Button) findViewById(R.id.login_btn);
-                login_btn.setEnabled(false);
-                Button cancel_btn = (Button) findViewById(R.id.cancel_btn);
-                cancel_btn.setEnabled(false);
-                displayCodeCheck();
-            } else {
-                //wrong password
-                counter--;// Decremment login attempt counter
-
-                Log.d(TAG, "Wrong password or usename");
-
-                if (counter == 0) {// No more login attempts allowed
-                    login_btn.setEnabled(false);// Desable login button
-                    finish();// Call onDestroy()
-                }
-            }
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Interrupted: " + e);
-        } catch (ExecutionException e) {
-            Log.e(TAG, "Execution Expection: " + e);
-        }
-
-    }// End login()
-
-    /*
-     * Name: Cancel
-     * Description: Cleans up activity and closes the app
-     * Input: Input: The the login layout as a view
-     * Output: None
-     */
-    public void cancel(View view) {
-        finish();// Call onDestroy
-    }// End Cancel()
-
     // onClick method for a number question
     public void pickNumber(View view) {
         // find number picker
         NumberPicker numberPicker = (NumberPicker) findViewById(R.id.number_pick);
 
         // save the chosen answer
-        saveAnswer(questionsList.get(currentQuestion).getId(), person_id, Integer.toString(numberPicker.getValue()));
+        saveAnswer(questionsList.get(currentQuestion).getId(), Integer.toString(numberPicker.getValue()));
         Log.d("Main Activity", "Saved answer");
 
         currentQuestion++;// increment question number reference
@@ -356,11 +268,17 @@ public class MainActivity extends AppCompatActivity {
     {
         SeekBar seekbar = (SeekBar) findViewById(R.id.seekBar);
         int result = seekbar.getProgress() + 1;
-        saveAnswer(questionsList.get(currentQuestion).getId(), person_id, String.valueOf(result));
-        currentQuestion++;
-        displayQuestions(questionsList);
-
-
+        //saveAnswer(questionsList.get(currentQuestion).getId(), person_id, String.valueOf(result));
+            //check if result already exists
+            if (currentQuestion < 5) {
+                new Thread(new CheckIfAnswerExists(questionsList.get(currentQuestion).getId(), String.valueOf(result))).start();
+            }
+            currentQuestion++;
+            displayQuestions(questionsList);
+//            FragmentManager fm = getSupportFragmentManager();
+//            Fragment fragment = fm.findFragmentByTag(QUESTION_FRAGMENT);// find any active fragments with the QUESTION_FRAGMENT tag
+//            FragmentTransaction ft = fm.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//            Log.d("Main Activity", "Finished Survey");
     }
 
     // onClick method for a set time question
@@ -370,10 +288,10 @@ public class MainActivity extends AppCompatActivity {
         TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
         if (Build.VERSION.SDK_INT >= 23)
         {
-            saveAnswer(questionsList.get(currentQuestion).getId(), person_id, Integer.toString(timePicker.getHour()) + ":" + Integer.toString(timePicker.getMinute()));
+            saveAnswer(questionsList.get(currentQuestion).getId(), Integer.toString(timePicker.getHour()) + ":" + Integer.toString(timePicker.getMinute()));
         }
         else {
-            saveAnswer(questionsList.get(currentQuestion).getId(), person_id, Integer.toString(timePicker.getCurrentHour()) + ":" + Integer.toString(timePicker.getCurrentMinute()));
+            saveAnswer(questionsList.get(currentQuestion).getId(), Integer.toString(timePicker.getCurrentHour()) + ":" + Integer.toString(timePicker.getCurrentMinute()));
         }
 
         currentQuestion++;// increment question number reference
@@ -389,12 +307,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // create a new answer and add it to the end of the answers list
-    public void saveAnswer(int question, int person, String result){
+    public void saveAnswer(int question, String result){
         Log.i("Main Activity", "question " + question);
         Log.i("Main Activity", "result " + result);
-        Answer answer = new Answer(question, person, result);
+        Answer answer = new Answer(question, result);
         answersList.add(answer);
-        Log.i("Answer",String.valueOf(question)+":"+String.valueOf(person)+":"+result);
+        Log.i("Answer",String.valueOf(question)+":"+":"+result);
     }
     public List<Image> BitmapImages()
     {
@@ -405,8 +323,6 @@ public class MainActivity extends AppCompatActivity {
         // questions.get(currentQuestion).getType().equals(
 
     }
-
-
 
     //Server connection tasks
     private class fetchTask extends AsyncTask<String, ArrayList<Question>, ArrayList<Question>> {
@@ -451,45 +367,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class loginTask extends AsyncTask<String, Boolean, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-
-            Log.i(TAG, "Login");
-            // Send user and pass to be checked by server
-              /*
-              * Create JSON object
-              * Username : <Username entered by user>
-              * Password : <Password entered by user>
-              */
-
-            try {
-                JSONObject loginDetails = new JSONObject();
-                loginDetails.put("username", params[1].toString());
-                loginDetails.put("password", params[2].toString());
-
-                JSONObject result = httpCom.login(loginDetails);
-
-                //Check the result of the query
-                if (result.has("status")) {
-                    return result.getBoolean("status");
-                } else {
-                    return false;
-                }
-            } catch (JSONException e) {
-                Log.e(TAG, "JSON Exception: ", e);
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result){
-            Log.i("Polavo","Login result: "+result.toString());
-        }
-
-    }
-
     //Server connection tasks
     private class SendTask extends AsyncTask<JSONObject, JSONObject, JSONObject> {
 
@@ -508,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(JSONObject s) {
             try {
-                if (s.getBoolean("result") == true) {
+                if (s.getBoolean("status") == true) {
                     Log.i("Survey Badger","Successfully Submitted Answers");
                 } else {
                     Log.i("Survey Badger","Answers not submitted");
@@ -523,5 +400,34 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    class CheckIfAnswerExists implements Runnable {
+
+        int idToCheck;
+        String result;
+        boolean found;
+
+        CheckIfAnswerExists(int qId, String result){
+            this.idToCheck = qId;
+            this.result = result;
+            found = false;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < answersList.size(); i++) {
+                if (answersList.get(i).getQuestionID() == idToCheck - 1) {
+                    answersList.get(i).setResult(result);
+                    found = true;
+                    Log.i(TAG, "Question " + String.valueOf(answersList.get(i).getQuestionID()));
+                    Log.i(TAG, "result " + String.valueOf(answersList.get(i).getResult()));
+                }
+            }
+
+            if (!found) {
+                saveAnswer(idToCheck, result);
+            }
+        }
     }
 }
