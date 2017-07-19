@@ -45,7 +45,7 @@ public class SelectionFragment extends Fragment {
     private ImageView indicator;
 
     // array of images
-    private String[] satisfaction = {"unhappy", "ok", "neutral", "good", "happy"};
+    private String[] satisfaction = {"ic_v_disat", "ic_disat", "ic_neutral", "ic_sat", "ic_v_sat"};
 
     public SelectionFragment () {
 
@@ -113,7 +113,7 @@ public class SelectionFragment extends Fragment {
             // set image resource
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                indicator.setImageResource(getResources().getIdentifier(satisfaction[seekBar.getProgress()], "drawable", getActivity().getPackageName()));
+                indicator.setImageResource(getResources().getIdentifier(satisfaction[seekBar.getProgress()], "mipmap", getActivity().getPackageName()));
             }
 
             @Override

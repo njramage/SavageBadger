@@ -57,6 +57,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:text="@string/submit"
+        android:onClick="sendAnswers"
         android:textSize="20dp"
         android:background="@drawable/login_button_style"
         app:layout_constraintBottom_toBottomOf="parent"

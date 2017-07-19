@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // create jsonArray to send answer back
-    public void sendAnswers(ArrayList<Answer> answersList) {
+    public void sendAnswers(View view) {
         JSONObject data = new JSONObject();
         try {
             data.put("survey",this.survey);
@@ -163,8 +163,6 @@ public class MainActivity extends AppCompatActivity {
                 {
                     ft.replace(R.id.fragment_container, selectionFragment, QUESTION_FRAGMENT);
                     ft.commit();
-                    TextView tv = (TextView) findViewById(R.id.textView2);
-                    tv.setText("YOLO");
                 }
                 else
                 {
@@ -417,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             for (int i = 0; i < answersList.size(); i++) {
-                if (answersList.get(i).getQuestionID() == idToCheck - 1) {
+                if (answersList.get(i).getQuestionID() == idToCheck) {
                     answersList.get(i).setResult(result);
                     found = true;
                     Log.i(TAG, "Question " + String.valueOf(answersList.get(i).getQuestionID()));

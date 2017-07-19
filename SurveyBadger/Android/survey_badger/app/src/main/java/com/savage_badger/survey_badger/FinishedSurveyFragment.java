@@ -31,7 +31,7 @@ public class FinishedSurveyFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.selection_question, container, false);
+        View view = inflater.inflate(R.layout.finished_survey, container, false);
         return view;
     }
 }
