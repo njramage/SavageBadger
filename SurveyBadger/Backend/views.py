@@ -151,7 +151,17 @@ def webClient():
 @app.route('/survey/', methods=["GET"])
 @login_student
 def survey():
-    return render_template("survey.html", options = getOptions()) 
+    return render_template("survey.html", options = getOptions())
+
+#forgot password page
+@app.route('/forgotpassword/')
+def forgotPSW():
+    return render_template("forgotpsw.html", options = getOptions())
+
+#change password page
+@app.route('/changepassword/')
+def changePSW():
+    return render_template("changePsw.html", options = getOptions())
 
 #Tutor portal
 @app.route('/tutor/', methods=["GET"])

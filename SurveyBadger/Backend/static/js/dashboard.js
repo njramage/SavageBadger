@@ -76,10 +76,14 @@ function displayOverview() {
                 }
                 row.append(cell);
             }
-            console.log(intel);
+           // console.log(intel);
             
             table.append(row);
-            intel++;
+
+            //this is flawed because intel will be set to a high value after all the tables are created.
+            intel = intel + row.index();
+            console.log("this is index", row.index());
+            console.log("this is new intel", intel);
         } 
 
         //Place unit elements into the div
@@ -96,9 +100,9 @@ function displayOverview() {
 //displays a detailed review for each tutorial.
 
 
-function detailedTutorial(intel, tut)
+function detailedTutorial(help, tut)
 {
-    var x = intel.rowIndex - 1;
+    var x = help.rowIndex - 1;
     console.log ("what is XXx", x);
 
 
@@ -124,6 +128,7 @@ function detailedTutorial(intel, tut)
       console.log ("what is x", x);
     console.log ("what is Intel", intel);
     console.log("tutorial id", tut);
+    console.log ("this is helperthing", help.rowIndex);
   //  console.log(unit);
     //console.log(unit["Surveys"][0]["Attendance"]);
    // console.log(unit["Surveys"][0]["Early_leavers"]);
